@@ -17,8 +17,20 @@ export class TextReferenceService {
     return await this.textReferenceRepository.save(newQuiz);
   }
 
-  async findAll(): Promise<TextReference[]> {
-    return await this.textReferenceRepository.find();
+  async findAll(params: {
+    page: number;
+    limit: number;
+    filters: Record<string, string>;
+  }): Promise<{data: TextReference[], total: number}> {
+    const { page, limit, filters } = params;
+
+    const [data, total] = await this.textReferenceRepository.findAndCount({
+      where: filters,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { data, total };
   }
 
   async findOne(id: number): Promise<TextReference> {

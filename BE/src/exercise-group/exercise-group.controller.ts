@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { ExerciseGroupService } from './exercise-group.service';
 import { CreateExerciseGroupDto } from './dto/create-exercise-group.dto';
 import { UpdateExerciseGroupDto } from './dto/update-exercise-group.dto';
@@ -13,8 +22,14 @@ export class ExerciseGroupController {
   }
 
   @Get()
-  findAll() {
-    return this.exerciseGroupService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query() _filters: any,
+  ) {
+    const { page: _, limit: __, ...filters } = _filters;
+
+    return this.exerciseGroupService.findAll({ page, limit, filters });
   }
 
   @Get(':id')
@@ -23,7 +38,10 @@ export class ExerciseGroupController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExerciseGroupDto: UpdateExerciseGroupDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateExerciseGroupDto: UpdateExerciseGroupDto,
+  ) {
     return this.exerciseGroupService.update(+id, updateExerciseGroupDto);
   }
 

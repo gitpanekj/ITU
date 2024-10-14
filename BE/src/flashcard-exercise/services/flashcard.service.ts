@@ -16,8 +16,16 @@ export class FlashcardService {
     return await this.FlashcardRepository.save(card);
   }
 
-  async findAll(): Promise<FlashCard[]> {
-    return await this.FlashcardRepository.find();
+  async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data: FlashCard[], total: number}> {
+    const {page, limit, filters} = params;
+    console.log({page, limit, filters});
+    const [data, total] = await this.FlashcardRepository.findAndCount({
+      where: filters,
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    return {data, total};
   }
 
   async findOne(id: number): Promise<FlashCard> {

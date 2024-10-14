@@ -17,8 +17,20 @@ export class QuizTextService {
     return await this.quizTextRepository.save(newQuiz);
   }
 
-  async findAll(): Promise<QuizText[]> {
-    return await this.quizTextRepository.find();
+  async findAll(params: {
+    page: number;
+    limit: number;
+    filters: Record<string, string>;
+  }): Promise<{data: QuizText[], total: number}> {
+    const { page, limit, filters } = params;
+
+    const [data, total] = await this.quizTextRepository.findAndCount({
+      where: filters,
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return { data, total };
   }
 
   async findOne(id: number): Promise<QuizText> {

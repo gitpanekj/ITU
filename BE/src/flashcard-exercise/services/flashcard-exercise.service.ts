@@ -15,8 +15,16 @@ export class FlashcardExerciseService {
     return await this.flashcardExerciseRepository.save(exercise);
   }
 
-  async findAll(): Promise<FlashcardExercise[]> {
-    return await this.flashcardExerciseRepository.find();
+  async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data: FlashcardExercise[], total: number}> {
+    const {page, limit, filters} = params;
+
+    const [data, total] = await this.flashcardExerciseRepository.findAndCount({
+      where: filters,
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    return {data, total};
   }
 
   async findOne(id: number): Promise<FlashcardExercise> {

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExerciseGroup } from './entities/exercise-group.entity';
 import { Repository } from 'typeorm';
 
+
 @Injectable()
 export class ExerciseGroupService {
   constructor(
@@ -15,8 +16,16 @@ export class ExerciseGroupService {
     return await this.exerciseGroupRepository.save(group);
   }
 
-  async findAll(): Promise<ExerciseGroup[]>{
-    return await this.exerciseGroupRepository.find();
+  async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data:ExerciseGroup[], total: number}>{
+    const {page, limit, filters} = params;
+
+    const [data, total] = await this.exerciseGroupRepository.findAndCount({
+      where: filters,
+      skip: (page - 1) * limit,
+      take: limit
+    });
+
+    return {data, total};
   }
 
   async findOne(id: number): Promise<ExerciseGroup>{
