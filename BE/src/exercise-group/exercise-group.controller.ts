@@ -24,7 +24,7 @@ export class ExerciseGroupController {
   @Get()
   findAll(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('limit') limit: number = 0,
     @Query() _filters: any,
   ) {
     const { page: _, limit: __, ...filters } = _filters;

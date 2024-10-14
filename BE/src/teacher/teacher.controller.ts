@@ -24,7 +24,7 @@ export class TeacherController {
   @Get()
   findAll(
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
+    @Query('limit') limit: number = 0,
     @Query() _filters: Record<string, string>,
   ) {
     const {page: _, limit: __, ...filters} = _filters;
