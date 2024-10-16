@@ -1,0 +1,21 @@
+<script lang="ts">
+    import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
+    import { loadUserContext } from "$lib/userContenxt/userContext";
+
+    let userId: number | null = null;
+
+    onMount(() => {
+        userId = loadUserContext();
+        if (!userId){ // user not logged in
+            goto('/login');
+        }
+    })
+</script>
+
+{#if userId}
+    <h1>Logged in as: {userId}</h1>
+    <slot></slot>
+{:else}
+    <p>Redirecting...</p>
+{/if}
