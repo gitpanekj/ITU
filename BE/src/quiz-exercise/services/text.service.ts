@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTextDto } from '../dto/create-text.dto';
 import { UpdateTextDto } from '../dto/update-text.dto';
 import { QuizText } from '../entities/text.entity';
@@ -14,7 +14,14 @@ export class QuizTextService {
 
   async create(createQuizTextDto: CreateTextDto): Promise<QuizText> {
     const newQuiz = this.quizTextRepository.create(createQuizTextDto);
-    return await this.quizTextRepository.save(newQuiz);
+    if (!newQuiz){
+      throw new BadRequestException('Provided bad data');
+    }
+    const entity = await this.quizTextRepository.save(newQuiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {
@@ -34,7 +41,11 @@ export class QuizTextService {
   }
 
   async findOne(id: number): Promise<QuizText> {
-    return await this.quizTextRepository.findOne({ where: { id: id } });
+    const quizText = await this.quizTextRepository.findOne({ where: { id: id } });
+    if (!quizText){
+      throw new NotFoundException(`Quiz text with ID ${id} not found`);
+    }
+    return quizText;
   }
 
   async update(
@@ -43,14 +54,21 @@ export class QuizTextService {
   ): Promise<QuizText> {
     let quiz = await this.quizTextRepository.findOne({ where: { id: id } });
     if (!quiz) {
-      throw new Error(`QUestion with ID ${id} not found`);
+      throw new NotFoundException(`QUestion with ID ${id} not found`);
     }
 
     Object.assign(quiz, updateQuizTextDto);
-    return await this.quizTextRepository.save(quiz);
+    const entity = await this.quizTextRepository.save(quiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async remove(id: number): Promise<void> {
-    await this.quizTextRepository.delete(id);
+    const result = await this.quizTextRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the entity');
+    }
   }
 }

@@ -7,6 +7,9 @@ import {
   Param,
   Delete,
   Query,
+  HttpException,
+  HttpStatus,
+  UseFilters,
 } from '@nestjs/common';
 import { FlashcardExerciseService } from './services/flashcard-exercise.service';
 import { CreateFlashcardExerciseDto } from './dto/create-flashcard-exercise.dto';
@@ -14,8 +17,10 @@ import { UpdateFlashcardExerciseDto } from './dto/update-flashcard-exercise.dto'
 import { CreateFlashcardDto } from './dto/create-flashcard.dto';
 import { FlashcardService } from './services/flashcard.service';
 import { UpdateFlashcardDto } from './dto/update-flashcard.dto';
+import { GlobalExceptionFilter } from 'src/exception-filter/filter';
 
 @Controller('flashcard-exercise')
+@UseFilters(GlobalExceptionFilter)
 export class FlashcardExerciseController {
   constructor(
     private readonly flashcardExerciseService: FlashcardExerciseService,
@@ -78,7 +83,12 @@ export class FlashcardExerciseController {
 
   @Get(':id')
   findOneExercise(@Param('id') id: string) {
-    return this.flashcardExerciseService.findOne(+id);
+    try {
+      return this.flashcardExerciseService.findOne(+id);
+    }
+    catch (error) {
+      throw new HttpException('Error fetching resource', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Patch(':id')

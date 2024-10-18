@@ -7,12 +7,15 @@ import {
   Param,
   Delete,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { ExerciseGroupService } from './exercise-group.service';
 import { CreateExerciseGroupDto } from './dto/create-exercise-group.dto';
 import { UpdateExerciseGroupDto } from './dto/update-exercise-group.dto';
+import { GlobalExceptionFilter } from 'src/exception-filter/filter';
 
 @Controller('exercise-group')
+@UseFilters(GlobalExceptionFilter)
 export class ExerciseGroupController {
   constructor(private readonly exerciseGroupService: ExerciseGroupService) {}
 

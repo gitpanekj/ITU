@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateQuestionAnswerDto } from '../dto/create-question-answer.dto';
 import { UpdateQuestionAnswerDto } from '../dto/update-question-answer.dot';
 import { QuestionAnswer } from '../entities/question-answer.entity';
@@ -14,10 +14,17 @@ export class QuestionAnswerService {
   async create(
     createQuestionAnswerDto: CreateQuestionAnswerDto,
   ): Promise<QuestionAnswer> {
-    const newQuiz = this.questionAnswerRepository.create(
+    const questionAnswer = this.questionAnswerRepository.create(
       createQuestionAnswerDto,
     );
-    return await this.questionAnswerRepository.save(newQuiz);
+    if (!questionAnswer){
+      throw new BadRequestException('Bad data provided');
+    }
+    const entity = await this.questionAnswerRepository.save(questionAnswer);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {
@@ -37,7 +44,11 @@ export class QuestionAnswerService {
   }
 
   async findOne(id: number): Promise<QuestionAnswer> {
-    return await this.questionAnswerRepository.findOne({ where: { id: id } });
+    const questionAnswer = await this.questionAnswerRepository.findOne({ where: { id: id } });
+    if (!questionAnswer){
+      throw new NotFoundException('Failed to save the entity');
+    }
+    return questionAnswer;
   }
 
   async update(
@@ -48,14 +59,21 @@ export class QuestionAnswerService {
       where: { id: id },
     });
     if (!quiz) {
-      throw new Error(`Quiz with ID ${id} not found`);
+      throw new NotFoundException(`Quiz with ID ${id} not found`);
     }
 
     Object.assign(quiz, updateQuestionAnswerDto);
-    return await this.questionAnswerRepository.save(quiz);
+    const entity = await this.questionAnswerRepository.save(quiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async remove(id: number): Promise<void> {
-    await this.questionAnswerRepository.delete(id);
+    const result = await this.questionAnswerRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the record');
+    }
   }
 }

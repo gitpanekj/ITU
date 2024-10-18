@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Teacher } from './entities/teacher.entity';
@@ -11,8 +11,17 @@ export class TeacherService {
     @InjectRepository(Teacher) private teacherRepository: Repository<Teacher>,
   ) {}
   async create(createTeacherDto: CreateTeacherDto): Promise<Teacher> {
-    const new_teacher = await this.teacherRepository.create(createTeacherDto);
-    return await this.teacherRepository.save(new_teacher);
+    const new_teacher = this.teacherRepository.create(createTeacherDto);
+    if (!new_teacher){
+      throw new BadRequestException('Bad data provided');
+    }
+    const entity = await this.teacherRepository.save(new_teacher);
+    if (!entity)
+    {
+      throw new ConflictException('Failed to save the entity');
+    }
+
+    return entity;
   }
 
   async findAll(params: {
@@ -32,7 +41,9 @@ export class TeacherService {
   }
 
   async findOne(id: number): Promise<Teacher> {
-    return await this.teacherRepository.findOne({ where: { id: id } });
+    const teacher = await this.teacherRepository.findOne({ where: { id: id } });
+    if (!teacher) throw new NotFoundException(`Teacher with ID ${id} not found`);
+    return teacher;
   }
 
   async update(
@@ -41,14 +52,22 @@ export class TeacherService {
   ): Promise<Teacher> {
     const teacher = await this.teacherRepository.findOne({ where: { id: id } });
     if (!teacher) {
-      throw new Error(`Teacher with ID ${id} not found`);
+      throw new NotFoundException(`Teacher with ID ${id} not found`);
     }
 
     Object.assign(teacher, updateTeacherDto);
-    return await this.teacherRepository.save(teacher);
+    const entity = await this.teacherRepository.save(teacher);
+    if (!entity)
+    {
+    throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async remove(id: number): Promise<void> {
-    await this.teacherRepository.delete(id);
+    const result = await this.teacherRepository.delete(id);
+    if (result.affected === 0) {
+      throw new ConflictException('Failed to delete the record');
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateQuizExerciseDto } from '../dto/create-quiz-exercise.dto';
 import { UpdateQuizExerciseDto } from '../dto/update-quiz-exercise.dto';
 import { QuizExercise } from '../entities/quiz-exercise.entity';
@@ -15,7 +15,14 @@ export class QuizExerciseService {
     createQuizExerciseDto: CreateQuizExerciseDto,
   ): Promise<QuizExercise> {
     const newQuiz = this.quizExerciseRepository.create(createQuizExerciseDto);
-    return await this.quizExerciseRepository.save(newQuiz);
+    if (!newQuiz){
+      throw new BadRequestException('Bad data provided');
+    }
+    const entity = await this.quizExerciseRepository.save(newQuiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {
@@ -35,7 +42,11 @@ export class QuizExerciseService {
   }
 
   async findOne(id: number): Promise<QuizExercise> {
-    return await this.quizExerciseRepository.findOne({ where: { id: id } });
+    const quiz = await this.quizExerciseRepository.findOne({ where: { id: id } });
+    if (!quiz){
+      throw new NotFoundException(`Quiz with ID ${id} not found`);
+    }
+    return quiz;
   }
 
   async update(
@@ -44,14 +55,22 @@ export class QuizExerciseService {
   ): Promise<QuizExercise> {
     let quiz = await this.quizExerciseRepository.findOne({ where: { id: id } });
     if (!quiz) {
-      throw new Error(`Quiz with ID ${id} not found`);
+      throw new NotFoundException(`Quiz with ID ${id} not found`);
     }
 
     Object.assign(quiz, updateQuizExerciseDto);
-    return await this.quizExerciseRepository.save(quiz);
+    const entity = await this.quizExerciseRepository.save(quiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+
+    return entity;
   }
 
   async remove(id: number): Promise<void> {
-    await this.quizExerciseRepository.delete(id);
+    const result = await this.quizExerciseRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the record');
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateExerciseGroupDto } from './dto/create-exercise-group.dto';
 import { UpdateExerciseGroupDto } from './dto/update-exercise-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,16 @@ export class ExerciseGroupService {
   ) {}
   async create(createExerciseGroupDto: CreateExerciseGroupDto): Promise<ExerciseGroup>{
     const group = this.exerciseGroupRepository.create(createExerciseGroupDto);
-    return await this.exerciseGroupRepository.save(group);
+    if (!group)
+    {
+      throw new BadRequestException('Bad data provided');
+    }
+
+    const entity = await this.exerciseGroupRepository.save(group);
+    if (!entity) {
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data:ExerciseGroup[], total: number}>{
@@ -29,21 +38,32 @@ export class ExerciseGroupService {
   }
 
   async findOne(id: number): Promise<ExerciseGroup>{
-    return await this.exerciseGroupRepository.findOne({where: {id:id}});
+    const group = await this.exerciseGroupRepository.findOne({where: {id:id}});
+    if (!group){
+      throw new NotFoundException(`Group with ID ${id} not found`);
+    }
+    return group;
   }
 
   async update(id: number, updateExerciseGroupDto: UpdateExerciseGroupDto): Promise<ExerciseGroup>{
     let group = await this.exerciseGroupRepository.findOne({where: {id:id}});
     if (!group)
     {
-      throw new Error(`Group with ID ${id} not found`);
+      throw new NotFoundException(`Group with ID ${id} not found`);
     }
     Object.assign(group, updateExerciseGroupDto);
 
-    return await this.exerciseGroupRepository.save(group);
+    const entity =  await this.exerciseGroupRepository.save(group);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async remove(id: number): Promise<void>{
-    await this.exerciseGroupRepository.delete(id);
+    const result = await this.exerciseGroupRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the record');
+    }
   }
 }

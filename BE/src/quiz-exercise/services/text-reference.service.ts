@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTextReferenceDto } from '../dto/create-text-reference.dto';
 import { UpdateTextReferenceDto } from '../dto/update-text-reference.dto';
 import { TextReference } from '../entities/text-reference.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { text } from 'stream/consumers';
 
 @Injectable()
 export class TextReferenceService {
@@ -14,7 +15,15 @@ export class TextReferenceService {
 
   async create(createTextReferenceDto: CreateTextReferenceDto): Promise<TextReference> {
     const newQuiz = this.textReferenceRepository.create(createTextReferenceDto);
-    return await this.textReferenceRepository.save(newQuiz);
+    if (!newQuiz){
+      throw new BadRequestException('Bad data provided');
+    }
+
+    const entity = await this.textReferenceRepository.save(newQuiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {
@@ -34,7 +43,11 @@ export class TextReferenceService {
   }
 
   async findOne(id: number): Promise<TextReference> {
-    return await this.textReferenceRepository.findOne({ where: { id: id } });
+    const textReference = await this.textReferenceRepository.findOne({ where: { id: id } });
+    if (!textReference){
+      throw new NotFoundException(`textReference with ID ${id} not found`);
+    }
+    return textReference;
   }
 
   async update(
@@ -43,14 +56,21 @@ export class TextReferenceService {
   ): Promise<TextReference> {
     let quiz = await this.textReferenceRepository.findOne({ where: { id: id } });
     if (!quiz) {
-      throw new Error(`QUestion with ID ${id} not found`);
+      throw new NotFoundException(`QUestion with ID ${id} not found`);
     }
 
     Object.assign(quiz, updateTextReferenceDto);
-    return await this.textReferenceRepository.save(quiz);
+    const entity = await this.textReferenceRepository.save(quiz);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async remove(id: number): Promise<void> {
-    await this.textReferenceRepository.delete(id);
+    const result = await this.textReferenceRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the entity');
+    }
   }
 }

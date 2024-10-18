@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 
 import { FlashCard } from '../entities/flashcard.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,7 +13,14 @@ export class FlashcardService {
   ){}
   async create(createFlashcardDto: CreateFlashcardDto) {
     const card = this.FlashcardRepository.create(createFlashcardDto);
-    return await this.FlashcardRepository.save(card);
+    if (!card){
+      throw new BadRequestException('Bad data provided');
+    }
+    const entity = await this.FlashcardRepository.save(card);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+    return entity;
   }
 
   async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data: FlashCard[], total: number}> {
@@ -29,22 +36,34 @@ export class FlashcardService {
   }
 
   async findOne(id: number): Promise<FlashCard> {
-    return await this.FlashcardRepository.findOne({where: {id:id}});
+    const flashcard = await this.FlashcardRepository.findOne({where: {id:id}});
+    if (!flashcard){
+      throw new NotFoundException(`Flashcard with ID ${id} not found`);
+    }
+    return flashcard;
   }
 
   async update(id: number, updateFlashcardDto: UpdateFlashcardDto): Promise<FlashCard> {
     let card = await this.FlashcardRepository.findOne({where: {id:id}});
     if (!card)
     {
-      throw new Error(`Exercise with ID ${id} not found`);
+      throw new NotFoundException(`Exercise with ID ${id} not found`);
     }
 
     Object.assign(card, updateFlashcardDto);
 
-    return await this.FlashcardRepository.save(card);
+    const entity = await this.FlashcardRepository.save(card);
+    if (!entity){
+      throw new ConflictException('Failed to save the entity');
+    }
+
+    return entity;
   }
 
   async remove(id: number) : Promise<void>{
-    await this.FlashcardRepository.delete(id);
+    const result = await this.FlashcardRepository.delete(id);
+    if (result.affected === 0){
+      throw new ConflictException('Failed to delete the record');
+    }
   }
 }

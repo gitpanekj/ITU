@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  UseFilters,
 } from '@nestjs/common';
 import { QuizExerciseService } from './services/quiz-exercise.service';
 import { CreateQuizExerciseDto } from './dto/create-quiz-exercise.dto';
@@ -23,8 +24,10 @@ import { CreateTextDto } from './dto/create-text.dto';
 import { UpdateTextDto } from './dto/update-text.dto';
 import { CreateTextReferenceDto } from './dto/create-text-reference.dto';
 import { UpdateTextReferenceDto } from './dto/update-text-reference.dto';
+import { GlobalExceptionFilter } from 'src/exception-filter/filter';
 
 @Controller('quiz-exercise')
+@UseFilters(GlobalExceptionFilter)
 export class QuizExerciseController {
   constructor(
     private readonly quizExerciseService: QuizExerciseService,
