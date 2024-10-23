@@ -6,10 +6,11 @@ import { ExerciseGroupModule } from './exercise-group/exercise-group.module';
 import { FlashcardExerciseModule } from './flashcard-exercise/flashcard-exercise.module';
 import { QuizExerciseModule } from './quiz-exercise/quiz-exercise.module';
 import { DatabaseModule } from './database/database.module';
+import { ReadingModule } from './reading/reading.module';
 
 
 @Module({
-  imports: [DatabaseModule, TeacherModule, ExerciseGroupModule, FlashcardExerciseModule, QuizExerciseModule],
+  imports: [DatabaseModule, TeacherModule, ExerciseGroupModule, FlashcardExerciseModule, QuizExerciseModule, ReadingModule],
   controllers: [AppController],
   providers: [AppService],
 })

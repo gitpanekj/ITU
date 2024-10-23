@@ -1,27 +1,27 @@
 import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
-export class CreateFlashcardDto {
+export class CreateQuestionDto {
     @IsOptional()
     @IsInt()
     id?: number
 
     @IsNotEmpty()
     @IsString()
-    frontFace: string
+    name: string
 
     @IsNotEmpty()
     @IsString()
-    backFace: string
+    question: string
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    feedbacks?: string
-
-    @IsOptional()
-    @IsInt()
-    hardCount?: number
+    answer: string
 
     @IsNotEmpty()
     @IsInt()
-    flashcardExerciseId: number  
+    exerciseId: number
+
+    @IsOptional()
+    @IsInt()
+    textIdx?: number
 }

@@ -9,8 +9,12 @@ import { FlashCard } from 'src/flashcard-exercise/entities/flashcard.entity';
 import { QuizExercise } from 'src/quiz-exercise/entities/quiz-exercise.entity';
 import { QuizQuestion } from 'src/quiz-exercise/entities/quiz-question.entity';
 import { QuestionAnswer } from 'src/quiz-exercise/entities/question-answer.entity';
-import { TextReference } from 'src/quiz-exercise/entities/text-reference.entity';
-import { QuizText } from 'src/quiz-exercise/entities/text.entity';
+import { ReadingExercise } from 'src/reading/entities/reading-exercise.entity';
+import { ReadingQuestion } from 'src/reading/entities/reading-question.entity';
+import { FlashcardSession } from 'src/flashcard-exercise/entities/flashcard-session.entity';
+import { QuizSession } from 'src/quiz-exercise/entities/quiz-session.entity';
+import { ReadingSession } from 'src/reading/entities/reading-session.entity';
+import { Text } from 'src/reading/entities/text.entity';
 
 @Module({
   providers: [SeedService],
@@ -26,11 +30,11 @@ import { QuizText } from 'src/quiz-exercise/entities/text.entity';
         username: configService.get<string>('DB_USERNAME', 'postgres'),
         password: configService.get<string>('DB_PASSWORD', 'postgres'),
         database: configService.get<string>('DB_NAME', 'postgres_db'),
-        entities: [Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, QuizText, TextReference],
+        entities: [Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, Text, FlashcardSession, QuizSession, ReadingSession],
         synchronize: configService.get<boolean>('DB_DEV', true),
       }),
     }),
-    TypeOrmModule.forFeature([Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, QuizText, TextReference]),
+    TypeOrmModule.forFeature([Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, Text, FlashcardSession, QuizSession, ReadingSession]),
   ],
 })
 export class DatabaseModule implements OnModuleInit {
@@ -40,7 +44,7 @@ export class DatabaseModule implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    if (this.configService.get<boolean>('DB_DEV', true)) {
+    if (this.configService.get<string>('DB_DEV', "true") === "true") {
       await this.seedService.seedDB();
     }
   }

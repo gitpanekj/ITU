@@ -1,6 +1,5 @@
 import { ExerciseGroup } from "src/exercise-group/entities/exercise-group.entity";
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { QuizText } from "./text.entity";
 import { QuizQuestion } from "./quiz-question.entity";
 
 @Entity()
@@ -12,7 +11,7 @@ export class QuizExercise {
     @Column()
     name: string
 
-    @Column()
+    @Column({default: ""})
     description: string
 
     @Column()
@@ -30,10 +29,6 @@ export class QuizExercise {
 
     @OneToMany(() => QuizQuestion, (question) => question.quiz)
     questions: QuizQuestion[]
-
-    @OneToOne(() => QuizText, (text) => text.quiz, {nullable: true})
-    @JoinColumn({name: 'textId'})
-    text: QuizText
 
     /* End of Relations */
 }

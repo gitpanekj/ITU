@@ -8,6 +8,7 @@ import {
   Delete,
   Query,
   UseFilters,
+  NotFoundException,
 } from '@nestjs/common';
 import { QuizExerciseService } from './services/quiz-exercise.service';
 import { CreateQuizExerciseDto } from './dto/create-quiz-exercise.dto';
@@ -18,13 +19,8 @@ import { QuestionAnswerService } from './services/quiz-answer.service';
 import { UpdateQuizQuestionDto } from './dto/update-quiz-question.dto';
 import { CreateQuestionAnswerDto } from './dto/create-question-answer.dto';
 import { UpdateQuestionAnswerDto } from './dto/update-question-answer.dot';
-import { QuizTextService } from './services/text.service';
-import { TextReferenceService } from './services/text-reference.service';
-import { CreateTextDto } from './dto/create-text.dto';
-import { UpdateTextDto } from './dto/update-text.dto';
-import { CreateTextReferenceDto } from './dto/create-text-reference.dto';
-import { UpdateTextReferenceDto } from './dto/update-text-reference.dto';
 import { GlobalExceptionFilter } from 'src/exception-filter/filter';
+import { QuizSessionService } from './services/session.service';
 
 @Controller('quiz-exercise')
 @UseFilters(GlobalExceptionFilter)
@@ -32,9 +28,8 @@ export class QuizExerciseController {
   constructor(
     private readonly quizExerciseService: QuizExerciseService,
     private readonly quizQuestionService: QuizQuestionService,
-    private readonly questionAnswerService: QuestionAnswerService,
-    private readonly quizTextService: QuizTextService,
-    private readonly textReferenceService: TextReferenceService
+    private readonly questionAnswerService: QuestionAnswerService, 
+    private readonly sessionService: QuizSessionService,
   ) {}
 
 
@@ -108,77 +103,84 @@ export class QuizExerciseController {
   }
   /* End of Question answer */
 
-  /* Text */
-  @Post('text')
-  createText(@Body() createTextDto: CreateTextDto) {
-    return this.quizTextService.create(createTextDto);
+  /* Session */
+  @Get('create_session/:exerciseId')
+  async createQuizSession(@Param('exerciseId') id: string){
+    const {data, total} = await this.quizQuestionService.findAll({page: 1, limit: 0, filters: {quizId: id}});
+    const session = await this.sessionService.create({exerciseId: +id, total: total});
+    return {quizSessionId: session.id};
   }
 
-  @Get('text')
-  findAllText(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 0,
-    @Query() _filters: any,
-  ) {
-    const {page: _, limit: __, ...filters} = _filters;
-    return this.quizTextService.findAll({page, limit, filters});
+  @Delete('delete_session/:sessionId')
+  deleteQuizSession(@Param('sessionId') id: string){
+    return this.sessionService.remove(+id);
   }
 
-  @Get('text/:id')
-  findOneText(@Param('id') id: string) {
-    return this.quizTextService.findOne(+id);
+  
+  @Patch('update_session/:id')
+  async updateSession(@Param('id') id: string, @Body() dto: {}){
+    return this.sessionService.update(+id, dto);
   }
 
-  @Patch('text/:id')
-  updateText(
-    @Param('id') id: string,
-    @Body() updateTextDto: UpdateTextDto,
-  ) {
-    return this.quizTextService.update(+id, updateTextDto);
+  @Get('session/:sessionId/next')
+  async getNextQuestion(@Param("sessionId") id: string){
+    // Move to next question in session
+    let session = await this.sessionService.findOne(+id);
+    if (session.questionIdx + 1 > session.total){
+      throw new NotFoundException('No next question');
+    }
+
+    Object.assign(session, {questionIdx: session.questionIdx + 1});
+    await this.sessionService.update(+id, session);
+
+    // return next question
+    const question = (await this.quizQuestionService.findAll({page: session.questionIdx, limit: 1, filters: {quizId: String(session.exerciseId)}})).data[0];
+    const answers = (await this.questionAnswerService.findAll({page: 1, limit: 0, filters: {questionId: String(question.id)}})).data;
+    const remaining = session.total - session.questionIdx;
+    return {data: {question, answers}, remaining};
   }
 
-  @Delete('text/:id')
-  removeText(@Param('id') id: string) {
-    return this.quizTextService.remove(+id);
-  }
-  /* End of Text */
+  @Post('evaluate_question')
+  async evaluateQuestion(@Body() dto: {questionId: number, answerId: number, sessionId: number}){
+    const {questionId, answerId, sessionId} = dto;
+    let question = await this.quizQuestionService.findOne(questionId);
+    let session = await this.sessionService.findOne(sessionId);
+  
+    // evaluate question and update session
+    const correct = question.rightAnswerId === answerId;
+    if (correct){
+      Object.assign(session, {correct: session.correct + (session.correct==="" ? "" : ",") +`{"id": ${questionId}, "name": "${question.name}"}`});
+      Object.assign(question, {noCorrect: question.noCorrect + 1});
+    } else {
+      Object.assign(session, {wrong: session.wrong + (session.wrong==="" ? "" : ",") + `{"id": ${questionId}, "name": "${question.name}", "chosen": ${answerId}}`});
+      Object.assign(question, {noWrong: question.noWrong + 1});
+    }
+    await this.sessionService.update(sessionId, session)
+    await this.quizQuestionService.update(questionId, question);
 
-
-  /* Text reference */
-  @Post('text-reference')
-  createTextReference(@Body() createTextReferenceDto: CreateTextReferenceDto) {
-    return this.textReferenceService.create(createTextReferenceDto);
-  }
-
-  @Get('text-reference')
-  findAllTextReference(
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 0,
-    @Query() _filters: any,
-  ) {
-    const {page: _, limit: __, ...filters} = _filters;
-    return this.textReferenceService.findAll({page, limit, filters});
+    return correct ? {result: "correct"} : {result: "incorrect", answer: question.rightAnswerId};
   }
 
-  @Get('text-reference/:id')
-  findOneTextReference(@Param('id') id: string) {
-    return this.textReferenceService.findOne(+id);
-  }
+  @Post('mark_hard/:questionId')
+  async markAsHard(@Param('questionId') id: string){
+    let question = await this.quizQuestionService.findOne(+id);
 
-  @Patch('text-reference/:id')
-  updateTextReference(
-    @Param('id') id: string,
-    @Body() updateTextReferenceDto: UpdateTextReferenceDto,
-  ) {
-    return this.textReferenceService.update(+id, updateTextReferenceDto);
-  }
+    Object.assign(question, {hardCount: question.hardCount + 1});
 
-  @Delete('text-reference/:id')
-  removeTextReference(@Param('id') id: string) {
-    return this.textReferenceService.remove(+id);
+    return this.quizQuestionService.update(+id, question);
   }
-  /* End of Text reference */
+  
+  @Post('evaluate_session/:sessionId')
+  async evaluateQuiz(@Param('sessionId') id: string){
+    let session = await this.sessionService.findOne(+id);
+  
+    const correct = JSON.parse(`[${session.correct}]`);
+    const wrong = JSON.parse(`[${session.wrong}]`);
+    const no_correct = correct.length;
+    const no_wrong = wrong.length;
 
+    return {no_correct, no_wrong, correct, wrong};
+  }
 
   /* Quiz exercise */
   @Post()

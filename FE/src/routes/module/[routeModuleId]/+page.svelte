@@ -2,6 +2,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
 
+
     export let data; // data loaded by load from page.ts
     const moduleId: number = data.props.moduleId;
     let module_data = [];

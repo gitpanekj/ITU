@@ -11,7 +11,7 @@ export class FlashcardExercise {
     @Column()
     name: string
 
-    @Column()
+    @Column({default: ""})
     description: string
 
 

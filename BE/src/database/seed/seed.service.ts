@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection, InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateExerciseGroupDto } from 'src/exercise-group/dto/create-exercise-group.dto';
 import { ExerciseGroup } from 'src/exercise-group/entities/exercise-group.entity';
 import { CreateFlashcardExerciseDto } from 'src/flashcard-exercise/dto/create-flashcard-exercise.dto';
@@ -9,18 +9,20 @@ import { FlashCard } from 'src/flashcard-exercise/entities/flashcard.entity';
 import { CreateQuestionAnswerDto } from 'src/quiz-exercise/dto/create-question-answer.dto';
 import { CreateQuizExerciseDto } from 'src/quiz-exercise/dto/create-quiz-exercise.dto';
 import { CreateQuizQuestionDto } from 'src/quiz-exercise/dto/create-quiz-question.dto';
-import { CreateTextReferenceDto } from 'src/quiz-exercise/dto/create-text-reference.dto';
-import { CreateTextDto } from 'src/quiz-exercise/dto/create-text.dto';
-import { UpdateQuizExerciseDto } from 'src/quiz-exercise/dto/update-quiz-exercise.dto';
 import { UpdateQuizQuestionDto } from 'src/quiz-exercise/dto/update-quiz-question.dto';
 import { QuestionAnswer } from 'src/quiz-exercise/entities/question-answer.entity';
 import { QuizExercise } from 'src/quiz-exercise/entities/quiz-exercise.entity';
 import { QuizQuestion } from 'src/quiz-exercise/entities/quiz-question.entity';
-import { TextReference } from 'src/quiz-exercise/entities/text-reference.entity';
-import { QuizText } from 'src/quiz-exercise/entities/text.entity';
+import { CreateQuestionDto } from 'src/reading/dto/create-question.dto';
+import { CreateReadingExerciseDto } from 'src/reading/dto/create-reading-exercise.dto';
+import { CreateTextDto } from 'src/reading/dto/create-text.dto';
+import { ReadingExercise } from 'src/reading/entities/reading-exercise.entity';
+import { ReadingQuestion } from 'src/reading/entities/reading-question.entity';
+import { ReadingSession } from 'src/reading/entities/reading-session.entity';
+import { Text } from 'src/reading/entities/text.entity';
 import { CreateTeacherDto } from 'src/teacher/dto/create-teacher.dto';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
-import { Connection, DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class SeedService {
@@ -32,8 +34,9 @@ export class SeedService {
   private quizExerciseSeeds: CreateQuizExerciseDto[];
   private quizQuestionSeeds: CreateQuizQuestionDto[];
   private questionAnswerSeeds: CreateQuestionAnswerDto[];
+  private readingExerciseSeeds: CreateReadingExerciseDto[];
+  private readingQuestionSeeds: CreateQuestionDto[];
   private textSeeds: CreateTextDto[];
-  private textReferenceSeeds: CreateTextReferenceDto[];
 
   constructor(
     @InjectRepository(Teacher) private teacherRepositoty: Repository<Teacher>,
@@ -49,11 +52,14 @@ export class SeedService {
     private quizQuestionRepositoty: Repository<QuizQuestion>,
     @InjectRepository(QuestionAnswer)
     private questionAnswerRepositoty: Repository<QuestionAnswer>,
-    @InjectRepository(QuizText)
-    private quizTextRepositoty: Repository<QuizText>,
-    @InjectRepository(TextReference)
-    private textReferenceRepositoty: Repository<TextReference>,
-    @InjectDataSource() private readonly dataSource: DataSource
+    @InjectRepository(ReadingExercise)
+    private readingExerciseRepository: Repository<ReadingExercise>,
+    @InjectRepository(ReadingQuestion)
+    private readingQuestionRepository: Repository<ReadingQuestion>,
+    @InjectRepository(Text)
+    private textRepositoty: Repository<Text>,
+    @InjectRepository(ReadingSession)
+    private readingSessionRepositoty: Repository<ReadingSession>
   ) {
     // Repositories
     this.repositories = [
@@ -61,11 +67,14 @@ export class SeedService {
       flashcardExerciseRepositoty,
       questionAnswerRepositoty,
       quizQuestionRepositoty,
-      textReferenceRepositoty,
-      quizTextRepositoty,
+      readingExerciseRepository,
+      readingQuestionRepository,
+      textRepositoty,
       quizExerciseRepositoty,
       exerciseGroupRepositoty,
       teacherRepositoty,
+      readingSessionRepositoty
+
     ];
     this.teacherSeeds = [
       { id: 1, username: 'Blitzdonner Wursthelm' },
@@ -262,19 +271,24 @@ export class SeedService {
 
     this.textSeeds = [
       { id: 1, content: 'Content1' },
-      { id: 2, content: 'Content2' },
-      { id: 3, content: 'Content3' },
-      { id: 4, content: 'Content4' },
+      { id: 2, content: 'Content2' }
     ];
-    this.textReferenceSeeds = [
-        {id: 1, referenceId: 1, textId: 1, questionId: 1},
-        {id: 2, referenceId: 1, textId: 1, questionId: 2},
 
-        {id: 3, referenceId: 1, textId: 2, questionId: 3},
-        {id: 4, referenceId: 1, textId: 2, questionId: 4},
+    this.readingExerciseSeeds = [
+      {id: 1, name: "Reading 1", groupId: 1, textId: 1},
+      {id: 2, name: "Reading 2", groupId: 2, textId: 2},
+    ];
 
-        {id: 5, referenceId: 1, textId: 3, questionId: 5},
-        {id: 6, referenceId: 1, textId: 3, questionId: 6},
+    this.readingQuestionSeeds = [
+      {id: 1, name:"My answer 1", question:"Question1", answer:"Answer1", exerciseId: 1},
+      {id: 2, name:"My answer 2", question:"Question2", answer:"Answer2", exerciseId: 1},
+      {id: 3, name:"My answer 3", question:"Question3", answer:"Answer3", exerciseId: 1},
+      {id: 4, name:"My answer 4", question:"Question4", answer:"Answer4", exerciseId: 1},
+
+      {id: 5, name:"My answer 1", question:"Question1", answer:"Answer1", exerciseId: 2},
+      {id: 6, name:"My answer 2", question:"Question2", answer:"Answer2", exerciseId: 2},
+      {id: 7, name:"My answer 3", question:"Question3", answer:"Answer3", exerciseId: 2},
+      {id: 8, name:"My answer 4", question:"Question4", answer:"Answer4", exerciseId: 2},
     ];
   }
 
@@ -299,10 +313,12 @@ export class SeedService {
     console.log("Quiz exercises seeded");
     await this.seedQuizQuestion();
     console.log("Quiz questions seeded");
-    await this.seedText();
-    console.log("Texts seeded");
-    await this.seedTextReferences()
-    console.log("Text references seeded");
+    await this.seedReadingTexts();
+    console.log("Reading texts seeded");
+    await this.seedReadingExercise();
+    console.log("Reading exercises seeded");
+    await this.seedReadingQuestions();
+    console.log("Reading questions seeded");
   }
 
 
@@ -391,34 +407,29 @@ export class SeedService {
     }
   }
 
-  /*
-   * Seed Text and reference them to quizes
-   */
-  async seedText(): Promise<void> {
-    for (const seed of this.textSeeds){
-      let text = this.quizTextRepositoty.create(seed);
-      await this.quizTextRepositoty.save(text);
-    }
 
-    for (const seed of this.quizExerciseSeeds) {
-      const quiz = await this.quizExerciseRepositoty.findOne({
-        where: { id: seed.id },
-      });
-      const updateQuizExerciseDto: UpdateQuizExerciseDto = { textId: seed.id };
-      Object.assign(quiz, updateQuizExerciseDto);
-      await this.quizExerciseRepositoty.save(quiz);
+  /* Seed reading exercises */
+  async seedReadingExercise(): Promise<void> {
+    for (const seed of this.readingExerciseSeeds) {
+      let reading = this.readingExerciseRepository.create(seed);
+      await this.readingExerciseRepository.save(reading);
     }
   }
 
-  /*
-   * Seed text references
-   */
-  async seedTextReferences(): Promise<void> {
-    for (const seed of this.textReferenceSeeds) {
-      let text = this.textReferenceRepositoty.create(seed);
-      await this.textReferenceRepositoty.save(text);
+  async seedReadingQuestions(): Promise<void> {
+    for (const seed of this.readingQuestionSeeds) {
+      let question = this.readingQuestionRepository.create(seed);
+      await this.readingQuestionRepository.save(question);
     }
   }
+
+  async seedReadingTexts(): Promise<void> {
+    for (const seed of this.textSeeds) {
+      let text = this.textRepositoty.create(seed);
+      await this.textRepositoty.save(text);
+    }
+  }
+
 
   async resetAutoIncrementSequences() {
     // List of repositories to process

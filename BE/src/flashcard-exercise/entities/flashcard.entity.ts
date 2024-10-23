@@ -14,10 +14,10 @@ export class FlashCard {
     backFace: string
 
     @Column({default: 0})
-    easyCount: number
-
-    @Column({default: 0})
     hardCount: number
+
+    @Column({default: ""})
+    feedback: string
 
     @Column()
     flashcardExerciseId: number
