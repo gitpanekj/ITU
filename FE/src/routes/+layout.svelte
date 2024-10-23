@@ -1,11 +1,9 @@
-<!-- Layout for all the pages - src/routes/+layout.svelte -->
 <script>
-    import Navbar from "$lib/components/Navbar.svelte";
-</script>
+    import "../app.css";
+</script><!-- Layout for all the pages - src/routes/+layout.svelte -->
 
-
-<!-- Header -->
-<Navbar/>
 
 <!-- Body -->
-<slot/>
+<div class="w-full flex flex-col bg-background" style="height: 100vh">
+    <slot/>
+</div>

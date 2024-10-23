@@ -14,7 +14,6 @@
 </script>
 
 {#if userId}
-    <h1>Logged in as: {userId}</h1>
     <slot></slot>
 {:else}
     <p>Redirecting...</p>
