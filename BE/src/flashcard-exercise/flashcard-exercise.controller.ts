@@ -73,7 +73,7 @@ export class FlashcardExerciseController {
     
     const {data, total} = await this.flashcardService.findAll({page: 1, limit: 0, filters: {flashcardExerciseId: id}});
     const session = await this.sessionService.create({exerciseId: +id, total: total, flashcardId: randomInt(0, total)});
-    return {quizSessionId: session.id};
+    return {flashcardSessionId: session.id};
   }
 
   @Delete('delete_session/:sessionId')
