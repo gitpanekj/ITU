@@ -36,7 +36,7 @@
 
 
 
-<div>
+<div class="h-full overlay {$teacherView.editting ? 'overlay-dark' : ''}">
   <!-- Sub-navbar -->
   <div class="w-full pl-4 h-16 bg-slate-400 flex flex-row items-center gap-8">
     <button
@@ -59,24 +59,41 @@
         <h1 class="text-2xl font-bold text-center">Odpověď na otázku</h1>
         <input
         bind:value={name}
+        disabled={$teacherView.editting}
         type="text"
-        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2"
+        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting ? ' overlay' : ''}"
       />
       </div>
       <br />
 
-      <textarea bind:value={question} class="text-lg min-h-36 p-4"></textarea>
+      <textarea bind:value={question} disabled={$teacherView.editting} class="text-lg min-h-36 p-4 {$teacherView.editting ? ' overlay' : ''}"></textarea>
 
       <h3>Tvoje odpověď</h3>
       <input
         bind:value={answer}
+        disabled={$teacherView.editting}
         type="text"
-        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2"
+        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting ? 'overlay' : ''}"
       />
       <button
-        class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black hover:bg-slate-400"
+        disabled={$teacherView.editting}
+        on:click={() => {teacherView.edit_mode()}}
+        class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting ? '' : 'hover:bg-slate-400'}"
         >Připojit text</button
       >
     </div>
   </div>
 </div>
+
+
+<style>
+  .overlay {
+    background-color: rgba(0, 0, 0, 0); /* Transparent by default */
+    transition: background-color 0.3s ease;
+  }
+
+  .overlay-dark {
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay effect */
+  }
+
+</style>

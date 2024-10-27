@@ -14,7 +14,6 @@ import { ReadingQuestion } from 'src/reading/entities/reading-question.entity';
 import { FlashcardSession } from 'src/flashcard-exercise/entities/flashcard-session.entity';
 import { QuizSession } from 'src/quiz-exercise/entities/quiz-session.entity';
 import { ReadingSession } from 'src/reading/entities/reading-session.entity';
-import { Text } from 'src/reading/entities/text.entity';
 
 @Module({
   providers: [SeedService],
@@ -30,11 +29,11 @@ import { Text } from 'src/reading/entities/text.entity';
         username: configService.get<string>('DB_USERNAME', 'postgres'),
         password: configService.get<string>('DB_PASSWORD', 'postgres'),
         database: configService.get<string>('DB_NAME', 'postgres_db'),
-        entities: [Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, Text, FlashcardSession, QuizSession, ReadingSession],
+        entities: [Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, FlashcardSession, QuizSession, ReadingSession],
         synchronize: configService.get<boolean>('DB_DEV', true),
       }),
     }),
-    TypeOrmModule.forFeature([Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, Text, FlashcardSession, QuizSession, ReadingSession]),
+    TypeOrmModule.forFeature([Teacher, ExerciseGroup, FlashcardExercise, FlashCard, QuizExercise, QuizQuestion, QuestionAnswer, ReadingExercise, ReadingQuestion, FlashcardSession, QuizSession, ReadingSession]),
   ],
 })
 export class DatabaseModule implements OnModuleInit {

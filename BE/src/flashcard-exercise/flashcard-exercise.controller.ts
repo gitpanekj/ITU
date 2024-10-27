@@ -98,7 +98,7 @@ export class FlashcardExerciseController {
     // return next flashcard
     const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
-    return {flashcard, hard};
+    return {flashcard, hard, current: session.flashcardId, total: session.total};
   }
 
   @Get('session/:sessionId/prev')
@@ -113,7 +113,7 @@ export class FlashcardExerciseController {
     // return next flashcard
     const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
-    return {flashcard, hard};
+    return {flashcard, hard, current: session.flashcardId, total: session.total};
   }
 
   @Post('mark_hard')

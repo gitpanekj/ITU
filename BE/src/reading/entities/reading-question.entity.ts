@@ -20,7 +20,7 @@ export class ReadingQuestion {
     exerciseId: number
 
     @Column({nullable: true})
-    textIdx?: number
+    textId?: number
 
     // statistics
     @Column({default: 0})

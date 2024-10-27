@@ -15,11 +15,9 @@ import { QuizExercise } from 'src/quiz-exercise/entities/quiz-exercise.entity';
 import { QuizQuestion } from 'src/quiz-exercise/entities/quiz-question.entity';
 import { CreateQuestionDto } from 'src/reading/dto/create-question.dto';
 import { CreateReadingExerciseDto } from 'src/reading/dto/create-reading-exercise.dto';
-import { CreateTextDto } from 'src/reading/dto/create-text.dto';
 import { ReadingExercise } from 'src/reading/entities/reading-exercise.entity';
 import { ReadingQuestion } from 'src/reading/entities/reading-question.entity';
 import { ReadingSession } from 'src/reading/entities/reading-session.entity';
-import { Text } from 'src/reading/entities/text.entity';
 import { CreateTeacherDto } from 'src/teacher/dto/create-teacher.dto';
 import { Teacher } from 'src/teacher/entities/teacher.entity';
 import { Repository } from 'typeorm';
@@ -36,7 +34,6 @@ export class SeedService {
   private questionAnswerSeeds: CreateQuestionAnswerDto[];
   private readingExerciseSeeds: CreateReadingExerciseDto[];
   private readingQuestionSeeds: CreateQuestionDto[];
-  private textSeeds: CreateTextDto[];
 
   constructor(
     @InjectRepository(Teacher) private teacherRepositoty: Repository<Teacher>,
@@ -56,8 +53,6 @@ export class SeedService {
     private readingExerciseRepository: Repository<ReadingExercise>,
     @InjectRepository(ReadingQuestion)
     private readingQuestionRepository: Repository<ReadingQuestion>,
-    @InjectRepository(Text)
-    private textRepositoty: Repository<Text>,
     @InjectRepository(ReadingSession)
     private readingSessionRepositoty: Repository<ReadingSession>
   ) {
@@ -69,7 +64,6 @@ export class SeedService {
       quizQuestionRepositoty,
       readingExerciseRepository,
       readingQuestionRepository,
-      textRepositoty,
       quizExerciseRepositoty,
       exerciseGroupRepositoty,
       teacherRepositoty,
@@ -269,14 +263,9 @@ export class SeedService {
       { id: 24, answer: 'Answer4', questionId: 6 },
     ];
 
-    this.textSeeds = [
-      { id: 1, content: 'Content1' },
-      { id: 2, content: 'Content2' }
-    ];
-
     this.readingExerciseSeeds = [
-      {id: 1, name: "Reading 1", groupId: 1, textId: 1},
-      {id: 2, name: "Reading 2", groupId: 2, textId: 2},
+      {id: 1, name: "Reading 1", groupId: 1},
+      {id: 2, name: "Reading 2", groupId: 2},
     ];
 
     this.readingQuestionSeeds = [
@@ -312,8 +301,6 @@ export class SeedService {
     await this.seedQuizExercise();
     console.log("Quiz exercises seeded");
     await this.seedQuizQuestion();
-    console.log("Quiz questions seeded");
-    await this.seedReadingTexts();
     console.log("Reading texts seeded");
     await this.seedReadingExercise();
     console.log("Reading exercises seeded");
@@ -422,14 +409,6 @@ export class SeedService {
       await this.readingQuestionRepository.save(question);
     }
   }
-
-  async seedReadingTexts(): Promise<void> {
-    for (const seed of this.textSeeds) {
-      let text = this.textRepositoty.create(seed);
-      await this.textRepositoty.save(text);
-    }
-  }
-
 
   async resetAutoIncrementSequences() {
     // List of repositories to process
