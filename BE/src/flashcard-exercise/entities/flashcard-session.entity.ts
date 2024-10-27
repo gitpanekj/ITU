@@ -14,6 +14,9 @@ export class FlashcardSession {
     @Column()
     total: number
 
+    @Column()
+    starting: number
+
     @Column({default: ""})
     markedAsHard: string
 

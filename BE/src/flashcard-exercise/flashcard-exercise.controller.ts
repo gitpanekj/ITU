@@ -70,6 +70,7 @@ export class FlashcardExerciseController {
   /* Session */
   @Get('create_session/:exerciseId')
   async createQuizSession(@Param('exerciseId') id: string){
+    
     const {data, total} = await this.flashcardService.findAll({page: 1, limit: 0, filters: {flashcardExerciseId: id}});
     const session = await this.sessionService.create({exerciseId: +id, total: total, flashcardId: randomInt(0, total)});
     return {quizSessionId: session.id};
@@ -92,13 +93,13 @@ export class FlashcardExerciseController {
     let session = await this.sessionService.findOne(+id);
 
 
-    Object.assign(session, {flashcardId: ((session.flashcardId) % (session.total)) + 1});
+    Object.assign(session, {flashcardId: ((session.flashcardId) % (session.total)) + 1, counter: ((session.counter) % (session.total)) + 1});
     await this.sessionService.update(+id, session);
 
     // return next flashcard
     const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
-    return {flashcard, hard, current: session.flashcardId, total: session.total};
+    return {flashcard, hard, current: session.counter, total: session.total};
   }
 
   @Get('session/:sessionId/prev')
@@ -107,13 +108,14 @@ export class FlashcardExerciseController {
     let session = await this.sessionService.findOne(+id);
 
     const next_id = (session.flashcardId - 1) > 0 ? (session.flashcardId - 1) : session.total;
-    Object.assign(session, {flashcardId: next_id});
+    const counter = (session.counter - 1) > 0 ? (session.counter - 1) : session.total;
+    Object.assign(session, {flashcardId: next_id, counter});
     await this.sessionService.update(+id, session);
 
     // return next flashcard
     const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
-    return {flashcard, hard, current: session.flashcardId, total: session.total};
+    return {flashcard, hard, current: session.counter, total: session.total};
   }
 
   @Post('mark_hard')
