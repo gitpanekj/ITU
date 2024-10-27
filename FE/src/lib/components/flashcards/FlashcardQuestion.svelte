@@ -1,0 +1,82 @@
+<script lang="ts">
+    import Progressbar from "$lib/components/Progressbar.svelte";
+    import { onMount } from "svelte";
+  
+    let questionId: number = 0;
+    let frontFace = "";
+    let backFace = "";
+    let currentIndex: number = 0;
+    let totalQuestions: number = 0;
+    let isFlipped = false;
+    let isHard = false;
+
+    function flipCard() {
+        isFlipped = !isFlipped;
+    }
+  
+    const getNextQuestion = async () => {
+      const response = await fetch(
+        `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/next`
+      );
+      const {flashcard, hard, current, total} = await response.json();
+      questionId = flashcard.id;
+      frontFace = flashcard.frontFace;
+      backFace = flashcard.backFace;
+      isHard = hard;
+      currentIndex = current;
+      totalQuestions = total;
+    };
+
+    const getPrevQuestion = async () => {
+      const response = await fetch(
+        `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/prev`
+      );
+      const {flashcard, hard, current, total} = await response.json();
+      questionId = flashcard.id;
+      frontFace = flashcard.frontFace;
+      backFace = flashcard.backFace;
+      isHard = hard;
+      currentIndex = current;
+      totalQuestions = total;
+    };
+  
+    onMount(async () => {
+      await getNextQuestion();
+    });
+  
+  </script>
+
+<button 
+    type="button" 
+    on:click={flipCard} 
+    class="w-4/5 h-4/5 mt-8 border-2 border-black flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
+>
+    <div class="flex-grow flex flex-col items-center">
+        <p class="text-xl">
+          {frontFace}
+        </p>
+        <hr class="w-full">
+        <p class={`text-l ${isFlipped ? 'opacity-100' : 'opacity-0'}`}>
+          {backFace}
+        </p>
+    </div>
+    <p class="text-lg font-semibold mt-auto">
+      {isFlipped ? "Skrýt odpověď" : "Zobrazit odpověď"}
+    </p>
+</button>
+
+<div class="flex justify-center space-x-4 mt-4">
+    <button
+        on:click={async () => {await getPrevQuestion()}}
+        class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+    >
+        Předchozí karta
+    </button>
+    <button
+        on:click={async () => {await getNextQuestion()}}
+        class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+    >
+        Další karta
+    </button>
+</div>
+<Progressbar {currentIndex} {totalQuestions} />
