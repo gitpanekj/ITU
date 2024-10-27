@@ -24,7 +24,7 @@
  
 <!-- Header -->
 <Navbar {title}/>
-<div class="h-full w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
+<div class="w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
     Main page with all the modules
 </div>
 

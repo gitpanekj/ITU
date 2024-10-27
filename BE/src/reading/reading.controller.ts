@@ -44,7 +44,7 @@ export class ReadingController {
     @Query() _filters: any,
   ) {
     const { page: _, limit: __, ...filters } = _filters;
-    return this.readingQuestionService.findAll({ page, limit, filters });
+    return this.readingQuestionService.findAll({ page, limit, filters, order: {id: 'DESC'} });
   }
 
   @Get('question/:id')
@@ -105,7 +105,7 @@ export class ReadingController {
   async getNextQuestion(@Param('sessionId') id: string) {
     // Move to next question in session
     let session = await this.sessionService.findOne(+id);
-    if (session.questionIdx + 1 >= session.total) {
+    if (session.questionIdx + 1 > session.total) {
       throw new NotFoundException('No next question');
     }
 
@@ -117,6 +117,7 @@ export class ReadingController {
       page: session.questionIdx,
       limit: 1,
       filters: { exerciseId: String(session.exerciseId) },
+      order: {id: 'ASC'}
     });
     const remaining = session.total - session.questionIdx;
     return { data, remaining };
@@ -158,20 +159,41 @@ export class ReadingController {
   }
 
   @Post('mark_hard/:questionId')
-  async markAsHard(@Param('questionId') id: string) {
+  async markAsHard(@Body() dto: {sessionId: number}, @Param('questionId') id: string) {
     let question = await this.readingQuestionService.findOne(+id);
+    let session = await this.sessionService.findOne(dto.sessionId);
 
     Object.assign(question, { hardCount: question.hardCount + 1 });
 
+    let hard_questions = session.hard.split(';').map(Number);
+    console.log(hard_questions);
+    
+    if (hard_questions.includes(+id))
+    {
+      hard_questions = hard_questions.filter(item => item !== +id);
+    } else {
+      hard_questions.push(+id);
+    }
+
+    Object.assign(session, {hard: hard_questions.join(';')});
+    console.log(session);
+
+
+    await this.sessionService.update(dto.sessionId, session);
     return this.readingQuestionService.update(+id, question);
   }
 
-  @Post('evaluate_session/:sessionId')
+  @Get('evaluate_session/:sessionId')
   async evaluateQuiz(@Param('sessionId') id: string) {
     let session = await this.sessionService.findOne(+id);
 
-    const correct = JSON.parse(`[${session.correct}]`);
-    const wrong = JSON.parse(`[${session.wrong}]`);
+    let correct = JSON.parse(`[${session.correct}]`);
+    let wrong = JSON.parse(`[${session.wrong}]`);
+    let hard = session.hard.split(';').map(Number);
+
+    correct = correct.map(item => hard.includes(item.id) ? {...item, hard: true} : {...item, hard: false});
+    wrong = wrong.map(item => hard.includes(item.id) ? {...item, hard: true} : {...item, hard: false});
+
     const no_correct = correct.length;
     const no_wrong = wrong.length;
 

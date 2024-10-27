@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { ReadingExercise } from '../entities/reading-exercise.entity';
 import { CreateReadingExerciseDto } from '../dto/create-reading-exercise.dto';
 import { UpdateReadingExerciseDto } from '../dto/update-reading-exercise.dto';
+import { Console } from 'console';
 
 @Injectable()
 export class ReadingExerciseService {

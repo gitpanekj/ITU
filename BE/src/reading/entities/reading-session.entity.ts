@@ -19,4 +19,7 @@ export class ReadingSession {
 
     @Column({default: ""})
     wrong?: string;   // {idx, name, chosen}
+
+    @Column({default: ""})
+    hard?: string;
 }

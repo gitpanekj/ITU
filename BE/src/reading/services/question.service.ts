@@ -29,14 +29,16 @@ export class ReadingQuestionService {
   async findAll(params: {
     page: number;
     limit: number;
-    filters: Record<string, string>;
+    filters?: Record<string, string>;
+    order?: Record<string, string>;
   }): Promise<{ data: ReadingQuestion[]; total: number }> {
-    const { page, limit, filters } = params;
+    const { page, limit, filters, order} = params;
 
     const [data, total] = await this.readingQuestionRepository.findAndCount({
       where: filters,
       skip: (page - 1) * limit,
       take: limit,
+      order: order
     });
 
     return { data, total };

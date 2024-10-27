@@ -23,6 +23,6 @@
 </script>
 
 <Navbar {title} {links}/>
-<div class="h-full w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
+<div class="w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
     Details of one module - moduleId: {moduleId}
 </div>
