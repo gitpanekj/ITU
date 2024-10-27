@@ -14,8 +14,8 @@ export class FlashcardSession {
     @Column()
     total: number
 
-    @Column()
-    starting: number
+    @Column({default: 0})
+    counter: number
 
     @Column({default: ""})
     markedAsHard: string
