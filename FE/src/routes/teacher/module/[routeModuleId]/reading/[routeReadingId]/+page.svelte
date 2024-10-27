@@ -9,11 +9,13 @@
   import { onMount } from "svelte";
   import { teacherView } from "../../../../../../stores/Reading/teacherView.js";
   import { read } from "$app/server";
+  import Editor from "$lib/components/reading/Editor.svelte";
 
   
   export let data;
   const moduleId: number = data.props.moduleId;
   const readingId: number = data.props.readingId;
+  console.log(readingId);
   
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
@@ -23,14 +25,15 @@
 
 
 <Navbar {title} {links}/>
-<div class="h-full w-11/12 mx-auto flex">
+<div class="w-[90%] mx-auto flex"
+     style="height: calc(100vh - 4em)">
   <!-- Text -->
-  <div class="w-1/2 h-full border-4 border-black">
-
+  <div class="w-1/2 border-x-4 border-black">
+    <Editor {readingId}/>
   </div>
 
   <!-- Right content  -->
-  <div class="w-1/2 h-full border-4 border-black flex flex-col justify-between pb-8">
+  <div class="w-1/2 border-x-4 border-black flex flex-col justify-between pb-8">
     {#if $teacherView.view === "list"}
       <QuestionList {readingId}/>
     {:else}

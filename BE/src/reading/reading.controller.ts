@@ -14,7 +14,6 @@ import {
 import { GlobalExceptionFilter } from 'src/exception-filter/filter';
 import { ReadingExerciseService } from './services/reading-exercise.service';
 import { ReadingQuestionService } from './services/question.service';
-import { TextService } from './services/text.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { UpdateReadingExerciseDto } from './dto/update-reading-exercise.dto';
@@ -27,7 +26,6 @@ export class ReadingController {
   constructor(
     private readonly readingExerciseService: ReadingExerciseService,
     private readonly readingQuestionService: ReadingQuestionService,
-    private readonly textService: TextService,
     private readonly sessionService: ReadingSessionService,
   ) {}
 
@@ -63,14 +61,14 @@ export class ReadingController {
   }
   /* End of Reading question */
   /* Text */
-  @Get('text/:id')
-  findOneText(@Param('id') id: string) {
-    return this.readingExerciseService.findOne(+id);
+  @Get('text/:readingId')
+  async findOneText(@Param('readingId') id: string) {
+    return (await this.readingExerciseService.findOne(+id)).text;
   }
 
-  @Patch('text/:id')
-  updateText(@Param('id') id: string, @Body() dto: UpdateReadingExerciseDto) {
-    return this.textService.update(+id, dto);
+  @Patch('text/:readingId')
+  updateText(@Param('readingId') id: string, @Body() dto: any) {
+    return this.readingExerciseService.update(+id, dto);
   }
 
   @Get('text/highlight/:id')
@@ -203,7 +201,6 @@ export class ReadingController {
   /* Quiz exercise */
   @Post()
   async createReadingExercise(@Body() dto: CreateReadingExerciseDto) {
-    await this.textService.create({ content: '' }); // create related text
     return this.readingExerciseService.create(dto);
   }
 

@@ -19,7 +19,8 @@
 
 <Navbar {title} {links} />
 <div
-  class="h-full w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl"
+  class="w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl"
+  style="height: calc(100vh - 4em)"
 >
   Details of one module - moduleId: {moduleId}
 </div>

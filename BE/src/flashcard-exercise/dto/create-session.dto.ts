@@ -14,6 +14,10 @@ export class CreateFlashcardSessionDto {
     total: number
 
     @IsOptional()
+    @IsInt()
+    counter?: number
+
+    @IsOptional()
     @IsString()
     markedAsHard?: string
 

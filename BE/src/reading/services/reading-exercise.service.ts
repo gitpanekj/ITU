@@ -4,17 +4,17 @@ import { Repository } from 'typeorm';
 import { ReadingExercise } from '../entities/reading-exercise.entity';
 import { CreateReadingExerciseDto } from '../dto/create-reading-exercise.dto';
 import { UpdateReadingExerciseDto } from '../dto/update-reading-exercise.dto';
-import { Console } from 'console';
 
 @Injectable()
 export class ReadingExerciseService {
   constructor(
     @InjectRepository(ReadingExercise)
-    private readingExerciseRepository: Repository<ReadingExercise>,
+    private readingExerciseRepository: Repository<ReadingExercise>
   ) {}
   async create(
     dto: CreateReadingExerciseDto,
   ): Promise<ReadingExercise> {
+    
     const reading = this.readingExerciseRepository.create(dto);
     if (!reading){
       throw new BadRequestException('Bad data provided');
@@ -23,6 +23,7 @@ export class ReadingExerciseService {
     if (!entity){
       throw new ConflictException('Failed to save the entity');
     }
+
     return entity;
   }
 

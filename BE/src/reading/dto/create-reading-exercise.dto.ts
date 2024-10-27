@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsInt, IsJSON, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateReadingExerciseDto {
     @IsOptional()
@@ -17,8 +17,7 @@ export class CreateReadingExerciseDto {
     @IsString()
     description?: string
 
-    @IsNotEmpty()
-    @IsInt()
-    textId: number
-
+    @IsOptional()
+    @IsJSON()
+    text?: any
 }
