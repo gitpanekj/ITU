@@ -39,6 +39,23 @@
       currentIndex = current;
       totalQuestions = total;
     };
+
+    const toggleHard = async () => {
+    try {
+        const response = await fetch(`http://localhost:3000/flashcard-exercise/mark_hard`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                sessionId: Number(localStorage.getItem("flashcardSessionId")),
+                flashcardId: questionId 
+            })
+        });
+    } catch (error) {
+        console.error("Error:", error);
+    }
+};
   
     onMount(async () => {
       await getNextQuestion();
@@ -66,17 +83,34 @@
 </button>
 
 <div class="flex justify-center space-x-4 mt-4">
+  <button
+    on:click={async () => {await getPrevQuestion()}}
+    class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+  >
+    Předchozí karta
+  </button>
+    
+  <label class="text-xl font-bold text-center flex justify-center gap-4">Těžká
+    <input
+        type="checkbox"
+        bind:checked={isHard}
+        on:click={async () => {await toggleHard()}}
+        class="w-8 h-8 cursor-pointer"/>
+    </label>
+  {#if currentIndex < totalQuestions}
     <button
-        on:click={async () => {await getPrevQuestion()}}
-        class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+      on:click={async () => {await getNextQuestion()}}
+      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
     >
-        Předchozí karta
+      Další karta
     </button>
+  {:else}
     <button
-        on:click={async () => {await getNextQuestion()}}
-        class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+      on:click={async () => {await getNextQuestion()}}
+      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
     >
-        Další karta
+      Vyhodnotit flashcards
     </button>
+  {/if}
 </div>
 <Progressbar {currentIndex} {totalQuestions} />
