@@ -23,13 +23,14 @@ export class FlashcardService {
     return entity;
   }
 
-  async findAll(params: {page: number, limit: number, filters: Record<string, string>}): Promise<{data: FlashCard[], total: number}> {
-    const {page, limit, filters} = params;
+  async findAll(params: {page: number, limit: number, filters: Record<string, string>, order?: Record<string, string>}): Promise<{data: FlashCard[], total: number}> {
+    const {page, limit, filters, order} = params;
     console.log({page, limit, filters});
     const [data, total] = await this.FlashcardRepository.findAndCount({
       where: filters,
       skip: (page - 1) * limit,
-      take: limit
+      take: limit,
+      order: order
     });
 
     return {data, total};

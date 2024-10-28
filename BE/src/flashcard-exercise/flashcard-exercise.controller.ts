@@ -97,7 +97,7 @@ export class FlashcardExerciseController {
     await this.sessionService.update(+id, session);
 
     // return next flashcard
-    const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
+    const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}, order:{ 'id': 'ASC'}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
     return {flashcard, hard, current: session.counter, total: session.total};
   }
@@ -113,7 +113,7 @@ export class FlashcardExerciseController {
     await this.sessionService.update(+id, session);
 
     // return next flashcard
-    const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}})).data[0];
+    const flashcard = (await this.flashcardService.findAll({page: session.flashcardId, limit: 1, filters: {flashcardExerciseId: String(session.exerciseId)}, order:{ 'id': 'ASC'}})).data[0];
     const hard = session.markedAsHard.split(';').map(Number).includes(flashcard.id);
     return {flashcard, hard, current: session.counter, total: session.total};
   }
@@ -121,10 +121,14 @@ export class FlashcardExerciseController {
   @Post('mark_hard')
   async markAsHard(@Body() dto: {sessionId: number, flashcardId: number}){
     const {sessionId, flashcardId} = dto;
+    console.log(sessionId, flashcardId);
 
     let session = await this.sessionService.findOne(sessionId);
     let hard_set = new Set(session.markedAsHard.split(';').map(Number));
     let history_hard = new Set(session.historyHard.split(';').map(Number));
+
+    console.log(hard_set);
+    console.log(history_hard);
 
     // update statistics
     if (!history_hard.has(flashcardId))
@@ -134,6 +138,9 @@ export class FlashcardExerciseController {
       await this.flashcardService.update(flashcardId, flashcard);
     }
 
+    console.log(hard_set);
+    console.log(history_hard);
+
     // Update session
     history_hard.add(flashcardId);
     if (hard_set.has(flashcardId))
@@ -142,6 +149,9 @@ export class FlashcardExerciseController {
     } else {
       hard_set.add(flashcardId);
     }
+
+    console.log(hard_set);
+    console.log(history_hard);
 
     let updated_hard = Array.from(hard_set.values());
     let updated_history_hard = Array.from(history_hard.values());
