@@ -1,6 +1,7 @@
 <script lang="ts">
     import Progressbar from "$lib/components/Progressbar.svelte";
     import { onMount } from "svelte";
+    import { goto } from "$app/navigation";
   
     let questionId: number = 0;
     let frontFace = "";
@@ -56,6 +57,7 @@
         console.error("Error:", error);
     }
 };
+
   
     onMount(async () => {
       await getNextQuestion();
@@ -106,7 +108,7 @@
     </button>
   {:else}
     <button
-      on:click={async () => {await getNextQuestion()}}
+      on:click={async () => {await goto(`/module/1/flashcards/results`)}}
       class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
     >
       Vyhodnotit flashcards
