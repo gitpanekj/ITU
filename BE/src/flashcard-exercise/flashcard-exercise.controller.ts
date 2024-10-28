@@ -43,7 +43,7 @@ export class FlashcardExerciseController {
       @Query() _filters: any,
     ) {
       const { page: _, limit: __, ...filters } = _filters;
-      return this.flashcardService.findAll({ page, limit, filters });
+      return this.flashcardService.findAll({ page, limit, filters, order: {id: "DESC"} });
     }
   
     @Get('card/:id')
@@ -127,9 +127,6 @@ export class FlashcardExerciseController {
     let hard_set = new Set(session.markedAsHard.split(';').map(Number));
     let history_hard = new Set(session.historyHard.split(';').map(Number));
 
-    console.log(hard_set);
-    console.log(history_hard);
-
     // update statistics
     if (!history_hard.has(flashcardId))
     {
@@ -138,8 +135,7 @@ export class FlashcardExerciseController {
       await this.flashcardService.update(flashcardId, flashcard);
     }
 
-    console.log(hard_set);
-    console.log(history_hard);
+
 
     // Update session
     history_hard.add(flashcardId);
@@ -150,8 +146,6 @@ export class FlashcardExerciseController {
       hard_set.add(flashcardId);
     }
 
-    console.log(hard_set);
-    console.log(history_hard);
 
     let updated_hard = Array.from(hard_set.values());
     let updated_history_hard = Array.from(history_hard.values());
@@ -164,10 +158,10 @@ export class FlashcardExerciseController {
   async getHard(@Param('sessionId') id: string){
     const session = await this.sessionService.findOne(+id);
     let hard_cards = [];
-    for (let id of session.markedAsHard.split(';'))
+    for (let id of session.markedAsHard.split(';').map(Number))
     {
-      if (id === "NaN") continue;
-      let card = await this.flashcardService.findOne(+id);
+      if (id === 0) continue;
+      let card = await this.flashcardService.findOne(id);
       hard_cards.push(card);
     }
 
