@@ -19,8 +19,8 @@ export class ReadingQuestion {
     @Column()
     exerciseId: number
 
-    @Column({nullable: true})
-    textId?: number
+    @Column({default: false})
+    textAttached: boolean
 
     // statistics
     @Column({default: 0})

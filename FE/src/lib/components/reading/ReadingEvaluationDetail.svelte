@@ -1,8 +1,9 @@
 <script>
   import { onMount } from "svelte";
   import { userView } from "../../../stores/Reading/userView";
-
-    export let question = {id: 0, chosen: ""};
+  import { teacherView } from "../../../stores/Reading/teacherView";
+    export let readingId;
+    export let question = {id: 0, chosen: "", hard: false};
     let name = "";
     let question_text = "";
     let correct = "";
@@ -17,6 +18,27 @@
         textId = data.textId;
         name = data.name;
     });
+
+    const highlightText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${question.id}`
+    );
+    const data = await response.text();
+
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
+
+  const loadText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/${readingId}`
+    );
+    const data = await response.text();
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
     
 </script>
 
@@ -25,6 +47,7 @@
   <div class="w-full pl-4 h-16 bg-slate-400 flex flex-row items-center gap-8">
     <button
       on:click={async () => {
+        await loadText();
         userView.goto_evaluation_list_view();
       }}
       class="border-2 border-blue-900 hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500"
@@ -44,7 +67,9 @@
       <div class="flex flex-col gap-4 justify-start items-start">
         <div class="w-full flex justify-between">
           <h1 class="text-2xl font-bold text-center">Otázka: {name}</h1>
+          {#if question.hard}
           <h1 class="w-32 border-2 bg-red-500 font-bold rounded-lg  text-center flex justify-center items-center">Hard</h1>
+          {/if}
         </div>
       <br />
 
@@ -66,6 +91,7 @@
 
       
       <button
+        on:click={async () => {await highlightText()}}
         class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black hover:bg-slate-400"
         >Zobrazit v textu</button
       >

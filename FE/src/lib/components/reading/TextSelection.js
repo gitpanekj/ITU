@@ -7,18 +7,25 @@ export const QuestionSelection = Mark.create({
     addOptions(){return {};},
 
     // may vary per instance
-    addAttributes(){
+    addAttributes() {
         return {
-            default: null,
-            parseHTML: (element) => element.getAttribute('question-id'),
-            renderHTML: (attributes) => {
-                if (!attributes.questionId){
-                    return {};
-                }
+            questionId: {
+                default: null,
+                parseHTML: element => element.getAttribute('question-id'),
+                renderHTML: attributes => {
+                    if (!attributes.questionId) return {};
+                    return {
+                        'question-id': attributes.questionId
+                    };
+                },
+            },
 
-                return {
-                    'question-id': attributes.questionId,
-                };
+            highlighted: {
+                default: false,
+                parseHTML: (element) => element.getAttribute('highlighted') === 'true',
+                renderHTML: (attributes) => {
+                    return attributes.highlighted ? { style: 'background-color: yellow;' } : {};
+                },
             },
         };
     },
@@ -31,16 +38,15 @@ export const QuestionSelection = Mark.create({
         ];
     },
 
-    renderHTML({ mark, HTMLAttributes }){
-        console.log(mark);
-        return ['span', {'question-id': 'blue'}, 0]
+    renderHTML({ HTMLAttributes }){
+        return ['span', {...HTMLAttributes}, 0]
     },
 
 
     addCommands() {
         return {
-          setCustomHighlight: () => ({ commands }) => {
-            return commands.setMark(this.name); // Apply the custom highlight
+          setCustomHighlight: (id) => ({ commands }) => {
+            return commands.setMark(this.name, {questionId: id, highlighted: false}); // Apply the custom highlight
           },
           unsetCustomHighlight: () => ({ commands }) => {
             return commands.unsetMark(this.name); // Remove the custom highlight

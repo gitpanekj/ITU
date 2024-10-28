@@ -18,6 +18,6 @@ export class CreateReadingExerciseDto {
     description?: string
 
     @IsOptional()
-    @IsJSON()
-    text?: any
+    @IsString()
+    text?: string
 }

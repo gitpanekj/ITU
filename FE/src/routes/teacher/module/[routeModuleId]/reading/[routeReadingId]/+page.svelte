@@ -15,7 +15,6 @@
   export let data;
   const moduleId: number = data.props.moduleId;
   const readingId: number = data.props.readingId;
-  console.log(readingId);
   
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
@@ -29,7 +28,7 @@
      style="height: calc(100vh - 4em)">
   <!-- Text -->
   <div class="w-1/2 border-x-4 border-black">
-    <Editor {readingId}/>
+    <Editor {readingId} editable={true}/>
   </div>
 
   <!-- Right content  -->
@@ -37,7 +36,7 @@
     {#if $teacherView.view === "list"}
       <QuestionList {readingId}/>
     {:else}
-      <QuestionDetail questionId={$teacherView.id}/>
+      <QuestionDetail {readingId}/>
     {/if}
   </div>
 

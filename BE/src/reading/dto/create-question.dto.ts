@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateQuestionDto {
     @IsOptional()
@@ -22,6 +22,6 @@ export class CreateQuestionDto {
     exerciseId: number
 
     @IsOptional()
-    @IsInt()
-    textIdx?: number
+    @IsBoolean()
+    textAttached?: boolean
 }

@@ -71,8 +71,33 @@ export class ReadingController {
     return this.readingExerciseService.update(+id, dto);
   }
 
-  @Get('text/highlight/:id')
-  highlightText(@Param('id') id: string) {}
+  @Get('text/highlight/:readingId/:questionId')
+  async getHighlightedText(@Param('readingId') readingId: string, @Param('questionId') questionId: string) {
+    console.log(readingId, questionId);
+    let exercise = await this.readingExerciseService.findOne(+readingId);
+
+    const editorContent = exercise.text; 
+    
+    const regex = new RegExp(`<span question-id="(${questionId})">`, 'g');
+    const modifiedContent = editorContent.replace(regex, '<span question-id="$1" highlighted="true">');
+
+    return modifiedContent;
+  }
+
+  @Delete('/text/highlight/:readingId/:questionId')
+  async removeHighlightedText(@Param('readingId') readingId: string, @Param('questionId') questionId: string) {
+    let exercise = await this.readingExerciseService.findOne(+readingId);
+
+    const editorContent = exercise.text; 
+    const regex = new RegExp(`<span question-id="${questionId}">(.*?)<\/span>`, 'g');
+    const modifiedContent = editorContent.replace(regex, '$1');
+    console.log(modifiedContent);
+
+    await this.readingExerciseService.update(+readingId, {text: modifiedContent});
+
+    return modifiedContent;
+
+  }
 
   /* Session */
   @Get('create_session/:exerciseId')
