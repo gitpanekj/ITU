@@ -81,7 +81,7 @@
 {#each questions as question (question.id)}
   <button 
     class={`w-11/12 h-14 px-4 border-4 border-blue-950 flex justify-between items-center rounded-lg cursor-pointer 
-    ${selectedQuestionId === question.id ? ' border-blue-400' : 'hover:bg-gray-300 hover:border-blue-400'}`}
+    ${selectedQuestionId == question.id ? ' border-blue-300 bg-gray-300' : 'hover:bg-gray-300 hover:border-blue-200'}`}
     on:click={() => selectQuestion(question.id)}>
 
     <div class="text-2xl w-96 text-start">{question.name}</div>

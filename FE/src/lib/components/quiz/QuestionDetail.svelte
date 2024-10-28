@@ -143,7 +143,7 @@
             
         {/each}
         {#if answers.length < 4}
-            <button class="text-black bg-neutral-300 px-4 py-2 rounded-xl hover:bg-neutral-500" on:click={async () => {await createNewAnswer(); await fetchAnswers();}}>Přidat odpověď</button>
+            <button class="text-black bg-neutral-300 px-4 py-2 rounded-xl hover:bg-neutral-500" on:click={async () => { await saveAnswers(); await createNewAnswer(); await fetchAnswers();}}>Přidat odpověď</button>
         {/if}
     {:else}
         <button class="text-black bg-neutral-300 px-4 py-2 rounded-xl hover:bg-neutral-500" on:click={async () => {await createNewAnswer(); await fetchAnswers();}}>Přidat odpověď</button>
