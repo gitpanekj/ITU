@@ -7,6 +7,7 @@
   import { userView } from "../../../../../stores/Reading/userView";
   import ReadingEvaluation from "$lib/components/reading/ReadingEvaluation.svelte";
   import ReadingEvaluationDetail from "$lib/components/reading/ReadingEvaluationDetail.svelte";
+  import Editor from "$lib/components/reading/Editor.svelte";
 
   // Route parameters and fetched data
   export let data;
@@ -39,7 +40,7 @@
 <div class="h-full w-11/12 mx-auto flex">
   <!-- Text -->
   <div class="w-1/2 border-4 border-black">
-    text
+    <Editor {readingId} editable={false}/>
   </div>
 
   <!-- Right content  -->
@@ -48,11 +49,11 @@
       Creaiting session
     {:else }
       {#if $userView.view === "question"}
-        <ReadingQuestion/>
+        <ReadingQuestion {readingId}/>
       {:else if $userView.view === "evaluation"}
         <ReadingEvaluation/>
       {:else}
-        <ReadingEvaluationDetail question={$userView.question}/>
+        <ReadingEvaluationDetail question={$userView.question} {readingId}/>
       {/if}
     {/if}
   </div>   

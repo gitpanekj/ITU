@@ -17,8 +17,8 @@ export class ReadingExercise {
     @Column()
     groupId: number
 
-    @Column({type: 'jsonb', default: {type: "doc", content: []}})
-    text?: any;
+    @Column({default: "<p>Text</p>"})
+    text?: string;
 
 
     @ManyToOne(() => ExerciseGroup, (group) => group.readingExercises, {onDelete: 'CASCADE'})

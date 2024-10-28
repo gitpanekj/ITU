@@ -2,39 +2,78 @@
   import { onMount } from "svelte";
   import { teacherView } from "../../../stores/Reading/teacherView";
   import { text } from "@sveltejs/kit";
-    export let questionId: number | null;
+  export let readingId;
 
-    let name = "";
-    let question = "";
-    let answer = "";
-    let textId: number | null = null;
+  let name = "";
+  let question = "";
+  let answer = "";
+  let textAttached = false;
+  let highlighted = false;
+
+  onMount(async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/question/${$teacherView.questionId}`
+    );
+    const data = await response.json();
+    teacherView.load_question(data.name, data.question, data.answer, data.textAttached);
+    name = data.name;
+    question = data.question;
+    answer = data.answer;
+    textAttached = data.textAttached;
+  });
 
 
-    onMount(async () => {
-      const response = await fetch(`http://localhost:3000/reading-exercise/question/${questionId}`);
-      const data = await response.json();
-      name  = data.name;
-      question  = data.question;
-      answer  = data.answer;
-      textId  = data.textId;
-    });
+  const unattachText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${$teacherView.questionId}`,
+      {
+        method: "DELETE"
+      }
+    );
+    const data = await response.text();
+    $teacherView.editor?.commands.setContent(data);
+  }
 
-    const saveQuestion = async () => {
-      const response = await fetch(`http://localhost:3000/reading-exercise/question/${questionId}`,
-        {
-          method: "PATCH",
-          headers: {
-                'Content-Type': 'application/json', // Indicate that the payload is JSON
-            },
-          body: JSON.stringify({name: name, question: question, answer: answer, textId: textId})
-        });
-        const data = await response.json();
-    };
+  const highlightText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${$teacherView.questionId}`
+    );
+    const data = await response.text();
 
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
+
+  const loadText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/${readingId}`
+    );
+    const data = await response.text();
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
+
+  const saveQuestion = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/question/${$teacherView.questionId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json", // Indicate that the payload is JSON
+        },
+        body: JSON.stringify({
+          name: name,
+          question: question,
+          answer: answer,
+          textAttached: $teacherView.textAttached,
+        }),
+      }
+    );
+    const data = await response.json();
+  };
 </script>
-
-
-
 
 <div class="h-full overlay {$teacherView.editting ? 'overlay-dark' : ''}">
   <!-- Sub-navbar -->
@@ -58,33 +97,83 @@
       <div class="flex gap-4 justify-start items-center">
         <h1 class="text-2xl font-bold text-center">Odpověď na otázku</h1>
         <input
-        bind:value={name}
-        disabled={$teacherView.editting}
-        type="text"
-        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting ? ' overlay' : ''}"
-      />
+          bind:value={name}
+          disabled={$teacherView.editting}
+          type="text"
+          class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting
+            ? ' overlay'
+            : ''}"
+        />
       </div>
       <br />
 
-      <textarea bind:value={question} disabled={$teacherView.editting} class="text-lg min-h-36 p-4 {$teacherView.editting ? ' overlay' : ''}"></textarea>
+      <textarea
+        bind:value={question}
+        disabled={$teacherView.editting}
+        class="text-lg min-h-36 p-4 {$teacherView.editting ? ' overlay' : ''}"
+      ></textarea>
 
       <h3>Tvoje odpověď</h3>
       <input
         bind:value={answer}
         disabled={$teacherView.editting}
         type="text"
-        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting ? 'overlay' : ''}"
+        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting
+          ? 'overlay'
+          : ''}"
       />
-      <button
-        disabled={$teacherView.editting}
-        on:click={() => {teacherView.edit_mode()}}
-        class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting ? '' : 'hover:bg-slate-400'}"
-        >Připojit text</button
-      >
+
+      {#if ! $teacherView.textAttached}
+        <button
+          disabled={$teacherView.editting}
+          on:click={() => {
+            teacherView.edit_mode();
+          }}
+          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
+            ? ''
+            : 'hover:bg-slate-400'}">Připojit text</button
+        >
+      {:else}
+          
+        {#if !highlighted}
+        <button
+          disabled={$teacherView.editting}
+          on:click={async () => {
+            await highlightText();
+            highlighted = !highlighted;
+          }}
+          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
+            ? ''
+            : 'hover:bg-slate-400'}">Zobrazit text</button
+        >
+        {:else}
+        <button
+          disabled={$teacherView.editting}
+          on:click={async () => {
+            await loadText();
+            highlighted = !highlighted;
+          }}
+          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
+            ? ''
+            : 'hover:bg-slate-400'}">Zpět</button
+        >
+        {/if}
+
+        <button
+          disabled={$teacherView.editting}
+          on:click={async () => {
+            await unattachText();
+            teacherView.attach_text(false);
+          }}
+          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
+            ? ''
+            : 'hover:bg-slate-400'}">Odpojit text</button
+        >
+        
+      {/if}
     </div>
   </div>
 </div>
-
 
 <style>
   .overlay {
@@ -95,5 +184,4 @@
   .overlay-dark {
     background-color: rgba(0, 0, 0, 0.5); /* Dark overlay effect */
   }
-
 </style>

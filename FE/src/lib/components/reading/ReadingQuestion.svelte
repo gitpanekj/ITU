@@ -1,6 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { userView } from "../../../stores/Reading/userView";
+  import { teacherView } from "../../../stores/Reading/teacherView";
+  export let readingId;
 
   let questionId: number = 0;
   let name = "";
@@ -40,9 +42,29 @@
     const data = await response.json();
     evaluation = data.result;
     correct_answer = data.answer;
-    
-
   };
+
+
+  const highlightText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${questionId}`
+    );
+    const data = await response.text();
+
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
+
+  const loadText = async () => {
+    const response = await fetch(
+      `http://localhost:3000/reading-exercise/text/${readingId}`
+    );
+    const data = await response.text();
+    console.log(data);
+
+    $teacherView.editor?.commands.setContent(data);
+  }
 
 
   const getNextQuestion = async () => {
@@ -95,13 +117,13 @@
 
     {#if questionNumber < totalQuestions}
         <button
-        on:click={async () => {checked=false; await getNextQuestion()}}
+        on:click={async () => {checked=false; await loadText(); await getNextQuestion()}}
         class="border-4 border-black rounded-lg py-2 px-2 text-xl hover:bg-slate-400"
         >Další otázka</button
         >
     {:else}
         <button
-            on:click={() => {userView.goto_evaluation_list_view()}}
+            on:click={async () => {await loadText(); userView.goto_evaluation_list_view()}}
         class="border-4 border-black rounded-lg py-2 px-2 text-xl hover:bg-slate-400"
         >Vyhodnotit kvíz</button> 
     {/if}
@@ -124,6 +146,7 @@
     />
     <div class="flex flex-row justify-between mt-8 px-8 pb-4">
       <button
+      on:click={async () => {await highlightText()}}
         class="h-12 px-2 py-2 rounded-lg border-4 border-black hover:bg-slate-400"
         >Chci nápovědu</button
       >
