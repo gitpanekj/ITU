@@ -43,7 +43,7 @@ export class FlashcardExerciseController {
       @Query() _filters: any,
     ) {
       const { page: _, limit: __, ...filters } = _filters;
-      return this.flashcardService.findAll({ page, limit, filters });
+      return this.flashcardService.findAll({ page, limit, filters, order: {id: "DESC"} });
     }
   
     @Get('card/:id')
