@@ -7,6 +7,7 @@
 
   export let data;
   const moduleId: number = data.props.moduleId;
+  const sessionId = Number(localStorage.getItem("flashcardSessionId"));
 
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
@@ -18,7 +19,7 @@
     frontFace: string;
     backFace: string;
     hardCount: number;
-    feedback: string;
+    session_feedback: string;
     flashcardExerciseId: number;
     isFlipped: boolean;
   }
@@ -29,8 +30,8 @@
 
   let hardCards: HardCard[] | null = null;
 
-  async function fetchHardCards(sessionId: number) {
-    const response = await fetch(`http://localhost:3000/flashcard-exercise/marked_hard/${sessionId}`);
+  async function fetchHardCards() {
+    const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}`);
     const data: HardCardsResponse = await response.json();
     hardCards = data.hard_cards.map(card => ({ ...card, isFlipped: false }));
   }
@@ -51,7 +52,8 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         flashcardId: card.id,
-        feedback: card.feedback,
+        sessionId: sessionId,
+        feedback: card.session_feedback,
       }),
     });
     } catch (error) {
@@ -63,7 +65,7 @@
   onMount(() => {
     const sessionId = Number(localStorage.getItem("flashcardSessionId"));
     if (sessionId) {
-      fetchHardCards(sessionId);
+      fetchHardCards();
     }
   });
 </script>
@@ -101,7 +103,7 @@
             <textarea
               class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500"
               placeholder="Zadejte poznámku ke kartě..."
-              bind:value={card.feedback}
+              bind:value={card.session_feedback}
             ></textarea>
             <button
               class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600"
