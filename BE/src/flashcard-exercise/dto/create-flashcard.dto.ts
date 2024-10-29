@@ -1,4 +1,4 @@
-import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsInt, IsJSON, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateFlashcardDto {
     @IsOptional()
@@ -14,8 +14,8 @@ export class CreateFlashcardDto {
     backFace: string
 
     @IsOptional()
-    @IsString()
-    feedbacks?: string
+    @IsJSON()
+    feedbacks?: JSON
 
     @IsOptional()
     @IsInt()

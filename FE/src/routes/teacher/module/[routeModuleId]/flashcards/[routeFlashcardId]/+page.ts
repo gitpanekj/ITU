@@ -1,17 +1,17 @@
-// Module detail page load - src/routes/module/[moduleId]/flashcards/[flashcardExcerciseId]/+page.svelte
+// Module detail page load - src/routes/module/[moduleId]/flashcards/[flashcardId]/+page.svelte
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
 
 export async function load({ params } : { params: Record<string, string>}){
-    const { routeModuleId, routeFlashcardExerciseId } = params;
-    if (!isValidId(routeModuleId) || !isValidId(routeFlashcardExerciseId)) 
+    const { routeModuleId, routeFlashcardId } = params;
+    if (!isValidId(routeModuleId) || !isValidId(routeFlashcardId)) 
     {
         throw error(404, 'Page not found');
     };
 
     const moduleId: number = +routeModuleId;
-    const flashcardExerciseId: number = +routeFlashcardExerciseId;
+    const flashcardId: number = +routeFlashcardId;
 
     // TODO: Fetch initial data - before page is rendered
     // const response = await fetch('');
@@ -21,7 +21,7 @@ export async function load({ params } : { params: Record<string, string>}){
         props:
             {
                 moduleId,
-                flashcardExerciseId,
+                flashcardId,
                 //data
             }
     }
