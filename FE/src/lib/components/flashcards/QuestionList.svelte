@@ -35,23 +35,27 @@
   };
 
   const updateQuestion = async (id: number, frontFace: string, backFace: string) => {
-    // await fetch(`http://localhost:3000/flashcard-exercise/question/${id}`, {
-    //   method: "PUT",
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ frontFace, backFace })
-    // });
+    await fetch(`http://localhost:3000/flashcard-exercise/card/${id}`, {
+      method: "PATCH",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        frontFace: frontFace,
+        backFace: backFace })
+    });
     await fetchQuestions();
   };
 
   onMount(fetchQuestions);
 </script>
 
-<div class="h-full flex flex-col justify-between">
+<div class="h-full flex flex-col justify-between mt-10">
   <div>
     <button
     on:click={() => {addQuestion();}}
       class="border-2 border-blue-900 hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
-      Add
+      Přidat kartu
     </button>
     
     <!-- Question List Container -->
@@ -65,6 +69,7 @@
             class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-40"
             placeholder="Zadejte líc karty..."
             bind:value={question.frontFace}
+            on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
           ></textarea>
             
             
@@ -72,13 +77,14 @@
           class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-40"
           placeholder="Zadejte rub karty..."
           bind:value={question.backFace}
+          on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
         ></textarea>
             
             <!-- Delete Button -->
             <button
               on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
               class="border-2 border-blue-900 hover:bg-red-900 hover:text-red-200 py-1 px-2 rounded-full bg-red-500">
-              Delete
+                Odstranit
             </button>
             
           </div>
