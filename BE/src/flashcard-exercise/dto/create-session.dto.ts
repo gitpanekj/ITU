@@ -1,4 +1,4 @@
-import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator"
+import { IsArray, IsInt, IsJSON, IsNotEmpty, IsOptional, IsString } from "class-validator"
 
 export class CreateFlashcardSessionDto {
     @IsNotEmpty()
@@ -24,4 +24,8 @@ export class CreateFlashcardSessionDto {
     @IsOptional()
     @IsString()
     historyHard?: string
+
+    @IsOptional()
+    @IsJSON()
+    feedback?: JSON
 }

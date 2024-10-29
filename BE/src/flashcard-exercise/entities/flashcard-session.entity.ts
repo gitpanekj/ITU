@@ -22,4 +22,7 @@ export class FlashcardSession {
 
     @Column({default: ""})
     historyHard: string
+
+    @Column({type: "jsonb", default: {}})
+    feedback: any // {id: feedback}
 }

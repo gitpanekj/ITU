@@ -16,8 +16,8 @@ export class FlashCard {
     @Column({default: 0})
     hardCount: number
 
-    @Column({default: ""})
-    feedback: string
+    @Column({type: 'jsonb', default: {}})
+    feedback: any
 
     @Column()
     flashcardExerciseId: number
