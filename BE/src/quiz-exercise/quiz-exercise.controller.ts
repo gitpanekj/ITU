@@ -46,7 +46,7 @@ export class QuizExerciseController {
     @Query() _filters: any,
   ) {
     const {page: _, limit: __, ...filters} = _filters;
-    return this.quizQuestionService.findAll({page, limit, filters});
+    return this.quizQuestionService.findAll({page, limit, filters, order: {id: 'DESC'}});
   }
 
   @Get('question/:id')
@@ -134,7 +134,7 @@ export class QuizExerciseController {
     await this.sessionService.update(+id, session);
 
     // return next question
-    const question = (await this.quizQuestionService.findAll({page: session.questionIdx, limit: 1, filters: {quizId: String(session.exerciseId)}})).data[0];
+    const question = (await this.quizQuestionService.findAll({page: session.questionIdx, limit: 1, filters: {quizId: String(session.exerciseId)}, order: {id: 'ASC'}})).data[0];
     const answers = (await this.questionAnswerService.findAll({page: 1, limit: 0, filters: {questionId: String(question.id)}})).data;
     const remaining = session.total - session.questionIdx;
     return {data: {question, answers}, remaining};
