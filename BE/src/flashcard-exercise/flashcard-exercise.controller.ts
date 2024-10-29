@@ -85,7 +85,7 @@ export class FlashcardExerciseController {
       total: total,
       flashcardId: randomInt(0, total),
     });
-    return { quizSessionId: session.id };
+    return { flashcardSessionId: session.id };
   }
 
   @Delete('delete_session/:sessionId')
