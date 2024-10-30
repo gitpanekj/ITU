@@ -26,6 +26,7 @@
       isHard = hard;
       currentIndex = current;
       totalQuestions = total;
+      isFlipped = false;
     };
 
     const getPrevQuestion = async () => {
@@ -39,6 +40,7 @@
       isHard = hard;
       currentIndex = current;
       totalQuestions = total;
+      isFlipped = false;
     };
 
     const toggleHard = async () => {
