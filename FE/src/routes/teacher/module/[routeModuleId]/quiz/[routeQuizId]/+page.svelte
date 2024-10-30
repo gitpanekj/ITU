@@ -29,13 +29,12 @@
     Details of one quiz - id: {quizId}
 </div> -->
 <div class="flex h-screen">
-  <div class="w-1/2 h-full p-4 border-rt border-black">
+  <div class="w-1/2 h-full p-4 border-a border-black border-4">
     <QuestionList {quizId} bind:selectedQuestionId on:selectQuestion={(event) => selectedQuestionId = event.detail.selectedQuestionId} />
   </div>
 
   <!-- Right column: Question detail -->
-  <div class="w-1/2 h-full border-4 border-black border-t flex flex-col justify-between p-8">
-    <h1 class="text-3xl mb-4">Náhled</h1>
+  <div class="w-1/2 h-full border-4 border-black border-a flex flex-col justify-between p-4">
     {#key selectedQuestionId}
       {@debug selectedQuestionId} <!-- DEBUG-->
       <QuestionDetail {selectedQuestionId}/>

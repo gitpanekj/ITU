@@ -8,7 +8,7 @@
     let question = "";
     let correctAnswerId: number | null = null;
     let answers: any = [];
-    let totalRecords: number;
+    let totalRecords: number; // TODO remove
     
 
 
@@ -101,7 +101,8 @@
 {@debug answers}
 {#if selectedQuestionId}
     
-
+<h1 class="text-3xl mb-4">Náhled</h1>
+<hr class="h-1 mt-4 bg-blue-950 border-0 dark:bg-blue-950 w-11/12 overflow-y-auto">
 <div class="flex flex-col mx-auto bg-blue-950 rounded-xl shadow-lg border-2 border-black p-6 text-white size-3/4 my-auto">
   <input placeholder="Název otázky" class=" text-4xl bg-inherit w-full" bind:value={name}/>
 
