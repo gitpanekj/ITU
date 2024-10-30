@@ -71,18 +71,19 @@
     class="w-4/5 h-4/5 mt-8 border-2 border-black flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
 >
     <div class="flex-grow flex flex-col items-center">
-        <p class="text-xl">
+        <p class="text-2xl font-bold">
           {frontFace}
         </p>
-        <hr class="w-full">
-        <p class={`text-l ${isFlipped ? 'opacity-100' : 'opacity-0'}`}>
+        <hr class="w-full border-t-2 border-gray-500 my-2">
+        <p class={`text-xl ${isFlipped ? 'opacity-100' : 'opacity-0'}`}>
           {backFace}
         </p>
     </div>
-    <p class="text-lg font-semibold mt-auto">
+    <p class="text-xl font-semibold mt-auto">
       {isFlipped ? "Skrýt odpověď" : "Zobrazit odpověď"}
     </p>
 </button>
+
 
 <div class="flex justify-center space-x-4 mt-4">
   <button
