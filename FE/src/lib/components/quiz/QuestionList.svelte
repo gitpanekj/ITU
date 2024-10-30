@@ -80,8 +80,10 @@
 <div class="flex flex-col mt-0 pt-4 gap-2 overflow-y-auto max-h-full" style="max-height: 80vh;">
 {#each questions as question (question.id)}
   <button 
-    class={`w-11/12 h-14 px-4 border-4 border-blue-950 flex justify-between items-center rounded-lg cursor-pointer 
-    ${selectedQuestionId == question.id ? ' border-blue-300 bg-gray-300' : 'hover:bg-gray-300 hover:border-blue-200'}`}
+    class={`w-11/12 h-14 px-4 border-4 flex justify-between items-center rounded-lg cursor-pointer 
+    ${selectedQuestionId === question.id 
+    ? 'border-blue-300 bg-gray-300'
+    : 'hover:bg-gray-300 hover:border-blue-200 border-blue-950'}`}
     on:click={() => selectQuestion(question.id)}>
 
     <div class="text-2xl w-96 text-start">{question.name}</div>

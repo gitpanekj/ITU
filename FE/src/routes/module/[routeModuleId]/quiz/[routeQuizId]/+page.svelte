@@ -3,6 +3,9 @@
   import Navbar from "$lib/components/Navbar.svelte";
   import type { Link } from "$lib/utils/dataTypes.js";
   import { onMount } from "svelte";
+  import QuizQuestion from "$lib/components/quiz/QuizQuestion.svelte";
+  import QuizEvaluation from "$lib/components/quiz/QuizEvaluation.svelte";
+  import { userView } from "../../../../../stores/Quiz/userView";
 
   // Route parameters and fetched data
   export let data;
@@ -13,14 +16,36 @@
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
     let title: string = "Quiz exercise";
 
-  onMount(() => {
-    // TODO: fetching data after page render
+
+  let sessionActive = false;
+
+  const createSession = async () => {
+    const response = await fetch(`http://localhost:3000/quiz-exercise/create_session/${quizId}`);
+    const data = await response.json();
+    localStorage.setItem('quizSessionId', data.quizSessionId);
+    sessionActive = true;
+  }
+
+  onMount(async () => {
+    await createSession();
   });
 
 </script>
 
 
 <Navbar {title} {links}/>
-<div class="h-full w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
-    Quiz exercise - moduleId: {moduleId}, flashcardExerciseId: {quizId}
-</div>
+
+{#if !sessionActive}
+  Vytváří se session
+{:else}
+  {#if $userView.view === "question"}
+    <QuizQuestion {quizId}/>
+  {:else}
+    <QuizEvaluation/>
+  {/if}
+
+{/if}
+
+
+
+
