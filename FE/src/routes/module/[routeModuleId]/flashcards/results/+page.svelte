@@ -1,4 +1,3 @@
-<!-- Flashcards result - src/routes/module/[moduleId]/flashcards/results/+page.svelte -->
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
@@ -7,12 +6,10 @@
 
   export let data;
   const moduleId: number = data.props.moduleId;
-  const sessionId = Number(localStorage.getItem("flashcardSessionId"));
 
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
   let title: string = "Flashcard exercise";
-
 
   interface HardCard {
     id: number;
@@ -29,11 +26,17 @@
   }
 
   let hardCards: HardCard[] | null = null;
+  let sessionId: number | null = null;
 
+  // Fetch hard cards data from API
   async function fetchHardCards() {
-    const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}`);
-    const data: HardCardsResponse = await response.json();
-    hardCards = data.hard_cards.map(card => ({ ...card, isFlipped: false }));
+    try {
+      const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}`);
+      const data: HardCardsResponse = await response.json();
+      hardCards = data.hard_cards.map(card => ({ ...card, isFlipped: false }));
+    } catch (error) {
+      console.error("Failed to fetch hard cards:", error);
+    }
   }
 
 
@@ -61,11 +64,15 @@
     }
   }
 
-
+  // Run fetchHardCards when the component mounts, only if sessionId is available
   onMount(() => {
-    const sessionId = Number(localStorage.getItem("flashcardSessionId"));
-    if (sessionId) {
-      fetchHardCards();
+    if (typeof window !== "undefined") {
+      sessionId = Number(localStorage.getItem("flashcardSessionId"));
+      if (sessionId) {
+        fetchHardCards();
+      } else {
+        console.error("No session ID found in localStorage.");
+      }
     }
   });
 </script>
@@ -75,10 +82,9 @@
   Výsledky flashcards
 </h1>
 
+<h1 class="text-4xl font-bold text-center mb-5">Těžké karty</h1>
 {#if hardCards}
   {#if hardCards.length > 0}
-    <h1 class="text-4xl font-bold text-center">Těžké karty</h1>
-    
     <div class="flex flex-col overflow-y-auto h-full w-4/5 gap-4 items-center mx-auto my-auto pt-10">
       {#each hardCards as card (card.id)}
         <div class="flex w-full gap-4 items-start">
@@ -115,7 +121,7 @@
       {/each}
     </div>
   {:else}
-  <h1 class="text-4xl font-bold text-center">Výborně, žádné karty jste neoznačili jako těžké.</h1>
+    <h1 class="text-4xl font-bold text-center">Výborně, žádné karty jste neoznačili jako těžké.</h1>
   {/if}
 {:else}
   <Spinner />
