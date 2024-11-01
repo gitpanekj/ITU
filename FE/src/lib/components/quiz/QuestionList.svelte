@@ -10,7 +10,7 @@
   // Function to handle selecting a question and dispatching the event
   const selectQuestion = (id: number) => {
     selectedQuestionId = id;
-    dispatch('selectQuestion', { selectedQuestionId }); // Dispatch the event with the selectedQuestionId
+    dispatch('selectQuestion', { selectedQuestionId }); 
   };
 
   let questions: any = [];
@@ -22,8 +22,8 @@
     const { data, total } = await response.json();
     questions = data;
 
-    // Set selectedQuestionId to the first question's ID only if not already selected
-    if (questions.length > 0 && selectedQuestionId === null) {
+    
+    if (questions.length > 0) {
       selectQuestion(questions[0].id);
     }
   };
@@ -36,7 +36,8 @@
       },
       body: JSON.stringify({ name: "Nová otázka", question: "Text otázky", quizId: quizId, rightAnswerId: null })
     });
-
+    const data = await response.json();
+    await createNewAnswer(data.id);
     await fetchQuestions();
   };
 
@@ -46,6 +47,29 @@
     });
 
     await fetchQuestions();
+  };
+
+  const createNewAnswer = async (newQuestionId: number) => {
+    const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
+        method: "POST",
+        headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answer: "odpověď", questionId: newQuestionId })
+    });
+    const data = await response.json();
+    await setCorrectAnswer(newQuestionId, data.id);
+  };
+
+  const setCorrectAnswer = async (newQuestionId: number, correctAnswerId: number) => {
+    const response = await fetch(`http://localhost:3000/quiz-exercise/question/${newQuestionId}`,
+    {
+      method: "PATCH",
+      headers: {
+            'Content-Type': 'application/json', 
+        },
+      body: JSON.stringify({rightAnswerId: correctAnswerId})
+    });
   };
 
   onMount(async () => {

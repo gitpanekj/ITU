@@ -2,8 +2,6 @@
     import { onMount } from "svelte";
     import { userView } from "../../../stores/Quiz/userView";
 
-    export let quizId;
-
     let question = "";
     let name = "";
     let questionId: number = 0;
