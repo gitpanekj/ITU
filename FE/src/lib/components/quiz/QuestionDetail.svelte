@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     // import QuestionList from "./QuestionList.svelte";
 
     export let selectedQuestionId: number | null = null; // TODO
@@ -13,6 +13,13 @@
     let flashType = "";
 
 
+    const dispatch = createEventDispatcher();
+
+    const saveClicked = () => {
+        dispatch('saveClicked');
+    };
+
+
     function showFlashMessage(message: string, type: string) {
         flashMessage = message;
         flashType = type;
@@ -20,7 +27,7 @@
             flashMessage = "";
             flashType = "";
         }, 2000);  
-    }
+    };
 
     const fetchQuestion = async () => {
         const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`);
@@ -155,20 +162,20 @@
   </div>
 </div>
 
-<!-- Flash message container -->
+
 {#if flashMessage}
     <div class={`fixed top-4 left-1/2 transform -translate-x-1/2 ${flashType === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white px-4 py-2 rounded shadow-md`}>
         {flashMessage}
     </div>
 {/if}
 
-  <!-- Button row -->
 <div class="flex justify-between w-3/4 mx-auto">
   <button 
     on:click={async () => {
         await saveQuestion();
         await saveAnswers();
         showFlashMessage("Uložení proběhlo úspěšně", "green");
+        saveClicked();
     }}
     class="h-auto border-2 border-black bg-zinc-400 rounded-xl text-white text-2xl px-6 py-2 hover:bg-zinc-300">
     Uložit

@@ -12,6 +12,7 @@
   const moduleId: number = data.props.moduleId;
   const quizId: number = data.props.quizId;
   let selectedQuestionId: number;
+  let change = false;
     
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
@@ -25,19 +26,20 @@
 
 
 <Navbar {title} {links}/>
-<!-- <div class="h-full w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
-    Details of one quiz - id: {quizId}
-</div> -->
+
 <div class="flex h-screen">
+
+  <!-- Left column: Question list -->
   <div class="w-1/2 h-full p-4 border-a border-black border-4">
-    <QuestionList {quizId} bind:selectedQuestionId on:selectQuestion={(event) => selectedQuestionId = event.detail.selectedQuestionId} />
+    {#key change}
+      <QuestionList {quizId} on:selectQuestion={(event) => selectedQuestionId = event.detail.selectedQuestionId} />
+    {/key}
   </div>
 
   <!-- Right column: Question detail -->
   <div class="w-1/2 h-full border-4 border-black border-a flex flex-col justify-between p-4">
     {#key selectedQuestionId}
-      {@debug selectedQuestionId} <!-- DEBUG-->
-      <QuestionDetail {selectedQuestionId}/>
+      <QuestionDetail {selectedQuestionId} on:saveClicked={(event) => change = !change}/>
     {/key}
   </div>
 </div>

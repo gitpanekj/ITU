@@ -3,7 +3,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let quizId: number;
-  export let selectedQuestionId: number | null = null;
+  let selectedQuestionId: number | null = null;
 
   const dispatch = createEventDispatcher();
 
@@ -77,9 +77,6 @@
   });
 </script>
 
-<!-- Debugging questions -->
-{@debug questions}
-
 
 <div class="flex justify-between">
 <h1 class="text-3xl mb-4">Otázky</h1>
@@ -91,7 +88,6 @@
 </div>
 <hr class="h-1 mt-4 bg-blue-950 border-0 dark:bg-blue-950 w-11/12 overflow-y-auto">
 
-<!-- Questions header -->
 <div class="w-11/12 flex justify*between items-center mt-6">
   <div class="ml-4 text-4xl w-96 font-bold text-start">Název</div>
   <div class="w-36 text-2xl">Správně</div>
@@ -125,5 +121,3 @@
   </button>
 {/each}
 </div>
-
-{@debug selectedQuestionId}
