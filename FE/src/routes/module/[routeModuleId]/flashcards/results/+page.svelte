@@ -11,6 +11,10 @@
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
   let title: string = "Flashcard exercise";
 
+  let page: number = 1;
+  let totalRecords: number = 0;
+  $: totalPages = Math.ceil(totalRecords / 10);
+
   interface HardCard {
     id: number;
     frontFace: string;
@@ -21,19 +25,16 @@
     isFlipped: boolean;
   }
 
-  interface HardCardsResponse {
-    hard_cards: HardCard[];
-  }
-
   let hardCards: HardCard[] | null = null;
   let sessionId: number | null = null;
 
   // Fetch hard cards data from API
   async function fetchHardCards() {
     try {
-      const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}`);
-      const data: HardCardsResponse = await response.json();
-      hardCards = data.hard_cards.map(card => ({ ...card, isFlipped: false }));
+      const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}?page=${page}&limit=10`);
+      const {hard_cards, total} = await response.json();
+      totalRecords = total;
+      hardCards = hard_cards.map((card: HardCard) => ({ ...card, isFlipped: false }));
     } catch (error) {
       console.error("Failed to fetch hard cards:", error);
     }
@@ -119,6 +120,12 @@
           </div>
         </div>
       {/each}
+    </div>
+    <!-- Pagination Controls -->
+    <div class="w-full border-black border-4 h-12 flex gap-4 justify-center items-center">
+      <button on:click={() => { if (page > 1) page -= 1; fetchHardCards(); }}>Předchozí</button>
+      <h1>{page}/{totalPages}</h1>
+      <button on:click={() => { if (page < totalPages) page += 1; fetchHardCards(); }}>Další</button>
     </div>
   {:else}
     <h1 class="text-lg font-medium text-gray-600 text-center">Výborně, žádné karty jste neoznačili jako těžké.</h1>
