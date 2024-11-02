@@ -30,6 +30,15 @@
     fetchQuestions();
   };
 
+    const getCardColor = (hardCount: number) => {
+    if (hardCount >= 5) {
+      return 'bg-red-300';
+    } else if (hardCount >= 1) {
+      return 'bg-yellow-300';
+    } else {
+      return 'bg-green-300';
+    }
+  }
   const deleteQuestion = async (id: number) => {
     await fetch(`http://localhost:3000/flashcard-exercise/card/${id}`, {
       method: "DELETE"
@@ -116,7 +125,9 @@
               on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
             ></textarea>
 
-            <p class="mx-20">{question.hardCount}</p>
+            <p class={`mx-20 p-2 rounded-full ${getCardColor(question.hardCount)}`} style="min-width: 50px; text-align: center;">
+              {question.hardCount}
+            </p>
             <div class="flex flex-col gap-5">
               <button
                 on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
