@@ -86,13 +86,13 @@
     <div class="relative w-4/5 mx-auto mb-4 flex justify-center">
       <button
         on:click={() => {addQuestion();}}
-        class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
+        class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
         Přidat kartu
       </button>
 
       <button
       on:click={() => {goto(`/module/${moduleId}/flashcards/${flashcardExerciseId}`);}}
-        class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500 absolute right-0">
+        class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600 absolute right-0">
         Procházet karty
       </button>
     </div>
@@ -125,18 +125,18 @@
               on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
             ></textarea>
 
-            <p class={`mx-20 p-2 rounded-full ${getCardColor(question.hardCount)}`} style="min-width: 50px; text-align: center;">
+            <p class={`mx-20 p-2 rounded-lg  ${getCardColor(question.hardCount)}`} style="min-width: 50px; text-align: center;">
               {question.hardCount}
             </p>
             <div class="flex flex-col gap-5">
               <button
                 on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
-                class="hover:bg-red-900 hover:text-red-200 py-1 px-2 rounded-full bg-red-500">
+                class="text-white bg-red-500 p-2 rounded-lg hover:bg-red-600">
                 Odstranit
               </button>
               <button
                 on:click={() => {showFeedback(question.id);}}
-                class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
+                class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
                 Poznámky
               </button>
             </div>

@@ -121,7 +121,7 @@
       {/each}
     </div>
   {:else}
-    <h1 class="text-4xl font-bold text-center">Výborně, žádné karty jste neoznačili jako těžké.</h1>
+    <h1 class="text-lg font-medium text-gray-600 text-center">Výborně, žádné karty jste neoznačili jako těžké.</h1>
   {/if}
 {:else}
   <Spinner />

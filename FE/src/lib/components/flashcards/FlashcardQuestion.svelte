@@ -125,7 +125,7 @@
 <div class="flex justify-center space-x-4 mt-4">
   <button
     on:click={async () => {await getPrevQuestion()}}
-    class={`border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200 ${currentIndex != 1 ? 'opacity-100' : 'opacity-0'}`}
+    class={`text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600 ${currentIndex != 1 ? 'opacity-100' : 'opacity-0'}`}
     disabled={currentIndex == 1}
   >
   Předchozí karta
@@ -138,24 +138,17 @@
         on:click={async () => {await toggleHard()}}
         class="w-8 h-8 cursor-pointer"/>
     </label>
-  {#if currentIndex < totalQuestions}
+
     <button
       on:click={async () => {await getNextQuestion()}}
-      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+      class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600"
     >
-      Další karta
+      {currentIndex < totalQuestions?"Další karta":"Zpět na začátek"}
     </button>
-  {:else}
-  <button
-      on:click={async () => {await getNextQuestion()}}
-      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
-    >
-      Zpět na začátek
-    </button>
-  {/if}
+
     <button
       on:click={async () => {await goto(`/module/1/flashcards/results`)}}
-      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+      class="border-2 border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600"
     >
       Vyhodnotit flashcards
     </button>

@@ -34,7 +34,7 @@
   <div>
     <button
       on:click={() => {hideFeedback();}}
-      class="border-2 border-blue-900 hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
+      class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
       Zpět
     </button>
       <!-- Table Header -->
