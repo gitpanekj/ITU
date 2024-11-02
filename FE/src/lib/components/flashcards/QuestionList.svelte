@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { createEventDispatcher } from 'svelte';
   import { goto } from "$app/navigation";
+
   const dispatch = createEventDispatcher();
     
   export let flashcardExerciseId: number;
@@ -10,13 +11,23 @@
   let questions: any = [];
   let page: number = 1;
   let totalRecords: number = 0;
+  let hardSortOrder: 'ASC' | 'DESC' | 'NONE' = 'DESC';
   $: totalPages = Math.ceil(totalRecords / 4);
   
   const fetchQuestions = async () => {
-    const response = await fetch(`http://localhost:3000/flashcard-exercise/cards?flashcardExerciseId=${flashcardExerciseId}&page=${page}&limit=4`);
+    const response = await fetch(`http://localhost:3000/flashcard-exercise/cards?page=${page}&limit=4&hard_order=${hardSortOrder}&flashcardExerciseId=${flashcardExerciseId}`);
     const { data, total } = await response.json();
     totalRecords = total;
     questions = data;
+  };
+
+  const toggleSort = () => {
+    if (hardSortOrder === 'ASC') {
+      hardSortOrder = 'DESC';
+    } else{
+      hardSortOrder = 'ASC';
+    }
+    fetchQuestions();
   };
 
   const deleteQuestion = async (id: number) => {
@@ -33,8 +44,9 @@
       body: JSON.stringify({
         frontFace: "",
         backFace: "",
-		flashcardExerciseId: flashcardExerciseId})
-     });
+        flashcardExerciseId: flashcardExerciseId
+      })
+    });
     await fetchQuestions();
   };
 
@@ -82,39 +94,40 @@
       <div class="w-full flex justify-between pl-5 font-semibold pr-[280px]">
         <span>Líc</span>
         <span>Rub</span>
-        <span>Těžké</span>
+        <button class="flex items-center cursor-pointer" on:click={toggleSort}>
+          Těžké {hardSortOrder === 'ASC' ? '↑' : '↓'}
+        </button>
       </div>
 
       {#each questions as question}
         <div class="flex w-full gap-4 items-start">
           <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
+            <textarea
+              class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
+              placeholder="Zadejte líc karty..."
+              bind:value={question.frontFace}
+              on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
+            ></textarea>
             
             <textarea
-            class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-            placeholder="Zadejte líc karty..."
-            bind:value={question.frontFace}
-            on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
-          ></textarea>
-            
-          <textarea
-          class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-          placeholder="Zadejte rub karty..."
-          bind:value={question.backFace}
-          on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
-        ></textarea>
+              class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
+              placeholder="Zadejte rub karty..."
+              bind:value={question.backFace}
+              on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
+            ></textarea>
 
             <p class="mx-20">{question.hardCount}</p>
             <div class="flex flex-col gap-5">
-            <button
-              on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
-              class="hover:bg-red-900 hover:text-red-200 py-1 px-2 rounded-full bg-red-500">
-              Odstranit
-            </button>
-            <button
-              on:click={() => {showFeedback(question.id);}}
-              class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
-              Poznámky
-            </button>
+              <button
+                on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
+                class="hover:bg-red-900 hover:text-red-200 py-1 px-2 rounded-full bg-red-500">
+                Odstranit
+              </button>
+              <button
+                on:click={() => {showFeedback(question.id);}}
+                class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
+                Poznámky
+              </button>
             </div>
           </div>
         </div>
