@@ -1,9 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { createEventDispatcher } from 'svelte';
+  import { goto } from "$app/navigation";
   const dispatch = createEventDispatcher();
     
   export let flashcardExerciseId: number;
+  export let moduleId: number;
 
   let questions: any = [];
   let page: number = 1;
@@ -60,11 +62,19 @@
 
 <div class="h-full flex flex-col justify-between mt-10">
   <div>
-    <button
-      on:click={() => {addQuestion();}}
-      class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
-      Přidat kartu
-    </button>
+    <div class="relative w-4/5 mx-auto mb-4 flex justify-center">
+      <button
+        on:click={() => {addQuestion();}}
+        class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
+        Přidat kartu
+      </button>
+
+      <button
+      on:click={() => {goto(`/module/${moduleId}/flashcards/${flashcardExerciseId}`);}}
+        class="hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500 absolute right-0">
+        Procházet karty
+      </button>
+    </div>
     
     <!-- Flashcard List Container -->
     <div class="flex flex-col overflow-y-auto h-full w-4/5 gap-4 items-center mx-auto pt-10">

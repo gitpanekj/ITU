@@ -31,6 +31,6 @@
   {#if feedbackFlashcardId}
     <Feedback {feedbackFlashcardId} on:feedback={handleFeedback}/>
   {:else}
-    <QuestionList {flashcardExerciseId} on:feedback={handleFeedback}/>
+    <QuestionList {flashcardExerciseId} {moduleId} on:feedback={handleFeedback}/>
   {/if}
 </div>
