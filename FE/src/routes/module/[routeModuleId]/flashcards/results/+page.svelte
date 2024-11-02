@@ -108,7 +108,7 @@
           <div class="flex flex-col gap-2 w-2/5">
             <textarea
               class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500"
-              placeholder="Zadejte poznámku ke kartě..."
+              placeholder="Můžete zadat poznámku ke kartě..."
               bind:value={card.session_feedback}
             ></textarea>
             <button

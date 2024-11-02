@@ -10,6 +10,7 @@
     let totalQuestions: number = 0;
     let isFlipped = false;
     let isHard = false;
+    let cardFeedback = "";
 
     function flipCard() {
         isFlipped = !isFlipped;
@@ -19,7 +20,7 @@
       const response = await fetch(
         `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/next`
       );
-      const {flashcard, hard, current, total} = await response.json();
+      const {flashcard, hard, current, total, feedback} = await response.json();
       questionId = flashcard.id;
       frontFace = flashcard.frontFace;
       backFace = flashcard.backFace;
@@ -27,13 +28,14 @@
       currentIndex = current;
       totalQuestions = total;
       isFlipped = false;
+      cardFeedback = feedback;
     };
 
     const getPrevQuestion = async () => {
       const response = await fetch(
         `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/prev`
       );
-      const {flashcard, hard, current, total} = await response.json();
+      const {flashcard, hard, current, total, feedback} = await response.json();
       questionId = flashcard.id;
       frontFace = flashcard.frontFace;
       backFace = flashcard.backFace;
@@ -41,6 +43,7 @@
       currentIndex = current;
       totalQuestions = total;
       isFlipped = false;
+      cardFeedback = feedback;
     };
 
     const toggleHard = async () => {
@@ -58,7 +61,23 @@
     } catch (error) {
         console.error("Error:", error);
     }
-};
+  };
+
+  async function submitFeedback() {
+    try {
+    const response = await fetch('http://localhost:3000/flashcard-exercise/feedback', {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        flashcardId: questionId,
+        sessionId: Number(localStorage.getItem("flashcardSessionId")),
+        feedback: cardFeedback,
+      }),
+    });
+    } catch (error) {
+        console.error("Error:", error);
+    }
+  }
 
   
     onMount(async () => {
@@ -67,6 +86,7 @@
   
   </script>
 
+<!-- Card Section -->
 <button 
     type="button" 
     on:click={flipCard} 
@@ -86,7 +106,22 @@
     </p>
 </button>
 
+<!-- Feedback Section -->
+<div class="flex flex-row items-center gap-2 w-4/5 mx-auto mt-4">
+  <textarea
+    class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500"
+    placeholder="Můžete zadat poznámku ke kartě..."
+    bind:value={cardFeedback}
+  ></textarea>
+  <button
+    class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600"
+    on:click={() => submitFeedback()}
+  >
+    Odeslat
+  </button>
+</div>
 
+<!-- Buttons Section -->
 <div class="flex justify-center space-x-4 mt-4">
   <button
     on:click={async () => {await getPrevQuestion()}}
@@ -126,4 +161,6 @@
     </button>
  
 </div>
+
+<!-- ProgressBar Section -->
 <Progressbar {currentIndex} {totalQuestions} />
