@@ -98,9 +98,9 @@
               Těžké
             </h1>
             <div class="flex-grow flex flex-col items-center">
-              <p class="text-xl font-semibold">{card.frontFace}</p>
-              <hr class="w-full">
-              <p class={`text-xl font-semibold ${card.isFlipped ? 'opacity-100' : 'opacity-0'}`}>
+              <p class="text-2xl font-bold">{card.frontFace}</p>
+              <hr class="w-full border-t-2 border-gray-500 my-2">
+              <p class={`text-xl ${card.isFlipped ? 'opacity-100' : 'opacity-0'}`}>
                 {card.backFace}
               </p>
             </div>

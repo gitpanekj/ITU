@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { createEventDispatcher } from 'svelte';
+  import { getCardColor } from '$lib/utils/cardColors';
   const dispatch = createEventDispatcher();
     
   export let feedbackFlashcardId: number;
@@ -45,7 +46,7 @@
       </div>
       {#if card != null}
       <div class="flex w-full gap-4 items-start">
-        <div class="w-full min-h-12 border-2 border-black rounded-lg flex gap-2 items-center p-4">
+        <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
           
           <textarea
           class="w-full border-2 p-2 rounded-lg focus:outline-none text-xl min-h-[125px]"
@@ -58,8 +59,9 @@
         bind:value={card.backFace}
         readonly
       ></textarea>
-
-          <p class="mx-20">{card.hardCount}</p>
+      <p class={`mx-20 p-2 rounded-lg  ${getCardColor(card.hardCount)}`} style="min-width: 50px; text-align: center;">
+        {card.hardCount}
+      </p>
         </div>
       </div>
       {/if}

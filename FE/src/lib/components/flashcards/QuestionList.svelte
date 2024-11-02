@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { createEventDispatcher } from 'svelte';
   import { goto } from "$app/navigation";
+  import { getCardColor } from '$lib/utils/cardColors';
 
   const dispatch = createEventDispatcher();
     
@@ -30,15 +31,6 @@
     fetchQuestions();
   };
 
-    const getCardColor = (hardCount: number) => {
-    if (hardCount >= 5) {
-      return 'bg-red-300';
-    } else if (hardCount >= 1) {
-      return 'bg-yellow-300';
-    } else {
-      return 'bg-green-300';
-    }
-  }
   const deleteQuestion = async (id: number) => {
     await fetch(`http://localhost:3000/flashcard-exercise/card/${id}`, {
       method: "DELETE"
