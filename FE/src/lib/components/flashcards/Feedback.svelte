@@ -48,15 +48,15 @@
         <div class="w-full min-h-12 border-2 border-black rounded-lg flex gap-2 items-center p-4">
           
           <textarea
-          class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-          placeholder="Zadejte líc karty..."
+          class="w-full border-2 p-2 rounded-lg focus:outline-none text-xl min-h-[125px]"
           bind:value={card.frontFace}
+          readonly
         ></textarea>
           
         <textarea
-        class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-        placeholder="Zadejte rub karty..."
+        class="w-full border-2 p-2 rounded-lg focus:outline-none text-xl min-h-[125px]"
         bind:value={card.backFace}
+        readonly
       ></textarea>
 
           <p class="mx-20">{card.hardCount}</p>
@@ -79,7 +79,5 @@
           <h1 class="text-lg font-medium text-gray-600">K této kartě zatím nejsou žádné poznámky.</h1>
         {/if}
       </div>
-      
-      
   </div>
 </div>
