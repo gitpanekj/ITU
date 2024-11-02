@@ -213,7 +213,11 @@ export class FlashcardExerciseController {
   }
 
   @Get('evaluate_session/:sessionId')
-  async getHard(@Param('sessionId') id: string) {
+  async getHard(
+    @Param('sessionId') id: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 0,
+  ) {
     const session = await this.sessionService.findOne(+id);
     let hard_cards = [];
     for (let id of session.markedAsHard.split(';').map(Number)) {
@@ -224,7 +228,12 @@ export class FlashcardExerciseController {
       console.log(hard_cards);
     }
 
-    return { hard_cards };
+    if (limit == 0) return { hard_cards };
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return { hard_cards: hard_cards.slice(start, end) };
   }
 
   @Post('feedback')
