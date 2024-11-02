@@ -3,13 +3,14 @@
   import { createEventDispatcher } from 'svelte';
   import { goto } from "$app/navigation";
   import { getCardColor } from '$lib/utils/cardColors';
+  import Spinner from "$lib/components/Spinner.svelte";
 
   const dispatch = createEventDispatcher();
     
   export let flashcardExerciseId: number;
   export let moduleId: number;
 
-  let questions: any = [];
+  let questions: any = null;
   let page: number = 1;
   let totalRecords: number = 0;
   $: totalPages = Math.ceil(totalRecords / 4);
@@ -107,7 +108,7 @@
           {/if}
         </button>
       </div>
-
+      {#if questions}
       {#each questions as question}
         <div class="flex w-full gap-4 items-start">
           <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
@@ -143,6 +144,9 @@
           </div>
         </div>
       {/each}
+      {:else}
+        <Spinner/>
+      {/if}
     </div>
   </div>
 
