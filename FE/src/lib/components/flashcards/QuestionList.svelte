@@ -11,8 +11,8 @@
   let questions: any = [];
   let page: number = 1;
   let totalRecords: number = 0;
-  let hardSortOrder: 'ASC' | 'DESC' | 'NONE' = 'DESC';
   $: totalPages = Math.ceil(totalRecords / 4);
+  let hardSortOrder: 'ASC' | 'DESC' | 'NONE' = 'DESC';
   
   const fetchQuestions = async () => {
     const response = await fetch(`http://localhost:3000/flashcard-exercise/cards?page=${page}&limit=4&hard_order=${hardSortOrder}&flashcardExerciseId=${flashcardExerciseId}`);
@@ -56,6 +56,7 @@
         flashcardExerciseId: flashcardExerciseId
       })
     });
+    hardSortOrder = "NONE";
     await fetchQuestions();
   };
 
@@ -104,7 +105,14 @@
         <span>Líc</span>
         <span>Rub</span>
         <button class="flex items-center cursor-pointer" on:click={toggleSort}>
-          Těžké {hardSortOrder === 'ASC' ? '↑' : '↓'}
+          Těžké
+          {#if hardSortOrder === 'ASC'}
+            ↑
+          {:else if hardSortOrder === 'DESC'}
+            ↓
+          {:else}
+            -
+          {/if}
         </button>
       </div>
 
