@@ -70,7 +70,7 @@
 <button 
     type="button" 
     on:click={flipCard} 
-    class="w-4/5 h-4/5 mt-8 border-2 border-black flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
+    class="w-4/5 h-4/5 mt-8 border-2 border-black hover:bg-background flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
 >
     <div class="flex-grow flex flex-col items-center">
         <p class="text-2xl font-bold">
@@ -90,9 +90,9 @@
 <div class="flex justify-center space-x-4 mt-4">
   <button
     on:click={async () => {await getPrevQuestion()}}
-    class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+    class={`border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200 ${currentIndex != 1 ? 'opacity-100' : 'opacity-0'}`}
   >
-    Předchozí karta
+  Předchozí karta
   </button>
     
   <label class="text-xl font-bold text-center flex justify-center gap-4">Těžká
@@ -110,12 +110,19 @@
       Další karta
     </button>
   {:else}
+  <button
+      on:click={async () => {await getNextQuestion()}}
+      class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
+    >
+      Zpět na začátek
+    </button>
+  {/if}
     <button
       on:click={async () => {await goto(`/module/1/flashcards/results`)}}
       class="border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200"
     >
       Vyhodnotit flashcards
     </button>
-  {/if}
+ 
 </div>
 <Progressbar {currentIndex} {totalQuestions} />
