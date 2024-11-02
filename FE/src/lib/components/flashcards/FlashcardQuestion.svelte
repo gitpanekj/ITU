@@ -91,6 +91,7 @@
   <button
     on:click={async () => {await getPrevQuestion()}}
     class={`border-2 border-black py-2 px-4 rounded-lg hover:bg-gray-200 ${currentIndex != 1 ? 'opacity-100' : 'opacity-0'}`}
+    disabled={currentIndex == 1}
   >
   Předchozí karta
   </button>
