@@ -233,7 +233,10 @@ export class FlashcardExerciseController {
     const start = (page - 1) * limit;
     const end = start + limit;
 
-    return { hard_cards: hard_cards.slice(start, end) };
+    return {
+      hard_cards: hard_cards.slice(start, end),
+      total: hard_cards.length,
+    };
   }
 
   @Post('feedback')
