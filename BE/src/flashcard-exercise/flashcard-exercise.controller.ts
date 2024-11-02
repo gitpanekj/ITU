@@ -43,7 +43,7 @@ export class FlashcardExerciseController {
     @Query('hard_order') hard_order: 'ASC' | 'DESC' | 'NONE' = 'NONE',
     @Query() _filters: any,
   ) {
-    const { page: _, limit: __, hard_first: ___, ...filters } = _filters;
+    const { page: _, limit: __, hard_order: ___, ...filters } = _filters;
     let order;
     if (hard_order != 'NONE') {
       order = { hardCount: hard_order };
