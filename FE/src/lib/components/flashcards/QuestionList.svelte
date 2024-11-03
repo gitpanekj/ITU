@@ -31,6 +31,7 @@
     } else{
       hardSortOrder = 'DESC';
     }
+    page = 1; //go to the beginning
     fetchQuestions();
   };
 
@@ -51,7 +52,7 @@
         flashcardExerciseId: flashcardExerciseId
       })
     });
-    hardSortOrder = "NONE";
+    hardSortOrder = "NONE"; //turn of sorting so the new card is on the top
     await fetchQuestions();
   };
 
@@ -79,12 +80,14 @@
 <div class="h-full flex flex-col justify-between mt-10">
   <div>
     <div class="relative w-4/5 mx-auto mb-4 flex justify-center">
+      <!-- Add button -->
       <button
         on:click={() => {addQuestion();}}
         class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
         Přidat kartu
       </button>
 
+      <!-- Student view button -->
       <button
       on:click={() => {goto(`/module/${moduleId}/flashcards/${flashcardExerciseId}`);}}
         class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600 absolute right-0">
@@ -110,41 +113,46 @@
         </button>
       </div>
       {#if questions}
-      {#each questions as question}
-        <div class="flex w-full gap-4 items-start">
-          <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
-            <textarea
-              class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-              placeholder="Zadejte líc karty..."
-              bind:value={question.frontFace}
-              on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
-            ></textarea>
-            
-            <textarea
-              class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
-              placeholder="Zadejte rub karty..."
-              bind:value={question.backFace}
-              on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
-            ></textarea>
+        {#each questions as question}
+        <!-- Card container -->
+          <div class="flex w-full gap-4 items-start">
+            <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
+              <!-- FrontFace -->
+              <textarea
+                class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
+                placeholder="Zadejte líc karty..."
+                bind:value={question.frontFace}
+                on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
+              ></textarea>
+              <!-- BackFace -->
+              <textarea
+                class="w-full border-2 p-2 rounded-lg focus:outline-none focus:border-blue-500 text-xl min-h-[125px]"
+                placeholder="Zadejte rub karty..."
+                bind:value={question.backFace}
+                on:blur={() => updateQuestion(question.id, question.frontFace, question.backFace)}
+              ></textarea>
 
-            <p class={`mx-20 p-2 rounded-lg  ${getCardColor(question.hardCount)}`} style="min-width: 50px; text-align: center;">
-              {question.hardCount}
-            </p>
-            <div class="flex flex-col gap-5">
-              <button
-                on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
-                class="text-white bg-red-500 p-2 rounded-lg hover:bg-red-600">
-                Odstranit
-              </button>
-              <button
-                on:click={() => {showFeedback(question.id);}}
-                class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
-                Poznámky
-              </button>
+              <!-- HardCount -->
+              <p class={`mx-20 p-2 rounded-lg  ${getCardColor(question.hardCount)}`} style="min-width: 50px; text-align: center;">
+                {question.hardCount}
+              </p>
+              <div class="flex flex-col gap-5">
+                <!-- Remove button -->
+                <button
+                  on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
+                  class="text-white bg-red-500 p-2 rounded-lg hover:bg-red-600">
+                  Odstranit
+                </button>
+                <!-- Show feedback button -->
+                <button
+                  on:click={() => {showFeedback(question.id);}}
+                  class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
+                  Poznámky
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      {/each}
+        {/each}
       {:else}
         <Spinner/>
       {/if}

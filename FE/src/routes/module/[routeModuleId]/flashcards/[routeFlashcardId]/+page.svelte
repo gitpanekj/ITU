@@ -14,27 +14,10 @@
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
   let title: string = "Flashcard exercise";
 
-  // Flashcard
-  let flashcard: {
-    id: number, 
-    frontFace: string,
-    backFace: string,
-    hardCount: number,
-    feedback: string,
-    flashcardExerciseId: number
-  } | null = null; // Initially null, until data is fetched
-
-  let isFlipped = false;
   let sessionCreated = false;
-  let currentIndex = 1; // todo
-  let total = 10; //todo
 
-  // Fetch the flashcard data after the page render
   onMount(async () => {
       await createSession();
-      // const response = await fetch(`http://localhost:3000/flashcard-exercise/card/${flashcardId}`);
-      // const data = await response.json();
-      // flashcard = data.flashcard; // Set the flashcard data after fetching
   });
 
 

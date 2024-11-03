@@ -32,8 +32,10 @@
 
   onMount(fetchQuestion);
 </script>
+<!-- Card section -->
 <div class="h-full flex flex-col justify-between mt-10">
   <div>
+    <!-- Back button -->
     <button
       on:click={() => {hideFeedback();}}
       class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
@@ -71,6 +73,7 @@
       <h1 class="mt-8">
         Poznámky k této kartě
       </h1>
+      <!-- Feedback section -->
       <div class="mt-8 space-y-4 overflow-y-auto max-h-[800px]">
         {#if feedbacks}
           {#if feedbacks.length > 0}

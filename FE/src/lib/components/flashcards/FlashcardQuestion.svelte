@@ -123,6 +123,7 @@
 
 <!-- Buttons Section -->
 <div class="flex justify-center space-x-4 mt-4">
+  <!-- Prev button -->
   <button
     on:click={async () => {await getPrevQuestion()}}
     class={`text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600 ${currentIndex != 1 ? 'opacity-100' : 'opacity-0'}`}
@@ -130,7 +131,7 @@
   >
   Předchozí karta
   </button>
-    
+  <!-- Hard checkbox --> 
   <label class="text-xl font-bold text-center flex justify-center gap-4">Těžká
     <input
         type="checkbox"
@@ -138,14 +139,14 @@
         on:click={async () => {await toggleHard()}}
         class="w-8 h-8 cursor-pointer"/>
     </label>
-
+    <!-- Next/Back to beginning button -->
     <button
       on:click={async () => {await getNextQuestion()}}
       class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600"
     >
       {currentIndex < totalQuestions?"Další karta":"Zpět na začátek"}
     </button>
-
+    <!-- Evaluate button -->
     <button
       on:click={async () => {await goto(`/module/1/flashcards/results`)}}
       class="border-2 border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600"
