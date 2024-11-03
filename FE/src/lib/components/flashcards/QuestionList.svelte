@@ -25,9 +25,11 @@
 
   const toggleSort = () => {
     if (hardSortOrder === 'ASC') {
-      hardSortOrder = 'DESC';
-    } else{
+      hardSortOrder = 'NONE';
+    } else if (hardSortOrder === 'DESC'){
       hardSortOrder = 'ASC';
+    } else{
+      hardSortOrder = 'DESC';
     }
     fetchQuestions();
   };
@@ -64,7 +66,6 @@
         backFace: backFace
       })
     });
-    await fetchQuestions();
   };
 
   const showFeedback = (id: number) => {
