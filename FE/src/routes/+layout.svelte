@@ -4,6 +4,6 @@
 
 
 <!-- Body -->
-<div class="w-full flex flex-col bg-background h-screen">
+<div class="w-full flex flex-col h-screen">
     <slot/>
 </div>

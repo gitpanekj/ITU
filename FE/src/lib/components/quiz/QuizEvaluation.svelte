@@ -147,7 +147,7 @@
                             ? 'bg-neutral-300 text-black border-8 border-green-600' 
                             : chosen === answer.id 
                             ? 'bg-neutral-300 text-black border-8 border-red-600'
-                            : 'bg-neutral-300'}`}>
+                            : 'bg-neutral-300 border-4'}`}>
                         <div class="m-2 ml-6 text-justify bg-inherit w-full h-full">{answer.answer}</div>      
                     </button>                
                 {/each}

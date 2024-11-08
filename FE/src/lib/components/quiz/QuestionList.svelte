@@ -3,14 +3,14 @@
   import { createEventDispatcher } from 'svelte';
 
   export let quizId: number;
-  export let selectedQuestionId: number | null = null;
+  let selectedQuestionId: number | null = null;
 
   const dispatch = createEventDispatcher();
 
   // Function to handle selecting a question and dispatching the event
   const selectQuestion = (id: number) => {
     selectedQuestionId = id;
-    dispatch('selectQuestion', { selectedQuestionId }); // Dispatch the event with the selectedQuestionId
+    dispatch('selectQuestion', { selectedQuestionId }); 
   };
 
   let questions: any = [];
@@ -22,8 +22,8 @@
     const { data, total } = await response.json();
     questions = data;
 
-    // Set selectedQuestionId to the first question's ID only if not already selected
-    if (questions.length > 0 && selectedQuestionId === null) {
+    
+    if (questions.length > 0) {
       selectQuestion(questions[0].id);
     }
   };
@@ -36,7 +36,8 @@
       },
       body: JSON.stringify({ name: "Nová otázka", question: "Text otázky", quizId: quizId, rightAnswerId: null })
     });
-
+    const data = await response.json();
+    await createNewAnswer(data.id);
     await fetchQuestions();
   };
 
@@ -48,13 +49,33 @@
     await fetchQuestions();
   };
 
+  const createNewAnswer = async (newQuestionId: number) => {
+    const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
+        method: "POST",
+        headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ answer: "odpověď", questionId: newQuestionId })
+    });
+    const data = await response.json();
+    await setCorrectAnswer(newQuestionId, data.id);
+  };
+
+  const setCorrectAnswer = async (newQuestionId: number, correctAnswerId: number) => {
+    const response = await fetch(`http://localhost:3000/quiz-exercise/question/${newQuestionId}`,
+    {
+      method: "PATCH",
+      headers: {
+            'Content-Type': 'application/json', 
+        },
+      body: JSON.stringify({rightAnswerId: correctAnswerId})
+    });
+  };
+
   onMount(async () => {
     await fetchQuestions();
   });
 </script>
-
-<!-- Debugging questions -->
-{@debug questions}
 
 
 <div class="flex justify-between">
@@ -67,7 +88,6 @@
 </div>
 <hr class="h-1 mt-4 bg-blue-950 border-0 dark:bg-blue-950 w-11/12 overflow-y-auto">
 
-<!-- Questions header -->
 <div class="w-11/12 flex justify*between items-center mt-6">
   <div class="ml-4 text-4xl w-96 font-bold text-start">Název</div>
   <div class="w-36 text-2xl">Správně</div>
@@ -101,5 +121,3 @@
   </button>
 {/each}
 </div>
-
-{@debug selectedQuestionId}

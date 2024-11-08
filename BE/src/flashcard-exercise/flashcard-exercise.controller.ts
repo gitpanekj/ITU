@@ -40,14 +40,21 @@ export class FlashcardExerciseController {
   findAllCard(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 0,
+    @Query('hard_order') hard_order: 'ASC' | 'DESC' | 'NONE' = 'NONE',
     @Query() _filters: any,
   ) {
-    const { page: _, limit: __, ...filters } = _filters;
+    const { page: _, limit: __, hard_order: ___, ...filters } = _filters;
+    let order;
+    if (hard_order != 'NONE') {
+      order = { hardCount: hard_order };
+    } else {
+      order = { id: 'DESC' };
+    }
     return this.flashcardService.findAll({
       page,
       limit,
       filters,
-      order: { id: 'DESC' },
+      order: order,
     });
   }
 
@@ -206,17 +213,30 @@ export class FlashcardExerciseController {
   }
 
   @Get('evaluate_session/:sessionId')
-  async getHard(@Param('sessionId') id: string) {
+  async getHard(
+    @Param('sessionId') id: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 0,
+  ) {
     const session = await this.sessionService.findOne(+id);
     let hard_cards = [];
     for (let id of session.markedAsHard.split(';').map(Number)) {
       if (id === 0) continue;
       let card = await this.flashcardService.findOne(id);
-      card["session_feedback"] = session.feedback[id]; 
+      card['session_feedback'] = session.feedback[id];
       hard_cards.push(card);
+      console.log(hard_cards);
     }
 
-    return { hard_cards };
+    if (limit == 0) return { hard_cards };
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    return {
+      hard_cards: hard_cards.slice(start, end),
+      total: hard_cards.length,
+    };
   }
 
   @Post('feedback')

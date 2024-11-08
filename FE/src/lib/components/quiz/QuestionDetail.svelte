@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     // import QuestionList from "./QuestionList.svelte";
 
     export let selectedQuestionId: number | null = null; // TODO
@@ -9,8 +9,25 @@
     let correctAnswerId: number | null = null;
     let answers: any = [];
     let totalRecords: number; // TODO remove
-    
+    let flashMessage = "";  
+    let flashType = "";
 
+
+    const dispatch = createEventDispatcher();
+
+    const saveClicked = () => {
+        dispatch('saveClicked');
+    };
+
+
+    function showFlashMessage(message: string, type: string) {
+        flashMessage = message;
+        flashType = type;
+        setTimeout(() => {
+            flashMessage = "";
+            flashType = "";
+        }, 2000);  
+    };
 
     const fetchQuestion = async () => {
         const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`);
@@ -34,7 +51,7 @@
         {
           method: "PATCH",
           headers: {
-                'Content-Type': 'application/json', // Indicate that the payload is JSON
+                'Content-Type': 'application/json', 
             },
           body: JSON.stringify({name: name, question: question, rightAnswerId: correctAnswerId})
         });
@@ -58,7 +75,7 @@
         const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
             method: "POST",
             headers: {
-                    'Content-Type': 'application/json', // Indicate that the payload is JSON
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ answer: "odpověď", questionId: selectedQuestionId })
             });
@@ -76,16 +93,9 @@
             await fetchAnswers();
 
         }else{
-            alert("Nelze smazat správnou odpověď!");
+            showFlashMessage("Nelze smazat správnou odpověď!", "red");
         }
       
-    };
-
-    const saveAndNext = async () => {
-        await saveQuestion();
-        await saveAnswers();
-        await fetchQuestion();
-        await fetchAnswers();
     };
 
 
@@ -125,14 +135,14 @@
                     bind:group={correctAnswerId}
                     value={answer.id}
                     />
-                    <!-- Custom checkmark styling -->
+
                     <div class="w-6 h-6 border-2 border-gray-600 rounded-sm flex items-center justify-center bg-white transition-colors">
                     {#if correctAnswerId === answer.id}
                         <span class="text-green-600 text-xl">✓</span>
                     {/if}
                     </div>
                 </label>
-                <!-- Delete button with circular styling -->
+
                 <button on:click={() => { deleteAnswer(answer.id); }} class="m-1 p-1 rounded-full bg-transparent hover:bg-red-400 border-0">
                     <img
                         alt="Smazat odpověď"
@@ -152,20 +162,20 @@
   </div>
 </div>
 
-  <!-- Button row -->
+
+{#if flashMessage}
+    <div class={`fixed top-4 left-1/2 transform -translate-x-1/2 ${flashType === 'green' ? 'bg-green-500' : 'bg-red-500'} text-white px-4 py-2 rounded shadow-md`}>
+        {flashMessage}
+    </div>
+{/if}
+
 <div class="flex justify-between w-3/4 mx-auto">
-  
-  <!-- <button 
-    on:click={async () => {
-        await saveAndNext();
-    }}
-    class="h-auto border-2 border-black bg-zinc-400 rounded-xl text-white text-2xl px-6 py-2 hover:bg-zinc-300">
-    Uložit a přidat další
-  </button> -->
   <button 
     on:click={async () => {
         await saveQuestion();
         await saveAnswers();
+        showFlashMessage("Uložení proběhlo úspěšně", "green");
+        saveClicked();
     }}
     class="h-auto border-2 border-black bg-zinc-400 rounded-xl text-white text-2xl px-6 py-2 hover:bg-zinc-300">
     Uložit

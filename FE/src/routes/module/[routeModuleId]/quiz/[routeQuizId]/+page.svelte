@@ -39,7 +39,7 @@
   Vytváří se session
 {:else}
   {#if $userView.view === "question"}
-    <QuizQuestion {quizId}/>
+    <QuizQuestion/>
   {:else}
     <QuizEvaluation/>
   {/if}
