@@ -38,14 +38,14 @@
     {#if !loading}
         {#if loggedIn}
             <button class="text-white hover:text-gray-300" on:click={() => {saveCallback(); goto("/teacher/module")}}>
-                Moje moduly
+                Moje lekce
             </button>
             <button class="text-white hover:text-gray-300" on:click={() => {saveCallback(); localStorage.removeItem('userId'); loggedIn = false; goto("/")}}>
-                Logout
+                Odhlásit se
             </button>
         {:else}
          <button class="text-white hover:text-gray-300" on:click={() => {saveCallback(); goto("/login")}}>
-            Login
+            Přihlásit se
         </button>
         {/if}
     {/if}
