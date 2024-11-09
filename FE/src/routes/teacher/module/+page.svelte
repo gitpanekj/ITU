@@ -43,17 +43,16 @@
         goto(`/teacher/module/${moduleId}`);
     } 
 
-    // TODO mazani
+    // TODO mazani lekce
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function deleteModule(moduleId: number) {
-        // TODO varovne okno
+    // TODO hezci varovne okno ?
+    function deleteModule(moduleId: number) {  
         let reallyDelete = confirm("Opravdu smazat lekci i všechna její cvičení?\nTuto akci nelze vrátit zpět!");
         if(reallyDelete) {
-            // delete module
             fetch(`http://localhost:3000/exercise-group/${moduleId}`,{method: 'DELETE'});
             console.log("Deleting module with ID [" + moduleId + "].");
-        }
-        location.reload(); // obnoveni stranky, tj. i seznamu
+            location.reload(); // obnoveni stranky, tj. i seznamu
+        }   
     } 
 
     async function createModule() {
@@ -201,7 +200,7 @@
                 </div>
             </form>
         </div>
-        
+
     </div>
     </div>
 
