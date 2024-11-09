@@ -282,9 +282,9 @@
                 {#each readings as reading}
                     <div class="border-2 rounded-xl border-slate-800 p-4">
                         <details>
-                            <summary class="font-bold">{reading.name}</summary>
-                            <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 rounded-md m-1">
-                            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                            <summary class="font-bold cursor-pointer hover:underline">{reading.name} ✏</summary>
+                            <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
+                            <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                     on:click={() => {renameExercise("reading", reading.id)}}>
                                 Přejmenovat
                             </button>
@@ -307,16 +307,16 @@
                 {#each flashcards as flashcard}
                 <div class="border-2 rounded-xl border-slate-800 p-4">
                     <details>
-                        <summary class="font-bold">{flashcard.name}</summary>
-                        <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 rounded-md m-1">
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        <summary class="font-bold cursor-pointer hover:underline">{flashcard.name} ✏</summary>
+                        <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
+                        <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                 on:click={() => {renameExercise("flashcards", flashcard.id)}}>
                             Přejmenovat
                         </button>
                     </details>
                     <br>
                     <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {goto(`/teacher/module/${moduleId}/flashcard/${flashcard.id}`)}}>
+                            on:click={() => {goto(`/teacher/module/${moduleId}/flashcards/${flashcard.id}`)}}>
                         Upravit
                     </button>
                     <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
@@ -332,9 +332,9 @@
                 {#each quizes as quiz}
                 <div class="border-2 rounded-xl border-slate-800 p-4">
                     <details>
-                        <summary class="font-bold">{quiz.name}</summary>
-                        <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 rounded-md m-1">
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        <summary class="font-bold cursor-pointer hover:underline">{quiz.name} ✏</summary>
+                        <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
+                        <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                 on:click={() => {renameExercise("quiz", quiz.id)}}>
                             Přejmenovat
                         </button>

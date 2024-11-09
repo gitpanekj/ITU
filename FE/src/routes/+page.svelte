@@ -78,18 +78,18 @@
                 <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                     <label for=code>Kód lekce</label>
                     <br>
-                    <input type=text id=code name=code class="bg-gray-100 rounded-md m-1">
+                    <input type=text id=code name=code class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
                 </div>
                 <br>
                 <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                     <label for=topic>Téma</label>
                     <br>
-                    <input type=text id=topic name=topic class="bg-gray-100 rounded-md m-1">
+                    <input type=text id=topic name=topic class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
                 </div>
                 <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                     <label for=school>Škola</label>
                     <br>
-                    <input type=text id=school name=school class="bg-gray-100 rounded-md m-1">
+                    <input type=text id=school name=school class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
                 </div>
             </form>
         </div>

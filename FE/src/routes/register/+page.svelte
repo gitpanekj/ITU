@@ -34,13 +34,13 @@
           <div>
             <label for=username>Uživatelské jméno</label>
             <br>
-            <input type=text id=username name=username class="bg-gray-100 rounded-md m-1">
+            <input type=text id=username name=username class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
             <br> 
           </div>
           <div>   
             <label for=email>E-mail</label>
             <br>
-            <input type=text id=email name=email class="bg-gray-100 rounded-md m-1">      
+            <input type=text id=email name=email class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">      
             <br>
           </div>
         </div>
@@ -48,13 +48,13 @@
           <div>
             <label for=password>Heslo</label>
             <br>
-            <input type=password id=password name=password class="bg-gray-100 rounded-md m-1">
+            <input type=password id=password name=password class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
             <br>  
           </div>
           <div>  
             <label for=password2>Heslo znovu</label>
             <br>
-            <input type=password id=password2 name=password2 class="bg-gray-100 rounded-md m-1">      
+            <input type=password id=password2 name=password2 class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">      
             <br>
           </div>
         </div>
@@ -62,13 +62,13 @@
           <div>
             <label for=fullname>Jméno a příjmení</label>
             <br>
-            <input type=text id=fullname name=fullname class="bg-gray-100 rounded-md m-1">
+            <input type=text id=fullname name=fullname class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
             <br>    
           </div>
           <div> 
             <label for=school>Název školy</label>
             <br>
-            <input type=text id=school name=school class="bg-gray-100 rounded-md m-1">
+            <input type=text id=school name=school class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
             <br>
           </div>
         </div>
