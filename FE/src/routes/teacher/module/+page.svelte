@@ -55,20 +55,24 @@
         }   
     } 
 
-    async function createModule() {
-        // let requestContent = {
-        //     method: 'POST',
-        //     body: JSON.stringify({
-        //         name: "Nová lekce",
-        //         description: "Popis lekce",
-        //         teacherId: userId 
-        //     })
-        // }
-        // const response = await fetch(`http://localhost:3000/exercise-group`, requestContent);
-        // const data = await response.json();
-        // console.log("Creating a new module with ID [" + data.moduleId + "] for teacher with ID [" + userId + "].");
-        // goto(`/teacher/module/${data.moduleId}`);
+    // TODO tvorba nove lekce
+    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
+    function createModule() {
+        const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+                name: "Nová lekce",
+                description: "Výchozí popis lekce.",
+                teacherId: userId 
+            })
+        };
+
+        fetch(`http://localhost:3000/exercise-group`, requestOptions);
+        
         console.log("Creating new module.");
+
+        location.reload(); // obnoveni stranky, tj. i seznamu
     }
 
 
@@ -97,7 +101,7 @@
 <div class="flex mt-10">
        
     <!-- Skryte moduly --> 
-    <div class="basis-1/3 grid gap-8 grid-cols-1 m-10">
+    <!-- <div class="basis-1/3 grid gap-8 grid-cols-1 m-10">
         <h2>Skryté lekce</h2>
         <div class="border-2 rounded-xl border-slate-800 p-4">
             <h2 class="font-bold">SKRYTÝ MODUL #1 (UKÁZKA)</h2>   
@@ -138,19 +142,23 @@
                 Zveřejnit →
             </button>
         </div>
-    </div>
+    </div> -->
+
+    <!-- TEMPORARY START -->
+    <div class="basis-1/4"></div>
+    <!-- TEMPORARY END -->
 
     <!-- Viditelne moduly --> 
     <div class="basis-1/3 grid gap-8 grid-cols-1 m-10">
-        <h2>Veřejné lekce</h2>
+        <!-- <h2>Veřejné lekce</h2> -->
         {#each modules as mod (mod.id)}
             <div class="border-2 rounded-xl border-slate-800 p-4">
                 <h2 class="font-bold">{mod.name}</h2>     
                 <br>
-                <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                <!-- TEMPORARY COMMENTED <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                         on:click={() => {hideModule(mod.id)}}>
                     ← Skrýt
-                </button>
+                </button> -->
                 <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                         on:click={() => {editModule(mod.id)}}>
                     Upravit
@@ -169,10 +177,10 @@
     <div class="fixed">
 
         <!-- Vytvorit lekci -->
-        <div class="mx-4 py-2">
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+        <div class="flex mx-auto justify-center mb-16">
+            <button class="rounded-xl text-xl font-bold border-2 py-3 px-6 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                     on:click={() => {createModule()}}>
-                Vytvořit lekci
+                Vytvořit novou lekci
             </button>
         </div>
 
@@ -180,7 +188,7 @@
         <!-- TODO filtry přesunout do jejich komponenty -->
         <!-- TODO po zapsání znaku akce: spustit filtrování -->
         <div class="border-2 rounded-xl border-slate-800 p-2">
-            <h2 class="font-bold text-xl m-2 justify-center">Filtry</h2>
+            <h2 class="flex mx-auto font-bold text-xl justify-center mb-4">Filtry</h2>
             <form class="flex flex-col text-xl">
                 <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                     <label for=code>Kód lekce</label>
