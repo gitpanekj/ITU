@@ -18,23 +18,30 @@
     let quizes: {id: number, name: string, description: string, groupId: number}[] = [];
     let readings: {id: number, name: string, description: string, groupId: number}[] = [];
     let teacher_name: string = "...";
+    let exercises_counts: {flashcards: number, quizes: number, readings: number, all: number} = {flashcards: 0, quizes: 0, readings: 0, all: 0};
 
     const getFlashcards = async () => {
         const response = await fetch(`http://localhost:3000/flashcard-exercise?groupId=${moduleId}`);
         const data = await response.json();
         flashcards = data.data;
+        exercises_counts.flashcards = data.total;
+        exercises_counts.all += data.total;
     }
 
     const getQuizes = async () => {
         const response = await fetch(`http://localhost:3000/quiz-exercise?groupId=${moduleId}`);
         const data = await response.json();
         quizes = data.data;
+        exercises_counts.quizes = data.total;
+        exercises_counts.all += data.total;
     }
 
     const getReadings = async () => {
         const response = await fetch(`http://localhost:3000/reading-exercise?groupId=${moduleId}`);
         const data = await response.json();
         readings = data.data;
+        exercises_counts.readings = data.total;
+        exercises_counts.all += data.total;
     }
 
     const getTeacherName = async () => {
@@ -42,6 +49,7 @@
         const data = await response.json();
         teacher_name = data.username;
     }
+
 
 
     onMount( async () => {
@@ -71,57 +79,74 @@
 
     <!-- Odkazy a popis -->
     <div class="basis-3/4 m-10">
+
+        <!-- Popis -->
+        <div class="ml-10 mb-10">
+            <p class="text-xl">{module_data.description}</p>
+        </div>
+
         <div class="grid gap-16 grid-cols-3 m-10">
-            <div class="grid gap-2 grid-cols-1">
+            <!-- Cteni -->
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechna čtení v lekci:</p>
                 {#each readings as reading}
-                    <a href="/module/{moduleId}/reading/{reading.id}">
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                            {reading.name}
-                        </button>
-                    </a>
+                    <div class="border-2 rounded-xl border-slate-800 p-4">
+                        <p class="font-bold">{reading.name}</p>
+                        <br>
+                        <a href="/module/{moduleId}/reading/{reading.id}">
+                            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
+                                Spustit cvičení
+                            </button>
+                        </a>
+                    </div>
                 {/each}
             </div>
-            <div class="grid gap-2 grid-cols-1">
+            <!-- Flashcards -->
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechny kartičky v lekci:</p>
                 {#each flashcards as flashcard}
-                    <a href="/module/{moduleId}/flashcards/{flashcard.id}">
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                            {flashcard.name}
-                        </button>
-                    </a>
+                    <div class="border-2 rounded-xl border-slate-800 p-4">
+                        <p class="font-bold">{flashcard.name}</p>
+                        <br>
+                        <a href="/module/{moduleId}/flashcards/{flashcard.id}">
+                            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
+                                Spustit cvičení
+                            </button>
+                        </a>
+                    </div>
                 {/each}
             </div>
-            <div class="grid gap-2 grid-cols-1">
+            <!-- Kviz -->            
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechny kvízy v lekci:</p>
                 {#each quizes as quiz}
-                    <a href="/module/{moduleId}/quiz/{quiz.id}">
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                            {quiz.name}
-                        </button>
-                    </a>
+                    <div class="border-2 rounded-xl border-slate-800 p-4">
+                        <p class="font-bold">{quiz.name}</p>
+                        <br>
+                        <a href="/module/{moduleId}/quiz/{quiz.id}">
+                            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
+                                Spustit cvičení
+                            </button>
+                        </a>
+                    </div>
                 {/each}
             </div>
         </div>
-        <div class="m-20">
-            <p class="text-xl">
-                {module_data.description}
-            </p>
-        </div>
+
     </div>
 
     <!-- Kod a znacky -->
     <!-- TODO kod a tagy -->
     <div class="basis-1/4 m-10">
         <!-- zde pripadne bude obrazek, pokud budeme implementovat -->
-        <p class="text-2xl font-bold py-8 px-2">
+        <p class="text-3xl font-bold py-8 px-2">
             #123456<br>
         </p>
-        <br>
         <p class="text-xl py-8 px-2">
-            Téma<br>
-            Škola<br>
-            . . .<br>
+            Celkem cvičení: {exercises_counts.all}<br>
+            Flashcards: {exercises_counts.flashcards}<br>
+            Kvízů: {exercises_counts.quizes}<br>
+            Čtení: {exercises_counts.readings}<br>
         </p>
     </div>
 
