@@ -51,27 +51,30 @@
   let quizes: {id: number, name: string, description: string, groupId: number}[] = [];
   let readings: {id: number, name: string, description: string, groupId: number}[] = [];
   let teacher_name: string = "...";
-  let max_rows: number = 1;
+  let exercises_counts: {flashcards: number, quizes: number, readings: number, all: number} = {flashcards: 0, quizes: 0, readings: 0, all: 0};
 
   const getFlashcards = async () => {
       const response = await fetch(`http://localhost:3000/flashcard-exercise?groupId=${moduleId}`);
       const data = await response.json();
       flashcards = data.data;
-      if(data.total > max_rows) max_rows = data.total; // pro jednotne formatovani tabulky
+      exercises_counts.flashcards = data.total;
+      exercises_counts.all += data.total;
   }
 
   const getQuizes = async () => {
       const response = await fetch(`http://localhost:3000/quiz-exercise?groupId=${moduleId}`);
       const data = await response.json();
       quizes = data.data;
-      if(data.total > max_rows) max_rows = data.total;
+      exercises_counts.quizes = data.total;
+      exercises_counts.all += data.total;
   }
 
   const getReadings = async () => {
       const response = await fetch(`http://localhost:3000/reading-exercise?groupId=${moduleId}`);
       const data = await response.json();
       readings = data.data;
-      if(data.total > max_rows) max_rows = data.total;
+      exercises_counts.readings = data.total;
+      exercises_counts.all += data.total;
   }
 
   const getTeacherName = async () => {
@@ -143,7 +146,6 @@
 
     // TODO prejmenovani cviceni
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    // TODO pri ziskavani newName myslet na to ze dom muze byt null
     function renameExercise(exerciseType: string, exerciseId: number) {
         let newName = "";
         let names;
@@ -215,6 +217,41 @@
         location.reload(); // obnoveni stranky, tj. i seznamu
     }
 
+    // TODO uprava popisu
+    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
+    function editDescription() {
+        let element: any = document.getElementsByName("description")[0];
+        if(element != null) {
+            let requestOptions = {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    description: element.value
+                })
+            };
+            fetch(`http://localhost:3000/exercise-group/${moduleId}`, requestOptions);
+            console.log("Changing description of module with ID [" + moduleId +"].");
+            location.reload(); // obnoveni stranky, tj. i popisu
+        }
+    }
+
+    // TODO uprava nazvu
+    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
+    function editName() {
+        let element: any = document.getElementsByName("name")[0];
+        if(element != null) {
+            let requestOptions = {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ 
+                    name: element.value
+                })
+            };
+            fetch(`http://localhost:3000/exercise-group/${moduleId}`, requestOptions);
+            console.log("Changing title of module with ID [" + moduleId +"].");
+            location.reload(); // obnoveni stranky, tj. i popisu
+        }
+    }
 
 
   onMount( async () => {
@@ -236,8 +273,17 @@
 <!-- TODO uprava nazvu -->
 <Navbar {title} {links}/>
 <br>
-<div class="w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl">
-  {module_data.name}
+<div class="w-11/12 mx-auto flex flex-col text-center justify-center">
+    <details>
+        <summary title="Upravit název" class="font-bold text-4xl cursor-pointer list-none hover:underline">{module_data.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
+        <br>
+        <input type="text" name="name" class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.name}>
+        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                on:click={() => {editName()}}>
+            Změnit název
+        </button>
+        <hr class="border-blue-950 m-4">
+    </details>
 </div>
 <br>
 <div class="w-11/12 mx-auto flex flex-col text-center justify-center italic text-xl">
@@ -245,18 +291,23 @@
 </div>
 
 <!-- Obsah stranky -->
-<!-- TODO uprava popisu -->
 <div class="flex mt-10">
 
-    <!-- Odkazy a popis -->
-    <!-- TODO přidat nový-->
+    <!-- Popis a odkazy na cviceni -->
     <div class="basis-3/4 m-10">
 
         <!-- Popis -->
         <div class="ml-10 mb-10">
-            <p class="text-xl">
-                {module_data.description}
-            </p>
+            <details>
+                <summary title="Upravit popis" class="text-xl cursor-pointer list-none hover:underline">{module_data.description}&nbsp;&nbsp;<b>|</b> ✏</summary>
+                <br>
+                <textarea name="description" class="w-full bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.description}></textarea>
+                <button class="mx-auto flex flex-col text-center justify-center rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        on:click={() => {editDescription()}}>
+                    Změnit popis
+                </button>
+                <hr class="border-blue-950 m-4">
+            </details>
         </div>
 
         <!-- Tvorba novych cviceni -->
@@ -277,17 +328,19 @@
 
         <div class="grid gap-16 grid-cols-3 m-10">
             <!-- Cteni -->
-            <div class="grid gap-2 grid-cols-1 grid-rows-{max_rows}">
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechna čtení v lekci:</p>
                 {#each readings as reading}
                     <div class="border-2 rounded-xl border-slate-800 p-4">
                         <details>
-                            <summary class="font-bold cursor-pointer hover:underline">{reading.name} ✏</summary>
-                            <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                            <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                            <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{reading.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
+                            <br>
+                            <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={reading.name}>
+                            <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                     on:click={() => {renameExercise("reading", reading.id)}}>
                                 Přejmenovat
                             </button>
+                            <hr class="border-blue-950 m-4">
                         </details>
                         <br>
                         <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
@@ -302,17 +355,19 @@
                 {/each}
             </div>
             <!-- Flashcards -->
-            <div class="grid gap-2 grid-cols-1 grid-rows-{max_rows}">
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechny kartičky v lekci:</p>
                 {#each flashcards as flashcard}
                 <div class="border-2 rounded-xl border-slate-800 p-4">
                     <details>
-                        <summary class="font-bold cursor-pointer hover:underline">{flashcard.name} ✏</summary>
-                        <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                        <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{flashcard.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
+                        <br>
+                        <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={flashcard.name}>
+                        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                 on:click={() => {renameExercise("flashcards", flashcard.id)}}>
                             Přejmenovat
                         </button>
+                        <hr class="border-blue-950 m-4">
                     </details>
                     <br>
                     <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
@@ -327,17 +382,19 @@
                 {/each}
             </div>
             <!-- Kviz -->
-            <div class="grid gap-2 grid-cols-1 grid-rows-{max_rows}">
+            <div class="space-y-4">
                 <p class="font-bold text-xl">Všechny kvízy v lekci:</p>
                 {#each quizes as quiz}
                 <div class="border-2 rounded-xl border-slate-800 p-4">
                     <details>
-                        <summary class="font-bold cursor-pointer hover:underline">{quiz.name} ✏</summary>
-                        <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                        <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{quiz.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
+                        <br>
+                        <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={quiz.name}>
+                        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                                 on:click={() => {renameExercise("quiz", quiz.id)}}>
                             Přejmenovat
                         </button>
+                        <hr class="border-blue-950 m-4">
                     </details>
                     <br>
                     <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
@@ -352,22 +409,22 @@
                 {/each}
             </div>
         </div>
-  </div>
+    </div>
 
-  <!-- Kod a znacky -->
-  <!-- TODO kod a tagy -->
-  <div class="basis-1/4 m-10">
-      <!-- zde pripadne bude obrazek, pokud budeme implementovat -->
-      <p class="text-2xl font-bold py-8 px-2">
-          #123456<br>
-      </p>
-      <br>
-      <p class="text-xl py-8 px-2">
-          Téma<br>
-          Škola<br>
-          . . .<br>
-      </p>
-  </div>
+    <!-- Kod a znacky -->
+    <!-- TODO kod a tagy -->
+    <div class="basis-1/4 m-10">
+        <!-- zde pripadne bude obrazek, pokud budeme implementovat -->
+        <p class="text-3xl font-bold py-8 px-2">
+            #123456<br>
+        </p>
+        <p class="text-xl py-8 px-2">
+            Celkem cvičení: {exercises_counts.all}<br>
+            Flashcards: {exercises_counts.flashcards}<br>
+            Kvízů: {exercises_counts.quizes}<br>
+            Čtení: {exercises_counts.readings}<br>
+        </p>
+    </div>
 
-</div>
+    </div>
 
