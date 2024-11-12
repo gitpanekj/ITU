@@ -13,16 +13,11 @@ export async function load({ params } : { params: Record<string, string>}){
     const moduleId: number = +routeModuleId;
     const readingId: number = +routeReadingId;
 
-    // TODO: Fetch initial data - before page is rendered
-    // const response = await fetch('');
-    // const quiz_data = await response.json();
-
     return {
         props:
             {
                 moduleId,
-                readingId,
-                // quiz_data
+                readingId
             }
     }
 }

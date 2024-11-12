@@ -1,187 +1,97 @@
 <script lang="ts">
-  import { onMount } from "svelte";
-  import { teacherView } from "../../../stores/Reading/teacherView";
-  import { text } from "@sveltejs/kit";
+  // Libs
+  import { loadQuestionDetail, questionDetailStore, saveQuestionDetail } from "../../../stores/Reading/QuestionDetailStore";
+  import { deleteQuestionTextLink, editorStore, highlightLinkedText, loadEditorContents } from "../../../stores/Reading/EditorStore";
+  import { teacherQuestionPanelStore } from "../../../stores/Reading/TeacherQuestionPanelStore";
+  
+  // Props
   export let readingId;
-
-  let name = "";
-  let question = "";
-  let answer = "";
-  let textAttached = false;
+  
+  // UI state
   let highlighted = false;
 
-  onMount(async () => {
-    const response = await fetch(
-      `http://localhost:3000/reading-exercise/question/${$teacherView.questionId}`
-    );
-    const data = await response.json();
-    teacherView.load_question(data.name, data.question, data.answer, data.textAttached);
-    name = data.name;
-    question = data.question;
-    answer = data.answer;
-    textAttached = data.textAttached;
-  });
-
-
-  const unattachText = async () => {
-    const response = await fetch(
-      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${$teacherView.questionId}`,
-      {
-        method: "DELETE"
-      }
-    );
-    const data = await response.text();
-    $teacherView.editor?.commands.setContent(data);
-  }
-
-  const highlightText = async () => {
-    const response = await fetch(
-      `http://localhost:3000/reading-exercise/text/highlight/${readingId}/${$teacherView.questionId}`
-    );
-    const data = await response.text();
-
-    console.log(data);
-
-    $teacherView.editor?.commands.setContent(data);
-  }
-
-  const loadText = async () => {
-    const response = await fetch(
-      `http://localhost:3000/reading-exercise/text/${readingId}`
-    );
-    const data = await response.text();
-    console.log(data);
-
-    $teacherView.editor?.commands.setContent(data);
-  }
-
-  const saveQuestion = async () => {
-    const response = await fetch(
-      `http://localhost:3000/reading-exercise/question/${$teacherView.questionId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json", // Indicate that the payload is JSON
-        },
-        body: JSON.stringify({
-          name: name,
-          question: question,
-          answer: answer,
-          textAttached: $teacherView.textAttached,
-        }),
-      }
-    );
-    const data = await response.json();
+  const saveAndReturnBackButtonEvent = async () => {
+    try {
+    await loadEditorContents(readingId);       // clear potential highlights
+    await saveQuestionDetail();                // save linked text
+    } catch(err) {alert('Failed to save the question.');}
+    teacherQuestionPanelStore.set_list_view(); // change view
   };
+
+  const linkTextButtonEvent = async () => {
+    questionDetailStore.set_linking_text_mode();
+    editorStore.set_linking_text_mode();
+  };
+
+  const unLinkTextButtonEvent = async () => {
+    try {
+    await deleteQuestionTextLink(readingId, $questionDetailStore.questionId);
+    await loadQuestionDetail($questionDetailStore.questionId);
+    } catch(err) {alert('Failed to unlink the text.');}
+  };
+
+  const highlightTextButtonEvent = async () => {
+    try {
+    await highlightLinkedText(readingId, $questionDetailStore.questionId);
+  } catch(err) {alert('Failed to highlight the text.');}
+    highlighted = !highlighted;
+  };
+
+  const unHighlightTextButtonEvent = async () => {
+    try {
+    await loadEditorContents(readingId);
+  } catch(err) {alert('Failed to remove the text highlight.');}
+    highlighted = !highlighted;
+  };
+
+
+
 </script>
 
-<div class="h-full overlay {$teacherView.editting ? 'overlay-dark' : ''}">
+
+
+<div class="h-full overlay">
   <!-- Sub-navbar -->
-  <div class="w-full pl-4 h-16 bg-slate-400 flex flex-row items-center gap-8">
-    <button
-      on:click={async () => {
-        await saveQuestion();
-        teacherView.goto_list_view();
-      }}
-      class="border-2 border-blue-900 hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500"
-    >
+  <div class="w-full px-8 h-16 bg-slate-300 flex flex-row items-center justify-end rounded-br-xl">
+    <button on:click={async () => saveAndReturnBackButtonEvent()} class="py-2 px-4 flex justify-center items-center border-2 border-slate-700 rounded bg-slate-100 hover:bg-slate-700 hover:text-slate-100">
       Uložit a vrátit zpět
     </button>
   </div>
+
+
   <!-- question + result -->
   <div class="flex flex-col px-8 py-8">
     <!-- Question -->
-    <div
-      class="w-full border-4 border-black p-4 rounded-2xl flex flex-col gap-4"
-    >
+    <div class="w-full border-4 border-black p-4 rounded-2xl flex flex-col gap-4">
       <div class="flex gap-4 justify-start items-center">
-        <h1 class="text-2xl font-bold text-center">Odpověď na otázku</h1>
-        <input
-          bind:value={name}
-          disabled={$teacherView.editting}
-          type="text"
-          class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting
-            ? ' overlay'
-            : ''}"
-        />
+        <h1 class="text-2xl font-bold text-center">Název otázky</h1>
+        <input bind:value={$questionDetailStore.name} type="text" class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2"/>
       </div>
-      <br />
+      <br/>
 
-      <textarea
-        bind:value={question}
-        disabled={$teacherView.editting}
-        class="text-lg min-h-36 p-4 {$teacherView.editting ? ' overlay' : ''}"
-      ></textarea>
+      <textarea bind:value={$questionDetailStore.question} class="text-lg min-h-36 p-4 border-2"/>
 
-      <h3>Tvoje odpověď</h3>
-      <input
-        bind:value={answer}
-        disabled={$teacherView.editting}
-        type="text"
-        class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2 {$teacherView.editting
-          ? 'overlay'
-          : ''}"
-      />
+      <h3 class="text-2xl font-bold">Správná odpověď</h3>
+      <input bind:value={$questionDetailStore.answer} type="text" class="rounded-lg h-12 text-xl font-bold px-2 w-4/6 border-black border-2"/>
 
-      {#if ! $teacherView.textAttached}
-        <button
-          disabled={$teacherView.editting}
-          on:click={() => {
-            teacherView.edit_mode();
-          }}
-          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
-            ? ''
-            : 'hover:bg-slate-400'}">Připojit text</button
-        >
+      {#if !$questionDetailStore.textAttached}
+        <button on:click={() => linkTextButtonEvent()} class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black">
+          Připojit text
+        </button>
       {:else}
-          
         {#if !highlighted}
-        <button
-          disabled={$teacherView.editting}
-          on:click={async () => {
-            await highlightText();
-            highlighted = !highlighted;
-          }}
-          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
-            ? ''
-            : 'hover:bg-slate-400'}">Zobrazit text</button
-        >
+          <button on:click={async () => highlightTextButtonEvent()} class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black">
+            Zobrazit text
+          </button>
         {:else}
-        <button
-          disabled={$teacherView.editting}
-          on:click={async () => {
-            await loadText();
-            highlighted = !highlighted;
-          }}
-          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
-            ? ''
-            : 'hover:bg-slate-400'}">Zpět</button
-        >
+          <button on:click={async () => unHighlightTextButtonEvent()} class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black">
+            Zpět
+          </button>
         {/if}
-
-        <button
-          disabled={$teacherView.editting}
-          on:click={async () => {
-            await unattachText();
-            teacherView.attach_text(false);
-          }}
-          class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black {$teacherView.editting
-            ? ''
-            : 'hover:bg-slate-400'}">Odpojit text</button
-        >
-        
+        <button on:click={async () => unLinkTextButtonEvent()} class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black">
+          Odpojit text
+        </button>
       {/if}
     </div>
   </div>
 </div>
-
-<style>
-  .overlay {
-    background-color: rgba(0, 0, 0, 0); /* Transparent by default */
-    transition: background-color 0.3s ease;
-  }
-
-  .overlay-dark {
-    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay effect */
-  }
-</style>

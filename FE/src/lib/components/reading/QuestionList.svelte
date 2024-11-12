@@ -1,52 +1,109 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { teacherView } from "../../../stores/Reading/teacherView";
-    
-    export let readingId: number;
+  import { teacherQuestionPanelStore } from "../../../stores/Reading/TeacherQuestionPanelStore";
+  import { loadQuestionDetail } from "../../../stores/Reading/QuestionDetailStore";
+  
+  // props
+  export let readingId: number;
 
-    let questions: any = [];
-    let page: number = 1;
-    let totalRecords: number = 0;
-    $: totalPages = Math.ceil(totalRecords / 15);
-    
-
-
-    
-    const fetchQuestions = async () => {
+  // UI state
+  let questions: any = [];
+  let page: number = 1;
+  let totalRecords: number = 0;
+  $: totalPages = Math.ceil(totalRecords / 15);
+  
+  // Data fetch
+  const fetchQuestions = async () => {
+    try{
       const response = await fetch(`http://localhost:3000/reading-exercise/question?exerciseId=${readingId}&page=${page}&limit=15`);
+
+      if (!response.ok) {
+        const err = await response.text();
+        throw new HttpError(response.status, response.statusText, err);
+      }
       const {data, total} = await response.json();
       totalRecords = total;
       questions = data;
-    };
+    } catch (err) {throw err;}
+  };
 
-    const deleteQuestion = async (id: number) => {
+  const deleteQuestion = async (id: number) => {
+    try {
       const response = await fetch(`http://localhost:3000/reading-exercise/question/${id}`,
         {
           method: "DELETE"
         }
       );
-
-      await fetchQuestions();
+      if (!response.ok) {
+        const err = await response.text();
+        throw new HttpError(response.status, response.statusText, err);
+      }
     }
+    catch (err) {throw err;}
+  }
 
-    const addQuestion = async () => {
-      const response = await fetch(`http://localhost:3000/reading-exercise/question`,
-        {
-          method: "POST",
-          headers: {
-                'Content-Type': 'application/json', // Indicate that the payload is JSON
-            },
-          body: JSON.stringify({name: "Nová otázka", question: "Text otázky", answer: "Text odpovědi", exerciseId: readingId})
-        }
-      );
-
-      await fetchQuestions();
+  const addQuestion = async () => {
+    try { 
+    const response = await fetch(`http://localhost:3000/reading-exercise/question`,
+      {
+        method: "POST",
+        headers: {
+              'Content-Type': 'application/json', // Indicate that the payload is JSON
+          },
+        body: JSON.stringify({name: "Nová otázka", question: "Text otázky", answer: "Text odpovědi", exerciseId: readingId})
+      }
+    );
+    if (!response.ok) {
+      const err = await response.text();
+      throw new HttpError(response.status, response.statusText, err);
     }
+    } catch (err) {throw err;}
+  }
 
+  // events
+  const deleteQuestionButtonEvent = async (questionId: number) => {
+    try {
+      await deleteQuestion(questionId);
+     await fetchQuestions();
+    } catch(err) {alert('Failed to delete the question.');}
+  };
 
-    onMount(async () => {
+  const addQuestionButtonEvent = async () => {
+    try {
+      await addQuestion();
       await fetchQuestions();
-    });
+    } catch(err) {alert('Failed to add the question.');}
+
+  };
+
+  const gotoQuestionDetailEvent = async (questionId: number) => {
+    try {
+      await  loadQuestionDetail(questionId);
+    } catch(err) {alert('Failed to show the question.');}
+    teacherQuestionPanelStore.set_detail_view()
+  };
+
+  const prevPageButtonEvent = async () => {
+    try {
+      if(page > 1){page-=1};
+      fetchQuestions();
+    } catch(err) {alert('Failed to load the questions.');}
+  };
+
+  const nextPageButtonEvent = async () => {
+    try {
+      if(page < totalPages){page+=1};
+      fetchQuestions()
+  } catch(err) {alert('Failed to load the questions.');}
+  };
+
+  // Mount
+  onMount(async () => {
+    
+    try {
+      await fetchQuestions();
+    } catch(err) {alert('Failed to load the questions.');}
+  });
 
 </script>
 
@@ -54,20 +111,21 @@
 <div class="h-full flex flex-col justify-between">
     <div>
       <!-- Sub-navbar -->
-      <div class="w-full pl-4 h-16 bg-slate-400 flex flex-row items-center gap-8">
-        <h1 class="font-bold text-xl">Questions</h1>
+      <div class="w-full px-8 h-16 bg-slate-300 flex flex-row items-center justify-between rounded-br-xl">
+        <div></div>
+        <h1 class="font-bold text-3xl">Seznam otázek</h1>
         <button
-          on:click={() => {addQuestion();}}
-          class="border-2 border-blue-900 hover:bg-blue-900 hover:text-blue-200 py-2 px-4 rounded-full bg-blue-500">
-          Add
+          on:click={async () => addQuestionButtonEvent()}
+          class="py-4 px-8 w-8 h-8 flex justify-center items-center border-2 border-slate-700 rounded bg-slate-100 hover:bg-slate-700 hover:text-slate-100">
+          Přidat
         </button>
       </div>
 
-     <!-- Questions -->
-      <div class="flex flex-col items-center pt-4 gap-2">
+      <!-- Table -->
+      <div class="flex flex-col items-center pt-4">
         
         <!-- header -->
-        <div class="w-11/12 h-12 px-4 flex justify-between items-center">
+        <div class="w-11/12 h-12 px-4 flex justify-between items-center border-b-4 border-black mb-4">
           <div class="flex flex-row gap-8 items-center">
             <div class="text-2xl font-bold w-48 text-center">Jméno</div>
             <div class="text-lg w-24 text-center ">Správně</div>
@@ -76,34 +134,38 @@
           </div>
         </div>
         
+        <!-- Table body -->
         {#each questions as question (question.id)}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <!-- svelte-ignore a11y-no-static-element-interactions -->
-          <div
-            on:click={() => teacherView.goto_detail(question.id)}
-            class="w-11/12 h-12 px-4 border-4 border-black flex justify-between items-center rounded-lg cursor-pointer"
-          >
+          <div on:click={async () => gotoQuestionDetailEvent(question.id)} class="w-11/12 h-12 px-4 border-b-2 border-slate-800 hover:bg-slate-200 flex justify-between items-center  cursor-pointer drop-shadow-lg">
             <div class="flex flex-row gap-8 items-center">
               <div class="text-2xl font-bold w-48 text-center">{question.name}</div>
               <div class="text-lg w-24 text-center">{question.noCorrect}</div>
               <div class="text-lg w-24 text-center">{question.noWrong}</div>
               <div class="text-lg w-24 text-center">{question.hardCount}</div>
             </div>
-            <button
-              on:click={(event) => {deleteQuestion(question.id); event?.stopPropagation()}}
-              class="border-2 border-blue-900 hover:bg-red-900 hover:text-red-200 py-1 px-2 rounded-full bg-red-500"
-            >
-              Delete
+            <button on:click={async (event) => { event?.stopPropagation(); deleteQuestionButtonEvent(question.id)}} class="py-4 px-8 w-8 h-8 flex justify-center font-bold items-center border-2 border-slate-700 rounded-md bg-slate-100 hover:bg-red-700 hover:text-white">
+              Smazat
             </button>
           </div>
         {/each}
-      </div>
+
+      </div> <!-- End of Table -->
     </div>
 
     <!-- Next -->
-    <div class="w-full border-black border-4 h-12 flex gap-4 justify-center items-center">
-      <button on:click={() => {if(page > 1){page-=1}; fetchQuestions()}}>Prev</button>
+    <div class="w-full h-12 flex gap-4 justify-center items-center border-b-4 border-slate-300">
+      <button on:click={async () => prevPageButtonEvent()}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      </button>
       <h1>{page}/{totalPages}</h1>
-      <button on:click={() => {if(page < totalPages){page+=1}; fetchQuestions()}}>Next</button>
+      <button on:click={async () => nextPageButtonEvent()}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+      </svg>
+      </button>
     </div>
 </div>

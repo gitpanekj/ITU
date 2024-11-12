@@ -24,8 +24,9 @@
 
     <div>
     {#each links as [name, href, callback]}
-        <button on:click={() => {saveCallback(); callback(); goto(href)}} class="text-white font-bold text-2xl hover:text-gray-300">
-            {name}
+        <button on:click={() => {saveCallback(); callback(); goto(href)}} class="text-white font-bold text-2xl flex flex-row gap-2 justify-center items-center group">
+            <div class="rounded-full border-white border-4 h-10 w-10 flex justify-center items-center text-2xl group-hover:bg-white group-hover:text-black duration-300">&lt;</div>
+            <div class="text-white group-hover:underline">{name}</div>
         </button>
     {/each}
     </div>
@@ -43,6 +44,7 @@
             <button class="text-white hover:text-gray-300" on:click={() => {saveCallback(); localStorage.removeItem('userId'); loggedIn = false; goto("/")}}>
                 Odhlásit se
             </button>
+            <div class="border-l-2 border-white ml-2 h-6"></div>
         {:else}
          <button class="text-white hover:text-gray-300" on:click={() => {saveCallback(); goto("/login")}}>
             Přihlásit se

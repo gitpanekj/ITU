@@ -73,7 +73,6 @@ export class ReadingController {
 
   @Get('text/highlight/:readingId/:questionId')
   async getHighlightedText(@Param('readingId') readingId: string, @Param('questionId') questionId: string) {
-    console.log(readingId, questionId);
     let exercise = await this.readingExerciseService.findOne(+readingId);
 
     const editorContent = exercise.text; 
@@ -91,12 +90,18 @@ export class ReadingController {
     const editorContent = exercise.text; 
     const regex = new RegExp(`<span question-id="${questionId}">(.*?)<\/span>`, 'g');
     const modifiedContent = editorContent.replace(regex, '$1');
-    console.log(modifiedContent);
+    
+    await this.readingQuestionService.update(+questionId, {textAttached: false});
 
     await this.readingExerciseService.update(+readingId, {text: modifiedContent});
 
     return modifiedContent;
 
+  }
+
+  @Post('/text/highlight/:questionId')
+  async attachHighlightedText(@Param('questionId') questionId: string) {
+    await this.readingQuestionService.update(+questionId, {textAttached: true});
   }
 
   /* Session */
@@ -207,20 +212,38 @@ export class ReadingController {
   }
 
   @Get('evaluate_session/:sessionId')
-  async evaluateQuiz(@Param('sessionId') id: string) {
+  async evaluateQuiz(
+    @Param('sessionId') id: string,
+    @Query('page') page: number = 1, 
+    @Query('limit') limit: number = 0,
+    @Query('type') type: "correct" | "wrong" = "correct") {
     let session = await this.sessionService.findOne(+id);
 
-    let correct = JSON.parse(`[${session.correct}]`);
-    let wrong = JSON.parse(`[${session.wrong}]`);
+    let correct: {id:number, name:string, chosen: string, hard: boolean}[] = JSON.parse(`[${session.correct}]`);
+    let wrong: {id:number, name:string, chosen: string, hard: boolean}[] = JSON.parse(`[${session.wrong}]`);
     let hard = session.hard.split(';').map(Number);
 
     correct = correct.map(item => hard.includes(item.id) ? {...item, hard: true} : {...item, hard: false});
     wrong = wrong.map(item => hard.includes(item.id) ? {...item, hard: true} : {...item, hard: false});
+    
+    const no_correct = correct.length ;
+    const no_wrong =  wrong.length ;
 
-    const no_correct = correct.length;
-    const no_wrong = wrong.length;
+    
+    const start = (page - 1) * limit;
+    const end = Number(+start + +limit);
+    
+    correct = correct.slice(start, end);
+    wrong = wrong.slice(start, end);
+    console.log(wrong);
+    console.log(correct);
 
-    return { no_correct, no_wrong, correct, wrong };
+    if (type === "correct"){
+      return {no_correct, correct};
+    }
+    else {
+      return {no_wrong, wrong};
+    }
   }
 
   /* Quiz exercise */
@@ -258,3 +281,35 @@ export class ReadingController {
   }
   /* End of Quiz exercise */
 }
+
+
+// let exercise = await this.readingExerciseService.findOne(+readingId);
+
+//     let editorContent = exercise.text; 
+    
+//     const singleOccurrenceRegex = new RegExp(`<span question-id="(${questionId})">`, 'g');
+//     const differentFromRegex  = new RegExp(`<span question-id="((?!${questionId}$).+?)">`, 'g');
+//     const multiOccurrenceRegex = new RegExp(/<span question-id="([0-9]+)">/, 'g');
+//     let matches = Array.from(editorContent.matchAll(singleOccurrenceRegex));
+
+//     console.log(editorContent);
+
+//     if (matches.length == 1){
+//       const modifiedContent = editorContent.replace(singleOccurrenceRegex, '<span question-id="$1" highlighted="true">');
+//       return modifiedContent;
+//     }
+
+//     const first_to_last = editorContent.slice(matches[0].index, matches[matches.length - 1].index + matches[matches.length - 1][0].length);
+//     if (!first_to_last.match(differentFromRegex))
+//     {
+//       const modifiedContent = editorContent.replace(singleOccurrenceRegex, '<span question-id="$1" highlighted="true">');
+//       return modifiedContent;
+//     }
+
+//     for (let nth_match = 0; nth_match < (matches.length-1); nth_match++)
+//     {
+//       const slice = editorContent.slice(matches[nth_match].index, matches[nth_match+1].index + matches[nth_match+1][0].length);
+//       const modifiedSlice = slice.replace(multiOccurrenceRegex, '<span question-id="$1" highlighted="true">');
+//       editorContent = editorContent.replace(slice, modifiedSlice);
+//     }
+//     return editorContent;
