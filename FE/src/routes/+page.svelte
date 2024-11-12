@@ -3,7 +3,7 @@
     import Navbar from "$lib/components/Navbar.svelte";
     import type { Link } from "$lib/utils/dataTypes.ts";
     import { onMount } from "svelte"; 
-    import Filters from "$lib/components/Filters.svelte";
+    import Filters from "$lib/components/mainPage/Filters.svelte";
     import { goto } from '$app/navigation';
 
     // Navbar
@@ -50,8 +50,9 @@
     <div class="basis-2/3 grid gap-8 grid-cols-2 m-10">
 
         {#each modules as mod (mod.id)}
-            <a href="/module/{mod.id}" class="border-2 rounded-xl border-slate-800 p-2">
+            <a href="/module/{mod.id}" class="border-2 rounded-xl border-slate-800 p-4 hover:bg-gray-100">
                 <h2 class="font-bold">{mod.name}</h2>
+                <br>
                 <span class="italic">
                     Vytvořil: 
                     {#await getTeacherName(mod.teacherId)}
@@ -68,32 +69,10 @@
     </div>
     
     <!-- Filtry --> 
-    <!-- TODO filtry přesunout do jejich komponenty -->
-    <!-- TODO po zapsání znaku akce: spustit filtrování -->
     <div class="basis-1/3 m-10">
-
-        <div class="border-2 rounded-xl border-slate-800 p-2 fixed">
-            <h2 class="font-bold text-xl m-2 justify-center">Filtry</h2>
-            <form class="flex flex-col text-xl">
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=code>Kód lekce</label>
-                    <br>
-                    <input type=text id=code name=code class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-                <br>
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=topic>Téma</label>
-                    <br>
-                    <input type=text id=topic name=topic class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=school>Škola</label>
-                    <br>
-                    <input type=text id=school name=school class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-            </form>
+        <div class="fixed">
+            <Filters />
         </div>
-
     </div>
 
 </div>

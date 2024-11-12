@@ -1,294 +1,62 @@
 <!-- Module edit page - src/routes/teacher/module/[moduleId]/+page.svelte -->
-<!-- <script lang="ts">
-  import Navbar from "$lib/components/Navbar.svelte";
-  import type { Link } from "$lib/utils/dataTypes.js";
-  import { onMount } from "svelte";
-
-  export let data; // data loaded by load from page.ts
-  const moduleId: number = data.props.moduleId;
-  let module_data = [];
-
-  // Navbar
-  let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
-  let title: string = `Teachers module wit ${moduleId}`;
-
-  onMount(() => {
-    // TODO: fetching data after page render
-  });
-</script>
-
-<Navbar {title} {links} />
-<div
-  class="w-11/12 mx-auto flex flex-col text-center justify-center font-bold text-4xl"
-  style="height: calc(100vh - 4em)"
->
-  Details of one module - moduleId: {moduleId}
-</div> -->
-
-<!-- Module edit page - src/routes/teacher/module/[moduleId]/+page.svelte -->
 <script lang="ts">
-  import { onMount } from 'svelte';
-  import type { Link } from '$lib/utils/dataTypes.js';
-  import Navbar from '$lib/components/Navbar.svelte';
-  import { get } from 'svelte/store';
-  import { loadUserContext } from "$lib/userContenxt/userContext";
-  import { goto } from "$app/navigation";
+    import { onMount } from 'svelte';
+    import type { Link } from '$lib/utils/dataTypes.js';
+    import Navbar from '$lib/components/Navbar.svelte';
+    import { get } from 'svelte/store';
+    import { loadUserContext } from "$lib/userContenxt/userContext";
+    import { goto } from "$app/navigation";
+    import MyModulesHeader from '$lib/components/teacher/MyModulesHeader.svelte';
+    import EditModuleDescription from '$lib/components/teacher/EditModuleDescription.svelte';
+    import CodeAndTags from '$lib/components/CodeAndTags.svelte';
+    import ManageExercises from '$lib/components/teacher/ManageExercises.svelte';
+    import { getFlashcards, getQuizes, getReadings } from '$lib/utils/getExercises';
+    import { getExerciseConunts } from '$lib/utils/getExerciseCounts';
+
+    let userId: number | null = null;
+
+    // props
+    export let data; // data loaded by load from page.ts
+    let moduleId: number = data.props.moduleId;
+    let module_data: {id: number, name: string, description: string, teacherId: number} = data.props.module_data;
+
+    // Navbar
+    let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
+    let title: string = `Detail lekce`;
+
+    let teacher_name: string = "...";
+    let flashcards: {id: number, name: string, description: string, groupId: number}[] = [];
+    let quizes: {id: number, name: string, description: string, groupId: number}[] = [];
+    let readings: {id: number, name: string, description: string, groupId: number}[] = [];
+    let exercises_counts: {flashcards: number, quizes: number, readings: number, all: number} = {flashcards: 0, quizes: 0, readings: 0, all: 0};
+
+    // ziskani jmena autora lekce (ucitele)
+    const getTeacherName = async () => {
+        const response = await fetch(`http://localhost:3000/teacher/${module_data.teacherId}`);
+        const data = await response.json();
+        teacher_name = data.username;
+    }
 
 
-  let userId: number | null = null;
-
-
-  // props
-  export let data; // data loaded by load from page.ts
-  const moduleId: number = data.props.moduleId;
-  let module_data: {id: number, name: string, description: string, teacherId: number} = data.props.module_data;
-
-  // Navbar links
-  let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
-  let title: string = `Detail lekce`;
-
-  let flashcards: {id: number, name: string, description: string, groupId: number}[] = [];
-  let quizes: {id: number, name: string, description: string, groupId: number}[] = [];
-  let readings: {id: number, name: string, description: string, groupId: number}[] = [];
-  let teacher_name: string = "...";
-  let exercises_counts: {flashcards: number, quizes: number, readings: number, all: number} = {flashcards: 0, quizes: 0, readings: 0, all: 0};
-
-  const getFlashcards = async () => {
-      const response = await fetch(`http://localhost:3000/flashcard-exercise?groupId=${moduleId}`);
-      const data = await response.json();
-      flashcards = data.data;
-      exercises_counts.flashcards = data.total;
-      exercises_counts.all += data.total;
-  }
-
-  const getQuizes = async () => {
-      const response = await fetch(`http://localhost:3000/quiz-exercise?groupId=${moduleId}`);
-      const data = await response.json();
-      quizes = data.data;
-      exercises_counts.quizes = data.total;
-      exercises_counts.all += data.total;
-  }
-
-  const getReadings = async () => {
-      const response = await fetch(`http://localhost:3000/reading-exercise?groupId=${moduleId}`);
-      const data = await response.json();
-      readings = data.data;
-      exercises_counts.readings = data.total;
-      exercises_counts.all += data.total;
-  }
-
-  const getTeacherName = async () => {
-      const response = await fetch(`http://localhost:3000/teacher/${module_data.teacherId}`);
-      const data = await response.json();
-      teacher_name = data.username;
-  }
-
-    // TODO mazani cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    // TODO hezci varovne okno ?
-    function deleteExercise(exerciseType: string, exerciseId: number) {
-        let reallyDelete = confirm("Opravdu smazat celé cvičení?\nTuto akci nelze vrátit zpět!");
-        if(reallyDelete) {
-            switch (exerciseType) {
-                case "flashcards":
-                    fetch(`http://localhost:3000/flashcard-exercise/${moduleId}`, {method: 'DELETE'});
-                    break;
-
-                case "reading":
-                    fetch(`http://localhost:3000/reading-exercise/${moduleId}`, {method: 'DELETE'});
-                    break;
-
-                case "quiz":
-                    fetch(`http://localhost:3000/quiz-exercise/${moduleId}`, {method: 'DELETE'});
-                    break;
-            
-                default:
-                    break;
+    onMount( async () => {
+        userId = loadUserContext();
+            if (!userId){ // neprihlasen
+                goto('/login');
             }
-            console.log("Deleting " + exerciseType + " exercise with ID [" + exerciseId + "].");
-            location.reload(); // obnoveni stranky, tj. i seznamu
-        }
-    }
+        await getTeacherName();
+        flashcards = await getFlashcards(moduleId);
+        quizes = await getQuizes(moduleId);
+        readings = await getReadings(moduleId);
+        exercises_counts = await getExerciseConunts(moduleId);
+    });
 
-    // TODO tvorba noveho cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function createExercise(exerciseType: string) {
-
-        const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ 
-                name: "Nové cvičení", 
-                description: "",
-                groupId: moduleId
-            })
-        };
-        
-        switch (exerciseType) {
-            case "flashcards":
-                fetch(`http://localhost:3000/flashcard-exercise`, requestOptions);
-                break;
-
-            case "reading":
-                fetch(`http://localhost:3000/reading-exercise`, requestOptions);
-                break;
-
-            case "quiz":
-                fetch(`http://localhost:3000/quiz-exercise`, requestOptions);
-                break;
-        
-            default:
-                break;
-        }
-        console.log("Creating new " + exerciseType +".");
-        location.reload(); // obnoveni stranky, tj. i seznamu
-    }
-
-    // TODO prejmenovani cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function renameExercise(exerciseType: string, exerciseId: number) {
-        let newName = "";
-        let names;
-        let requestOptions;
-
-        switch (exerciseType) {
-           
-            case "flashcards":
-                names = document.getElementsByName("flashcards");
-                for (let i = 0; i < names.length; i++) {
-                    const name: any = names[i];
-                    if(name.id == exerciseId.toString()) {
-                        newName = name.value;
-                        break;
-                    }
-                }  
-                requestOptions = {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        name: newName
-                    })
-                };
-                fetch(`http://localhost:3000/flashcard-exercise/${exerciseId}`, requestOptions);
-                break;
-
-            case "reading":
-                names = document.getElementsByName("reading");
-                for (let i = 0; i < names.length; i++) {
-                    const name: any = names[i];
-                    if(name.id == exerciseId.toString()) {
-                        newName = name.value;
-                        break;
-                    }
-                }  
-                requestOptions = {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        name: newName
-                    })
-                };
-                fetch(`http://localhost:3000/reading-exercise/${exerciseId}`, requestOptions);
-                break;
-
-            case "quiz":
-                names = document.getElementsByName("quiz");
-                for (let i = 0; i < names.length; i++) {
-                    const name: any = names[i];
-                    if(name.id == exerciseId.toString()) {
-                        newName = name.value;
-                        break;
-                    }
-                } 
-                requestOptions = {
-                    method: "PATCH",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ 
-                        name: newName
-                    })
-                };
-                fetch(`http://localhost:3000/quiz-exercise/${exerciseId}`, requestOptions);
-                break;
-
-            default:
-                break;
-        }
-        console.log("Renaming exercise with ID [" + exerciseId +"] to [" + newName + "].");
-        location.reload(); // obnoveni stranky, tj. i seznamu
-    }
-
-    // TODO uprava popisu
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function editDescription() {
-        let element: any = document.getElementsByName("description")[0];
-        if(element != null) {
-            let requestOptions = {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    description: element.value
-                })
-            };
-            fetch(`http://localhost:3000/exercise-group/${moduleId}`, requestOptions);
-            console.log("Changing description of module with ID [" + moduleId +"].");
-            location.reload(); // obnoveni stranky, tj. i popisu
-        }
-    }
-
-    // TODO uprava nazvu
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function editName() {
-        let element: any = document.getElementsByName("name")[0];
-        if(element != null) {
-            let requestOptions = {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ 
-                    name: element.value
-                })
-            };
-            fetch(`http://localhost:3000/exercise-group/${moduleId}`, requestOptions);
-            console.log("Changing title of module with ID [" + moduleId +"].");
-            location.reload(); // obnoveni stranky, tj. i popisu
-        }
-    }
-
-
-  onMount( async () => {
-      userId = loadUserContext();
-          if (!userId){ // user not logged in
-              goto('/login');
-          }
-      await getFlashcards();
-      await getQuizes();
-      await getReadings();
-      getTeacherName();
-  });
-
-  
 </script>
 
 
 <!-- Hlavicka -->
-<!-- TODO uprava nazvu -->
-<Navbar {title} {links}/>
+<Navbar {title} {links} />
 <br>
-<div class="w-11/12 mx-auto flex flex-col text-center justify-center">
-    <details>
-        <summary title="Upravit název" class="font-bold text-4xl cursor-pointer list-none hover:underline">{module_data.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-        <br>
-        <input type="text" name="name" class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.name}>
-        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                on:click={() => {editName()}}>
-            Změnit název
-        </button>
-        <hr class="border-blue-950 m-4">
-    </details>
-</div>
-<br>
-<div class="w-11/12 mx-auto flex flex-col text-center justify-center italic text-xl">
-  {teacher_name}
-</div>
+<MyModulesHeader {module_data} {teacher_name} {moduleId} />
 
 <!-- Obsah stranky -->
 <div class="flex mt-10">
@@ -297,134 +65,15 @@
     <div class="basis-3/4 m-10">
 
         <!-- Popis -->
-        <div class="ml-10 mb-10">
-            <details>
-                <summary title="Upravit popis" class="text-xl cursor-pointer list-none hover:underline">{module_data.description}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                <br>
-                <textarea name="description" class="w-full bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.description}></textarea>
-                <button class="mx-auto flex flex-col text-center justify-center rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                        on:click={() => {editDescription()}}>
-                    Změnit popis
-                </button>
-                <hr class="border-blue-950 m-4">
-            </details>
-        </div>
+        <EditModuleDescription {module_data} {moduleId} />
 
-        <!-- Tvorba novych cviceni -->
-        <div class="grid gap-16 grid-cols-3 m-10">
-            <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                    on:click={() => {createExercise("reading")}}>
-                Vytvořit nové čtení
-            </button>
-            <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                    on:click={() => {createExercise("flashcards")}}>
-                Vytvořit nové flashcards
-            </button>                
-            <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                    on:click={() => {createExercise("quiz")}}>
-                Vytvořit nový kvíz
-            </button>   
-        </div>
+        <!-- Tvorba a upravy cviceni -->
+        <ManageExercises {moduleId} {flashcards} {quizes} {readings} />
 
-        <div class="grid gap-16 grid-cols-3 m-10">
-            <!-- Cteni -->
-            <div class="space-y-4">
-                <p class="font-bold text-xl">Všechna čtení v lekci:</p>
-                {#each readings as reading}
-                    <div class="border-2 rounded-xl border-slate-800 p-4">
-                        <details>
-                            <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{reading.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                            <br>
-                            <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={reading.name}>
-                            <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                                    on:click={() => {renameExercise("reading", reading.id)}}>
-                                Přejmenovat
-                            </button>
-                            <hr class="border-blue-950 m-4">
-                        </details>
-                        <br>
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                                on:click={() => {goto(`/teacher/module/${moduleId}/reading/${reading.id}`)}}>
-                            Upravit
-                        </button>
-                        <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                                on:click={() => {deleteExercise("reading", reading.id)}}>
-                            Smazat
-                        </button>
-                    </div>
-                {/each}
-            </div>
-            <!-- Flashcards -->
-            <div class="space-y-4">
-                <p class="font-bold text-xl">Všechny kartičky v lekci:</p>
-                {#each flashcards as flashcard}
-                <div class="border-2 rounded-xl border-slate-800 p-4">
-                    <details>
-                        <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{flashcard.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                        <br>
-                        <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={flashcard.name}>
-                        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                                on:click={() => {renameExercise("flashcards", flashcard.id)}}>
-                            Přejmenovat
-                        </button>
-                        <hr class="border-blue-950 m-4">
-                    </details>
-                    <br>
-                    <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {goto(`/teacher/module/${moduleId}/flashcards/${flashcard.id}`)}}>
-                        Upravit
-                    </button>
-                    <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {deleteExercise("flashcards", flashcard.id)}}>
-                        Smazat
-                    </button>
-                </div>
-                {/each}
-            </div>
-            <!-- Kviz -->
-            <div class="space-y-4">
-                <p class="font-bold text-xl">Všechny kvízy v lekci:</p>
-                {#each quizes as quiz}
-                <div class="border-2 rounded-xl border-slate-800 p-4">
-                    <details>
-                        <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{quiz.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                        <br>
-                        <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={quiz.name}>
-                        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                                on:click={() => {renameExercise("quiz", quiz.id)}}>
-                            Přejmenovat
-                        </button>
-                        <hr class="border-blue-950 m-4">
-                    </details>
-                    <br>
-                    <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {goto(`/teacher/module/${moduleId}/quiz/${quiz.id}`)}}>
-                        Upravit
-                    </button>
-                    <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {deleteExercise("quiz", quiz.id)}}>
-                        Smazat
-                    </button>
-                </div>
-                {/each}
-            </div>
-        </div>
     </div>
 
     <!-- Kod a znacky -->
-    <!-- TODO kod a tagy -->
-    <div class="basis-1/4 m-10">
-        <!-- zde pripadne bude obrazek, pokud budeme implementovat -->
-        <p class="text-3xl font-bold py-8 px-2">
-            #123456<br>
-        </p>
-        <p class="text-xl py-8 px-2">
-            Celkem cvičení: {exercises_counts.all}<br>
-            Flashcards: {exercises_counts.flashcards}<br>
-            Kvízů: {exercises_counts.quizes}<br>
-            Čtení: {exercises_counts.readings}<br>
-        </p>
-    </div>
+    <!-- TODO update pocitadel po kazdem pridani / ubrani cviceni -->
+    <CodeAndTags {exercises_counts} />    
 
-    </div>
-
+</div>

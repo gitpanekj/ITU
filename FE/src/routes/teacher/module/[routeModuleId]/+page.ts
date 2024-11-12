@@ -15,8 +15,8 @@ export async function load({ params } : { params: Record<string, string>}){
     // const response = await fetch('');
     // const module_data = await response.json();
 
-    const response = await fetch(`http://localhost:3000/exercise-group/${moduleId}`); 
-    const module_data = await response.json();
+    let response = await fetch(`http://localhost:3000/exercise-group/${moduleId}`); 
+    let module_data = await response.json();
 
     return {
         props:
