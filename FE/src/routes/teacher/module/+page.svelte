@@ -5,6 +5,7 @@
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import { loadUserContext } from "$lib/userContenxt/userContext";
+    import TeachersFilters from "$lib/components/teacher/TeachersFilters.svelte";
 
 
     let userId: number | null = null;
@@ -46,18 +47,19 @@
     // TODO mazani lekce
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
     // TODO hezci varovne okno ?
-    function deleteModule(moduleId: number) {  
+    async function deleteModule(moduleId: number) {  
         let reallyDelete = confirm("Opravdu smazat lekci i všechna její cvičení?\nTuto akci nelze vrátit zpět!");
         if(reallyDelete) {
-            fetch(`http://localhost:3000/exercise-group/${moduleId}`,{method: 'DELETE'});
+            await fetch(`http://localhost:3000/exercise-group/${moduleId}`,{method: 'DELETE'});
             console.log("Deleting module with ID [" + moduleId + "].");
-            location.reload(); // obnoveni stranky, tj. i seznamu
+            await getModules();
+            //location.reload(); // obnoveni stranky, tj. i seznamu
         }   
     } 
 
     // TODO tvorba nove lekce
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    function createModule() {
+    async function createModule() {
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -68,11 +70,12 @@
             })
         };
 
-        fetch(`http://localhost:3000/exercise-group`, requestOptions);
+        await fetch(`http://localhost:3000/exercise-group`, requestOptions);
         
         console.log("Creating new module.");
 
-        location.reload(); // obnoveni stranky, tj. i seznamu
+        await getModules();
+        //location.reload(); // obnoveni stranky, tj. i seznamu
     }
 
 
@@ -185,29 +188,7 @@
         </div>
 
         <!-- Filtry --> 
-        <!-- TODO filtry přesunout do jejich komponenty -->
-        <!-- TODO po zapsání znaku akce: spustit filtrování -->
-        <div class="border-2 rounded-xl border-slate-800 p-2">
-            <h2 class="flex mx-auto font-bold text-xl justify-center mb-4">Filtry</h2>
-            <form class="flex flex-col text-xl">
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=code>Kód lekce</label>
-                    <br>
-                    <input type=text id=code name=code class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-                <br>
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=topic>Téma</label>
-                    <br>
-                    <input type=text id=topic name=topic class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-                <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
-                    <label for=etc>. . .</label>
-                    <br>
-                    <input type=text id=etc name=etc class="bg-gray-100 rounded-md m-1 border-2 border-blue-200">
-                </div>
-            </form>
-        </div>
+        <TeachersFilters  />
 
     </div>
     </div>
