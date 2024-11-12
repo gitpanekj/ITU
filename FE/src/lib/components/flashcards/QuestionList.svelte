@@ -10,7 +10,15 @@
   export let flashcardExerciseId: number;
   export let moduleId: number;
 
-  let questions: any = null;
+  let questions: Card[] | null = null;
+  interface Card {
+    id: number;
+    frontFace: string;
+    backFace: string;
+    hardCount: number;
+    feedback: any;
+    flashcardExerciseId: number;
+  }
   let page: number = 1;
   let totalRecords: number = 0;
   $: totalPages = Math.ceil(totalRecords / 4);
@@ -21,6 +29,12 @@
     const { data, total } = await response.json();
     totalRecords = total;
     questions = data;
+    if (questions){
+      if (questions.length == 0){
+        addQuestion();
+      }
+    }
+    
   };
 
   const toggleSort = () => {
@@ -140,7 +154,8 @@
                 <!-- Remove button -->
                 <button
                   on:click={(event) => { deleteQuestion(question.id); event.stopPropagation(); }}
-                  class="text-white bg-red-500 p-2 rounded-lg hover:bg-red-600">
+                  class="text-white bg-red-500 p-2 rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled={questions.length === 1 && question.frontFace === "" && question.backFace === ""}>
                   Odstranit
                 </button>
                 <!-- Show feedback button -->
