@@ -30,6 +30,7 @@
   };
 
   onMount(async () => {
+    studentQuestionPanelStore.set_quiz_view();
     await createSession();
   })
 

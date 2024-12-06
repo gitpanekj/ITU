@@ -11,7 +11,12 @@ with its functions including card toggle and feedback submittion
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
   
+<<<<<<< Updated upstream
     // Flashcard variables
+=======
+    export let moduleId;
+
+>>>>>>> Stashed changes
     let questionId: number = 0;
     let frontFace = "";
     let backFace = "";
@@ -181,7 +186,7 @@ with its functions including card toggle and feedback submittion
     </button>
     <!-- Evaluate button -->
     <button
-      on:click={async () => {await goto(`/module/1/flashcards/results`)}}
+      on:click={async () => {await goto(`/module/${moduleId}/flashcards/results`)}}
       class="border-2 border-blue-500 text-blue-500 py-2 px-4 rounded-lg hover:bg-blue-600 hover:text-white hover:border-blue-600"
     >
       Vyhodnotit flashcards

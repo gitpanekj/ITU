@@ -6,6 +6,7 @@
   import QuizQuestion from "$lib/components/quiz/QuizQuestion.svelte";
   import QuizEvaluation from "$lib/components/quiz/QuizEvaluation.svelte";
   import { userView } from "../../../../../stores/Quiz/userView";
+  import { goto } from "$app/navigation";
 
   // Route parameters and fetched data
   export let data;
@@ -27,6 +28,7 @@
   }
 
   onMount(async () => {
+    userView.goto_question_view();
     await createSession();
   });
 

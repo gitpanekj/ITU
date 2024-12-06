@@ -41,7 +41,7 @@ Description: Page that shows the flashcards detail and allows student to flip it
 
 <Navbar {title} {links}/>
 {#if sessionCreated}
-  <FlashcardQuestion/>
+  <FlashcardQuestion {moduleId}/>
 {:else }
   <Spinner/>
 {/if}
