@@ -9,7 +9,7 @@ Description: Component for detail of a question and it's update
 <script lang="ts">
   // Libs
   import { loadQuestionDetail, questionDetailStore, saveQuestionDetail } from "../../../stores/Reading/QuestionDetailStore";
-  import { deleteQuestionTextLink, editorStore, highlightLinkedText, loadEditorContents } from "../../../stores/Reading/EditorStore";
+  import { deleteQuestionTextLink, editorStore, highlightLinkedText, loadEditorContents, saveEditorContents } from "../../../stores/Reading/EditorStore";
   import { teacherQuestionPanelStore } from "../../../stores/Reading/TeacherQuestionPanelStore";
   
   // Props
@@ -20,6 +20,7 @@ Description: Component for detail of a question and it's update
 
   const saveAndReturnBackButtonEvent = async () => {
     try {
+    await saveEditorContents(readingId);
     await loadEditorContents(readingId);       // clear potential highlights
     await saveQuestionDetail();                // save linked text
     } catch(err) {alert('Failed to save the question.');}
@@ -41,7 +42,11 @@ Description: Component for detail of a question and it's update
   const highlightTextButtonEvent = async () => {
     try {
     await highlightLinkedText(readingId, $questionDetailStore.questionId);
-  } catch(err) {alert('Failed to highlight the text.');}
+  } catch(err) {
+    await unLinkTextButtonEvent();
+    await loadQuestionDetail($questionDetailStore.questionId);
+    alert('Oops. Vypadá to, že tenhle odkaz byl smazán.');
+  }
     highlighted = !highlighted;
   };
 

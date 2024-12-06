@@ -37,7 +37,7 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění čtení s porozuměním a uživatelského rozhrnaí pro správu čtení s porozuměním učitelem.
 - **Autor**: Pánek Jan (xpanek11)
 - **Umístění v adresářové struktuře:**
-    - stránka webové aplikace pro plněnín čtení s porozuměním odpovídá `FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty
+    - stránka webové aplikace pro plnění čtení s porozuměním odpovídá `FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty
      `Editor`, `ReadingQuestion`, `ReadingEvaluation`, `ReadingEvaluationDetail` umístěné v adresáři `FE/src/lib/components/reading`
     - stránka webové aplikace pro správu čtení s porozumněním odpovídá 
     `FE/src/routes/teacher/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty 

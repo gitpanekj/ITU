@@ -15,6 +15,9 @@ Description: Page that shows the teacher detail of his reading exercise
   import type { Link } from "$lib/utils/dataTypes.js";
   import Editor from "$lib/components/reading/Editor.svelte";
   import { teacherQuestionPanelStore } from "../../../../../../stores/Reading/TeacherQuestionPanelStore.js";
+  import { editorStore, saveEditorContents } from "../../../../../../stores/Reading/EditorStore.js";
+  import { onMount } from "svelte";
+  import { questionDetailStore } from "../../../../../../stores/Reading/QuestionDetailStore.js";
 
   
   export let data;
@@ -25,11 +28,17 @@ Description: Page that shows the teacher detail of his reading exercise
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
   let title: string = `Čtení s porozumněním`;
+  let saveCallback: Function = () => {saveEditorContents(readingId)};
 
+  onMount(() => {
+    editorStore.set_edit_mode();
+    questionDetailStore.set_edit_mode();
+    teacherQuestionPanelStore.set_list_view();
+  })
 </script>
 
 
-<Navbar {title} {links}/>
+<Navbar {title} {links} {saveCallback}/>
 <div class="w-[90%] mx-auto flex"
      style="height: calc(100vh - 4em)">
   <!-- Left half of the page - Text -->

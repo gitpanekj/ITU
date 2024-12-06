@@ -80,6 +80,12 @@ export class ReadingController {
     const regex = new RegExp(`<span question-id="(${questionId})">`, 'g');
     const modifiedContent = editorContent.replace(regex, '<span question-id="$1" highlighted="true">');
 
+ 
+    if (editorContent === modifiedContent)
+    {
+      throw new NotFoundException(`Mark does not exist.`); 
+    }
+
     return modifiedContent;
   }
 
@@ -281,35 +287,3 @@ export class ReadingController {
   }
   /* End of Quiz exercise */
 }
-
-
-// let exercise = await this.readingExerciseService.findOne(+readingId);
-
-//     let editorContent = exercise.text; 
-    
-//     const singleOccurrenceRegex = new RegExp(`<span question-id="(${questionId})">`, 'g');
-//     const differentFromRegex  = new RegExp(`<span question-id="((?!${questionId}$).+?)">`, 'g');
-//     const multiOccurrenceRegex = new RegExp(/<span question-id="([0-9]+)">/, 'g');
-//     let matches = Array.from(editorContent.matchAll(singleOccurrenceRegex));
-
-//     console.log(editorContent);
-
-//     if (matches.length == 1){
-//       const modifiedContent = editorContent.replace(singleOccurrenceRegex, '<span question-id="$1" highlighted="true">');
-//       return modifiedContent;
-//     }
-
-//     const first_to_last = editorContent.slice(matches[0].index, matches[matches.length - 1].index + matches[matches.length - 1][0].length);
-//     if (!first_to_last.match(differentFromRegex))
-//     {
-//       const modifiedContent = editorContent.replace(singleOccurrenceRegex, '<span question-id="$1" highlighted="true">');
-//       return modifiedContent;
-//     }
-
-//     for (let nth_match = 0; nth_match < (matches.length-1); nth_match++)
-//     {
-//       const slice = editorContent.slice(matches[nth_match].index, matches[nth_match+1].index + matches[nth_match+1][0].length);
-//       const modifiedSlice = slice.replace(multiOccurrenceRegex, '<span question-id="$1" highlighted="true">');
-//       editorContent = editorContent.replace(slice, modifiedSlice);
-//     }
-//     return editorContent;
