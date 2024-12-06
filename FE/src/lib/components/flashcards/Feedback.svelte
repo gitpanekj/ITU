@@ -1,95 +1,44 @@
+<!-------------------------------------------------------------- 
+Filename: Feedback.svelte
+Author: Lucie Klímová
+Login: xklimo04
+Last Modified: [06-12-2024]
+Description: Component defining feedback section of a card
+---------------------------------------------------------------->
 <script lang="ts">
   import { onMount } from "svelte";
-  import { createEventDispatcher } from 'svelte';
-  import { getCardColor } from '$lib/utils/cardColors';
-  import Spinner from "$lib/components/Spinner.svelte";
-  const dispatch = createEventDispatcher();
-    
+
+  // Variable required by the component  
   export let feedbackFlashcardId: number;
 
-  let card: Card | null = null;
+  // Feedbacks of the card
   let feedbacks: string[] | null = null;
-  interface Card {
-    id: number;
-    frontFace: string;
-    backFace: string;
-    hardCount: number;
-    feedback: any;
-    flashcardExerciseId: number;
-  }
 
-  const fetchQuestion = async () => {
+  // Function to fetch the feedback
+  // The card info is not used
+  const fetchFeedback = async () => {
     const response = await fetch(`http://localhost:3000/flashcard-exercise/card/${feedbackFlashcardId}`);
     const { flashcard, feedback } = await response.json();
     feedbacks = feedback;
-    card = flashcard;
   };
 
-  const hideFeedback = () => {
-    localStorage.removeItem('feedbackFlashcardId');
-    dispatch('feedback');
-  }
-
-  onMount(fetchQuestion);
+  // Fetch the feedback on mount
+  onMount(fetchFeedback);
 </script>
-<!-- Card section -->
-<div class="h-full flex flex-col justify-between mt-10">
-  <div>
-    <!-- Back button -->
-    <button
-      on:click={() => {hideFeedback();}}
-      class="text-white bg-blue-500 p-2 rounded-lg hover:bg-blue-600">
-      Zpět
-    </button>
-      <!-- Table Header -->
-      <div class="w-full flex justify-between p-5 font-semibold pr-[80px]">
-        <span>Líc</span>
-        <span>Rub</span>
-        <span>Těžké</span>
-      </div>
-      {#if card != null}
-        <div class="flex w-full gap-4 items-start">
-          <div class="w-full min-h-12 border-2 border-black bg-background rounded-lg flex gap-2 items-center p-4">
-            
-            <textarea
-            class="w-full border-2 p-2 rounded-lg focus:outline-none text-xl min-h-[125px]"
-            bind:value={card.frontFace}
-            readonly
-          ></textarea>
-            
-          <textarea
-          class="w-full border-2 p-2 rounded-lg focus:outline-none text-xl min-h-[125px]"
-          bind:value={card.backFace}
-          readonly
-        ></textarea>
-        <p class={`mx-20 p-2 rounded-lg  ${getCardColor(card.hardCount)}`} style="min-width: 50px; text-align: center;">
-          {card.hardCount}
-        </p>
-          </div>
-        </div>
-      {:else}
-        <Spinner/>
-      {/if}
-      <h1 class="mt-8">
-        Poznámky k této kartě
-      </h1>
-      <!-- Feedback section -->
-      <div class="mt-8 space-y-4 overflow-y-auto max-h-[800px]">
-        {#if feedbacks}
-          {#if feedbacks.length > 0}
-            <ul class="space-y-3">
-              {#each feedbacks as feedback}
-                <li class="p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm">
-                  <p class="text-gray-700 text-lg">{feedback}</p>
-                </li>
-              {/each}
-            </ul>
-          {:else}
-            <h1 class="text-lg font-medium text-gray-600">K této kartě zatím nejsou žádné poznámky.</h1>
-          {/if}
-        {:else}
-          <Spinner/>
-        {/if}
-      </div>
-  </div>
+
+<div class="space-y-4 overflow-y-auto max-h-[800px]">
+  {#if feedbacks}
+    {#if feedbacks.length > 0}
+      <ul class="space-y-3">
+        {#each feedbacks as feedback}
+        <!-- Feedback item -->
+          <li class="p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm">
+            <p class="text-gray-700 text-lg">{feedback}</p>
+          </li>
+        {/each}
+      </ul>
+    {:else}
+      <h1 class="text-lg font-medium text-gray-600">K této kartě zatím nejsou žádné poznámky.</h1>
+    {/if}
+  {/if}
 </div>

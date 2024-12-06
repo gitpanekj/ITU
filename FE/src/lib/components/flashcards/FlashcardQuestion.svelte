@@ -1,8 +1,17 @@
+<!-------------------------------------------------------------- 
+Filename: FlashcardQuestion.svelte
+Author: Lucie Klímová
+Login: xklimo04
+Last Modified: [06-12-2024]
+Description: Component defining one exercise card (question)
+with its functions including card toggle and feedback submittion
+---------------------------------------------------------------->
 <script lang="ts">
     import Progressbar from "$lib/components/Progressbar.svelte";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
   
+    // Flashcard variables
     let questionId: number = 0;
     let frontFace = "";
     let backFace = "";
@@ -12,10 +21,15 @@
     let isHard = false;
     let cardFeedback = "";
 
+    let flashMessage: string | null = null;
+    
+    // Function to flip the card
     function flipCard() {
         isFlipped = !isFlipped;
     }
   
+    // Function to get the next question (card)
+    // The next card is determined using current session id
     const getNextQuestion = async () => {
       const response = await fetch(
         `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/next`
@@ -31,6 +45,8 @@
       cardFeedback = feedback;
     };
 
+    // Function to get the previous question (card)
+    // The previous card is determined using current session id
     const getPrevQuestion = async () => {
       const response = await fetch(
         `http://localhost:3000/flashcard-exercise/session/${localStorage.getItem("flashcardSessionId")}/prev`
@@ -46,6 +62,7 @@
       cardFeedback = feedback;
     };
 
+    // Function to un/mark the question (card) as hard
     const toggleHard = async () => {
     try {
         const response = await fetch(`http://localhost:3000/flashcard-exercise/mark_hard`, {
@@ -53,6 +70,7 @@
             headers: {
                 "Content-Type": "application/json"
             },
+            // Passing session id and flashcard id to be un/marked
             body: JSON.stringify({
                 sessionId: Number(localStorage.getItem("flashcardSessionId")),
                 flashcardId: questionId 
@@ -63,34 +81,49 @@
     }
   };
 
+  // Function to submit feedback
   async function submitFeedback() {
     try {
     const response = await fetch('http://localhost:3000/flashcard-exercise/feedback', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      // Passing a question (flashcard id), sessionId and feedback
       body: JSON.stringify({
         flashcardId: questionId,
         sessionId: Number(localStorage.getItem("flashcardSessionId")),
         feedback: cardFeedback,
       }),
     });
+    // Show that feedback was/n't submitted, add timeout to flashmessage
+    if (response.ok) {
+        flashMessage = "Poznámka byla uložena.";
+        setTimeout(() => { flashMessage = null; }, 3000);
+      } else {
+        flashMessage = "Chyba při odesílání poznámky.";
+        setTimeout(() => { flashMessage = null; }, 3000);
+      }
     } catch (error) {
-        console.error("Error:", error);
+      flashMessage = "Chyba při odesílání poznámky.";
+      setTimeout(() => { flashMessage = null; }, 3000);
     }
   }
 
+  // Fetch the first question on mount
+  onMount(async () => {
+    await getNextQuestion();
+  });
   
-    onMount(async () => {
-      await getNextQuestion();
-    });
-  
-  </script>
-
+</script>
+<!-- Flash Message -->
+  <div class="mx-auto mt-2 px-4 py-2 bg-green-500 text-white rounded-lg"
+  style="opacity: {flashMessage ? 1 : 0};">
+    {flashMessage}
+  </div>
 <!-- Card Section -->
 <button 
     type="button" 
     on:click={flipCard} 
-    class="w-4/5 h-4/5 mt-8 border-2 border-black hover:bg-background flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
+    class="w-4/5 h-4/5 mt-3 border-2 border-black hover:bg-background flex flex-col justify-between items-center cursor-pointer relative mx-auto my-auto p-5 rounded-xl"
 >
     <div class="flex-grow flex flex-col items-center">
         <p class="text-2xl font-bold">

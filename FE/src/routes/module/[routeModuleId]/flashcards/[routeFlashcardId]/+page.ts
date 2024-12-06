@@ -1,10 +1,16 @@
-// Module detail page load - src/routes/module/[moduleId]/flashcards/[flashcardId]/+page.svelte
+// Filename: \src\routes\module\[routeModuleId]\flashcards\[routeFlashcardId]\+page.ts
+// Author: Lucie Klímová
+// Login: xklimo04
+// Last Modified: [06-12-2024]
+// Description: Page that shows the flashcards detail and allows student to flip it and submit feedback
+
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
 
 export async function load({ params } : { params: Record<string, string>}){
     const { routeModuleId, routeFlashcardId } = params;
+    // Check the ids
     if (!isValidId(routeModuleId) || !isValidId(routeFlashcardId)) 
     {
         throw error(404, 'Page not found');

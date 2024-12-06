@@ -1,3 +1,10 @@
+<!-------------------------------------------------------------- 
+Filename: \src\routes\module\[routeModuleId]\flashcards\results\+page.svelte
+Author: Lucie Klímová
+Login: xklimo04
+Last Modified: [06-12-2024]
+Description: Page that shows the flashcards exercise results
+---------------------------------------------------------------->
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
@@ -11,10 +18,12 @@
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
   let title: string = "Flashcard exercise";
 
+  // Pagination variables
   let page: number = 1;
   let totalRecords: number = 0;
   $: totalPages = Math.ceil(totalRecords / 10);
 
+  // Card format
   interface HardCard {
     id: number;
     frontFace: string;
@@ -25,9 +34,12 @@
     isFlipped: boolean;
   }
 
+  let flashMessage: string | null = null;
   let hardCards: HardCard[] | null = null;
   let sessionId: number | null = null;
 
+  // Function to fetch hard cards for this session
+  // Includes pagination
   async function fetchHardCards() {
     try {
       const response = await fetch(`http://localhost:3000/flashcard-exercise/evaluate_session/${sessionId}?page=${page}&limit=10`);
@@ -39,7 +51,9 @@
     }
   }
 
-
+  // Function to flip a card defined by cardId
+  // Params:
+  //    cardId: id of the card to flip
   function flipCard(cardId: number) {
     if (hardCards) {
       hardCards = hardCards.map(card => 
@@ -48,6 +62,9 @@
     }
   }
 
+  // Function to submit feedback to specified card
+  // Params:
+  //    card: card to which feedback should be submitted, this includes the feedback to be submitted
   async function submitFeedback(card: HardCard) {
     try {
     const response = await fetch('http://localhost:3000/flashcard-exercise/feedback', {
@@ -59,11 +76,21 @@
         feedback: card.session_feedback,
       }),
     });
+    // Show that feedback was/n't submitted, add timeout to flashmessage
+    if (response.ok) {
+        flashMessage = "Poznámka byla uložena.";
+        setTimeout(() => { flashMessage = null; }, 3000);
+      } else {
+        flashMessage = "Chyba při odesílání poznámky.";
+        setTimeout(() => { flashMessage = null; }, 3000);
+      }
     } catch (error) {
-        console.error("Error:", error);
+      flashMessage = "Chyba při odesílání poznámky.";
+      setTimeout(() => { flashMessage = null; }, 3000);
     }
   }
 
+  // Load the sessionId and fetch the hard cards on mount
   onMount(() => {
     if (typeof window !== "undefined") { //check if localStorage is available
       sessionId = Number(localStorage.getItem("flashcardSessionId"));
@@ -77,11 +104,16 @@
 </script>
 
 <Navbar {title} {links} />
-<h1 class="text-4xl font-bold text-center py-4 my-8 border-t-4 border-b-4 border-header">
+<!-- Flash Message -->
+<div class="mx-auto mt-2 px-4 py-2 bg-green-500 text-white rounded-lg"
+style="opacity: {flashMessage ? 1 : 0};">
+  {flashMessage}
+</div>
+<h1 class="text-4xl font-bold text-center py-4 my-2 border-t-4 border-b-4 border-header">
   Výsledky flashcards
 </h1>
 
-<h1 class="text-4xl font-bold text-center mb-5">Těžké karty</h1>
+<h1 class="text-4xl font-bold text-center my-5">Těžké karty</h1>
 <!-- Cards section -->
 {#if hardCards}
   {#if hardCards.length > 0}

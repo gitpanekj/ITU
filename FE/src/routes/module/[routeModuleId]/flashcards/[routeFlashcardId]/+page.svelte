@@ -1,4 +1,10 @@
-<!-- Flashcard exercise detail - src/routes/module/[moduleId]/flashcards/[flashcardId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: \src\routes\module\[routeModuleId]\flashcards\[routeFlashcardId]\+page.svelte
+Author: Lucie Klímová
+Login: xklimo04
+Last Modified: [06-12-2024]
+Description: Page that shows the flashcards detail and allows student to flip it and submit feedback
+---------------------------------------------------------------->
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
   import Spinner from "$lib/components/Spinner.svelte";
@@ -16,16 +22,17 @@
 
   let sessionCreated = false;
 
+  // Create new session on mount
   onMount(async () => {
       await createSession();
   });
 
 
-
+  // Function that creates new session and stores its id
   const createSession = async () => {
     const response = await fetch(`http://localhost:3000/flashcard-exercise/create_session/${flashcardId}`);
     const data = await response.json();
-    // save sessionId
+    // Save sessionId
     localStorage.setItem('flashcardSessionId', data.flashcardSessionId);
     sessionCreated = true;
   };

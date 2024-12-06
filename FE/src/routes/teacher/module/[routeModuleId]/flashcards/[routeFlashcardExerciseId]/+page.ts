@@ -1,10 +1,16 @@
-// Module detail page load - src/routes/module/[moduleId]/flashcards/[flashcardExcerciseId]/+page.svelte
+// Filename: src\routes\teacher\module\[routeModuleId]\flashcards\[routeFlashcardExerciseId]\+page.ts
+// Author: Lucie Klímová
+// Login: xklimo04
+// Last Modified: [06-12-2024]
+// Description: Page that shows the teacher detail of his flashcard exercise
+
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
 
 export async function load({ params } : { params: Record<string, string>}){
     const { routeModuleId, routeFlashcardExerciseId } = params;
+    // Check the ids
     if (!isValidId(routeModuleId) || !isValidId(routeFlashcardExerciseId)) 
     {
         throw error(404, 'Page not found');
@@ -13,16 +19,11 @@ export async function load({ params } : { params: Record<string, string>}){
     const moduleId: number = +routeModuleId;
     const flashcardExerciseId: number = +routeFlashcardExerciseId;
 
-    // TODO: Fetch initial data - before page is rendered
-    // const response = await fetch('');
-    // const data = await response.json();
-
     return {
         props:
             {
                 moduleId,
                 flashcardExerciseId,
-                //data
             }
     }
 }
