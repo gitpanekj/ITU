@@ -1,3 +1,9 @@
+// Filename: FE/src/lib/components/reading/TextSelection.js
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Definition of custom TipTap span mark
+
 import { Mark } from '@tiptap/core';
 
 export const QuestionSelection = Mark.create({

@@ -1,8 +1,15 @@
-// Quiz detail page load - src/routes/module/[moduleId]/quiz/[quizId]/+page.ts
+// Filename: FE/src/routes/teacher/module/[routeModuleId]/reading/[routeReadingId]/+page.ts
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Page that shows the students view of a reading exercise
+
+
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
-
+// parse route parameters - moduleId, readingId
+// and pass it to the page.svelte before the first render
 export async function load({ params } : { params: Record<string, string>}){
     const { routeModuleId, routeReadingId } = params;
     if (!isValidId(routeModuleId) || !isValidId(routeReadingId)) 
@@ -19,7 +26,6 @@ export async function load({ params } : { params: Record<string, string>}){
             {
                 moduleId,
                 readingId,
-                // quiz_data
             }
     }
 }

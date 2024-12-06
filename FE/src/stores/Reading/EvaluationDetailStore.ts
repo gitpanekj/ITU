@@ -1,3 +1,8 @@
+// Filename: FE/src/stores/Reading/EvaluationDetailStore.ts
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Question evaluation component shared state
 import { writable } from "svelte/store";
 
 type EvaluationDetailState = {
@@ -14,7 +19,7 @@ function createEvaluationDetailStore() {
 
   return {
     subscribe,
-    set_question_evaluation: ({
+    set_question_evaluation: ({ // load data into QuestionEvaluationDetail
       questionId,
       name,
       question_text,
@@ -39,7 +44,7 @@ function createEvaluationDetailStore() {
         return state;
       });
     },
-    get_question_evaluation: () => {
+    get_question_evaluation: () => {  // retrieve component state
       let questionId, name, question_text, correct, chosen, hard;
       update((state) => {
         questionId = state.questionId;
@@ -58,6 +63,7 @@ function createEvaluationDetailStore() {
 
 export const evaluationDetailStore = createEvaluationDetailStore();
 
+// Fetch data into the QuestionEvaluationDetail
 export const loadEvaluationDetail = async (questionId: number, chosen: string, hard:boolean) => {
   try {
     const response = await fetch(

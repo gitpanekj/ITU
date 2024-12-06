@@ -1,3 +1,9 @@
+// Filename: FE/src/stores/Reading/StudentQuestionPanelStore.ts
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Question detail component shared state
+
 import { writable } from "svelte/store";
 
 type StudentQuestionPanelStore = {

@@ -1,7 +1,17 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/reading/ReadingQuestion.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Reading question input component
+---------------------------------------------------------------->
+
 <script lang="ts">
   import { onMount } from "svelte";
   import { highlightLinkedText, loadEditorContents } from "../../../stores/Reading/EditorStore";
   import { studentQuestionPanelStore } from "../../../stores/Reading/StudentQuestionPanelStore";
+  
+  // Props
   export let readingId;
 
   // Question Data
@@ -19,7 +29,7 @@
   // User input
   let user_answer = "";
 
-
+  // Data fetching
   const toggleHard = async (id: number) => {
     try {
       const response = await fetch(`http://localhost:3000/reading-exercise/mark_hard/${id}`,
@@ -79,6 +89,7 @@
     } catch (err) {throw err;}
   };
 
+  // Mount
   onMount(async () => {
     try {
       await getNextQuestion();
@@ -186,7 +197,7 @@
         <button on:click={async () => checkAnswerButtonEvent()} class="h-12 px-2 py-2 rounded-lg border-4 border-black hover:bg-slate-400">
           Zkontrolovat
         </button>
-      {/if} <!-- End of checked -->
+      {/if}
     </div>
 
   </div>

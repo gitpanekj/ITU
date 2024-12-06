@@ -1,6 +1,14 @@
+// Filename: FE/src/stores/Reading/EditorStore.ts
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Editor state store
+
 import type { Editor } from "@tiptap/core";
 import { writable } from "svelte/store";
 
+// EDITTING mode - teacher can edit the editor content
+// LINKING_TEXT mode - teacher links a question to a text section
 type EditorState = {
   state: "EDITTING" | "LINKING_TEXT";
   editor?: Editor | null;
@@ -13,7 +21,7 @@ function createEditorStore() {
 
   return {
     subscribe,
-    attach_editor: (editor: Editor) =>
+    attach_editor: (editor: Editor) => // attach editor instance
       update((state: EditorState) => {
         state.editor = editor;
         return state;
@@ -28,15 +36,15 @@ function createEditorStore() {
         state.state = "LINKING_TEXT";
         return state;
       }),
-    set_editor_content: (data: string) =>
+    set_editor_content: (data: string) =>  // set content of the attached editor
       update((state: EditorState) => {
         state.editor?.commands.setContent(data);
         return state;
       }),
-    get_editor_content: () => {
+    get_editor_content: () => { // Retrieve editor HTML if editor is defined
       let content;
       update((state) => {
-        content = state.editor?.getHTML() || ""; // Retrieve HTML if editor is defined
+        content = state.editor?.getHTML() || ""; 
         return state;
       });
       return content;
@@ -46,7 +54,7 @@ function createEditorStore() {
 
 export const editorStore = createEditorStore();
 
-// Methods to modify Editor State
+// Methods to modify Editor State and text linkage
 export const saveEditorContents = async (readingId: number) => {
   const content = editorStore.get_editor_content();
 
@@ -56,7 +64,7 @@ export const saveEditorContents = async (readingId: number) => {
       {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json", // Indicate that the payload is JSON
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           text: content,

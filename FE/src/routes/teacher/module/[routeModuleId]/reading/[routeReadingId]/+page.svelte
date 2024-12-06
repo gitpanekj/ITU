@@ -1,4 +1,12 @@
-<!-- Reading page - src/routes/module/[moduleId]/quiz/[readingId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/teacher/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Page that shows the teacher detail of his reading exercise
+---------------------------------------------------------------->
+
+
 <!-- UI state of this page is determined by teacherView store -->
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
@@ -24,19 +32,19 @@
 <Navbar {title} {links}/>
 <div class="w-[90%] mx-auto flex"
      style="height: calc(100vh - 4em)">
-  <!-- Text -->
+  <!-- Left half of the page - Text -->
   <div class="w-1/2  border-black">
     <Editor {readingId} editable={true}/>
   </div>
 
-  <!-- Right content  -->
+  <!-- Right half of the page - Quesiton or QuestionList  -->
   <div class="w-1/2  border-black flex flex-col justify-between pb-8">
 
     {#if $teacherQuestionPanelStore.state === "LIST"}
-      <!-- LIST -->
+      <!-- List of questions -->
       <QuestionList {readingId}/>
     {:else}
-      <!-- DETAIL -->
+      <!-- Detail of chosen question -->
       <QuestionDetail {readingId}/>
     {/if}
 

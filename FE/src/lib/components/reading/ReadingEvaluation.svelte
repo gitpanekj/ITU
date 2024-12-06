@@ -1,19 +1,30 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/reading/ReadingEvaluation.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: List view of evaluated reading questions
+---------------------------------------------------------------->
+
+
 <script lang="ts">
   import { onMount } from "svelte";
   import { studentQuestionPanelStore } from "../../../stores/Reading/StudentQuestionPanelStore";
   import { loadEvaluationDetail } from "../../../stores/Reading/EvaluationDetailStore";
 
+    // Correct answers data
     let correct_questions: any = [];
     let correct_q_page: number = 1;
     let correct_q_total: number = 0;
     $: correct_q_total_pages = Math.ceil(correct_q_total / 4);
 
+    // Wrong answers data
     let wrong_questions: any = [];
     let wrong_q_page: number = 1;
     let wrong_q_total: number = 0;
     $: wrong_q_total_pages = Math.ceil(wrong_q_total / 4);
   
-
+    // Data fetching
     const loadCorrectAnswers = async () => {
         try {
             const response = await fetch(`http://localhost:3000/reading-exercise/evaluate_session/${localStorage.getItem('readingSessionId')}?page=${correct_q_page}&limit=4&type=correct`);
@@ -70,14 +81,6 @@
             loadWrongAnswers();
         } catch(err) {alert('Failed to load the answers.');}
     };
-  
-
-    onMount(async () => {
-        try {
-            await loadCorrectAnswers();
-            await loadWrongAnswers();
-        } catch(err) {alert('Failed to load the answers.');}
-    })
 
     const gotoQuestionDetailButtonEvent = async (questionId: number, chosen: string, hard:boolean) => {
         console.log(chosen);
@@ -86,17 +89,26 @@
         } catch(err) {alert('Failed to show the detail.');}
         studentQuestionPanelStore.set_evaluation_detail_view();
     };
-
-
+  
+    // Mount
+    onMount(async () => {
+        try {
+            await loadCorrectAnswers();
+            await loadWrongAnswers();
+        } catch(err) {alert('Failed to load the answers.');}
+    })
 
 </script>
 
 <div class='flex flex-col items-center border-2 border-black h-full pt-8 gap-8'>
 
+    <!-- Wrong answers list -->
     <div class="flex flex-col h-[45%] w-full p-8 gap-4">
         <h1 class="text-4xl font-bold">Špatné odpovědi</h1>
+
         <div class="flex flex-col overflow-y-auto h-full w-full gap-2 items-center">
             <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <!-- List body -->
             {#each wrong_questions as q (q.id)}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div 
@@ -109,13 +121,19 @@
                 </div>
             {/each}
         </div>
+
+        <!-- Prev / Next pages -->
         <div class="w-full h-12 flex gap-4 justify-center items-center border-b-4 border-slate-300">
+            <!-- Prev -->
             <button on:click={async () => prevWrongPageButtonEvent()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </button>
+
             <h1>{wrong_q_page}/{wrong_q_total_pages}</h1>
+
+            <!-- Next -->
             <button on:click={async () => nextWrongPageButtonEvent()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -124,9 +142,12 @@
         </div>
     </div>
 
+    <!-- Correct answers list -->
     <div class="flex flex-col h-[45%] w-full p-8 gap-4">
         <h1 class="text-4xl font-bold">Správné odpovědi</h1>
+
         <div class="flex flex-col overflow-y-auto h-full w-full gap-2">
+            <!-- List body -->
             {#each correct_questions as q (q.id)}
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -140,13 +161,20 @@
                 </div>
             {/each}
         </div>
+
+        <!-- Prev / Next pages -->
         <div class="w-full h-12 flex gap-4 justify-center items-center border-b-4 border-slate-300">
+
+            <!-- Prev -->
             <button on:click={async () => prevCorrectPageButtonEvent()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
                 </svg>
             </button>
+            
             <h1>{correct_q_page}/{correct_q_total_pages}</h1>
+
+            <!-- Next -->
             <button on:click={async () => nextCorrectPageButtonEvent()}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

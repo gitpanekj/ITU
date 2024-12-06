@@ -1,4 +1,11 @@
-<!-- Quiz detail page - src/routes/module/[moduleId]/quiz/[quizId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Page that shows the student's view of a reading exercise
+---------------------------------------------------------------->
+
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
   import ReadingQuestion from "$lib/components/reading/ReadingQuestion.svelte";
@@ -39,24 +46,24 @@
 
 <Navbar {title} {links}/>
 <div class="h-full w-11/12 mx-auto flex">
-  <!-- Text -->
+  <!-- Left half of the page - Text -->
   <div class="w-1/2">
     <Editor {readingId} editable={false}/>
   </div>
 
-  <!-- Right content  -->
+  <!-- Right half of the page - ReadingQuestion / ReadingEvaluation / ReadingEvaluationDetail  -->
   <div class="w-1/2 flex flex-col" style="height: calc(100vh - 4em)">
     {#if sessionCreated == false}
       Creaiting session
     {:else }
       {#if $studentQuestionPanelStore.state === "QUIZ"}
-        <!-- QUIZ -->
+        <!-- Single reading question -->
         <ReadingQuestion {readingId}/>
       {:else if $studentQuestionPanelStore.state === "EVALUATION"}
-        <!-- EVALUATION -->
+        <!-- Evaluation after reading finish -->
         <ReadingEvaluation/>
       {:else}
-        <!-- EVALUATION DETAIL -->
+        <!-- Detail of evaluated question from reading evaluation -->
         <ReadingEvaluationDetail {readingId}/>
       {/if}
     {/if}

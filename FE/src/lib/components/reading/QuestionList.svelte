@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/reading/QuestionList.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Question list view component
+---------------------------------------------------------------->
+
 <script lang="ts">
   import { onMount } from "svelte";
   import { teacherQuestionPanelStore } from "../../../stores/Reading/TeacherQuestionPanelStore";
@@ -154,14 +162,18 @@
       </div> <!-- End of Table -->
     </div>
 
-    <!-- Next -->
+    <!-- Prev / Next pages -->
     <div class="w-full h-12 flex gap-4 justify-center items-center border-b-4 border-slate-300">
+      <!-- Prev -->
       <button on:click={async () => prevPageButtonEvent()}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
       </svg>
       </button>
+
       <h1>{page}/{totalPages}</h1>
+
+      <!-- Next -->
       <button on:click={async () => nextPageButtonEvent()}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-6 h-6 text-2xl hover:bg-slate-300 rounded-full">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

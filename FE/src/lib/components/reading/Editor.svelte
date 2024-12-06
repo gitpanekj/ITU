@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/reading/Editor.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Rich text editor component.
+---------------------------------------------------------------->
+
 <script lang="ts">
   // Svelte
   import { onMount, onDestroy } from "svelte";
@@ -42,6 +50,7 @@
     });
     editorStore.attach_editor(editor);
     
+    // load initial editor contents
     try {
       await loadEditorContents(readingId);
     } catch (err)

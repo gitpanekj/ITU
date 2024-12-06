@@ -1,9 +1,21 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/reading/ReadingEvaluationDetail.svelte
+Author: Jan Pánek
+Login: xpanek11
+Last Modified: [06-12-2024]
+Description: Detail of evaluated reading questions
+---------------------------------------------------------------->
+
+
 <script>
   import { highlightLinkedText, loadEditorContents } from "../../../stores/Reading/EditorStore";
   import { studentQuestionPanelStore } from "../../../stores/Reading/StudentQuestionPanelStore";
   import { evaluationDetailStore } from "../../../stores/Reading/EvaluationDetailStore";
+  
+  // Props
   export let readingId;
 
+  // Events
   const returnBackButtonEvent = async () => {
     try {
       await loadEditorContents(readingId);
@@ -36,9 +48,8 @@
 
 
       <div class="flex flex-col w-full gap-4 justify-start items-start px-4">
-
-
         <div class="w-full flex justify-between">
+          <!-- Question Name -->
           <div class="flex flex-row items-center gap-4"><h1 class="text-2xl font-bold text-center">Otázka:</h1><div class="text-xl">{$evaluationDetailStore.name}</div></div>
           <!-- Hard indicator -->
           {#if $evaluationDetailStore.hard}
@@ -46,24 +57,27 @@
               Hard
             </h1>
           {/if}
-        </div>
-        <br/>
+          </div>
+          <br/>
 
+        <!-- Question text -->
         <p class="text-lg px-4 border-2 rounded-lg break-words w-full"><i>{$evaluationDetailStore.question_text}</i></p>
 
+        <!-- Chosen answer -->
         <div class="flex flex-row items-center gap-4">
-        <h1 class="text-2xl font-bold text-center">
-          Tvoje odpověd:
-        </h1>
-        <div class="text-xl">
-          {#if $evaluationDetailStore.chosen === undefined}
-          {$evaluationDetailStore.correct}
-        {:else}
-          {$evaluationDetailStore.chosen}
-        {/if}
+          <h1 class="text-2xl font-bold text-center">
+            Tvoje odpověd:
+          </h1>
+          <div class="text-xl">
+            {#if $evaluationDetailStore.chosen === undefined}
+            {$evaluationDetailStore.correct}
+          {:else}
+            {$evaluationDetailStore.chosen}
+          {/if}
         </div>
       </div>
 
+      <!-- Correct answer -->
       <div class="flex flex-row items-center gap-4">
         <h1 class="text-2xl font-bold text-center">
           Správná odpověď:
@@ -74,6 +88,7 @@
         </div>
       </div>
       
+      <!-- Show in text -->
       <button on:click={async () => highlightButtonEvent()} class="h-12 text-2xl flex items-center w-fit px-2 py-2 rounded-lg border-4 border-black hover:bg-slate-400 ml-4">
         Zobrazit v textu
       </button>

@@ -1,5 +1,13 @@
+// Filename: FE/src/stores/Reading/QuestionDetail.ts
+// Author: Jan Pánek
+// Login: xpanek11
+// Last Modified: [06-12-2024]
+// Description: Question detail component shared state
+
 import { writable } from "svelte/store";
 
+// EDITTING - teacher editting question
+// LINKING_TEXT - teacher linking question to a text section
 type QuestionDetailState = {
   state: "EDITTING" | "LINKING_TEXT";
   questionId?: number;
@@ -27,7 +35,7 @@ function createQuestionDetailStore() {
         state.state = "LINKING_TEXT";
         return state;
       }),
-    set_question: ({
+    set_question: ({ // set QuestionDetail component state
       questionId,
       name,
       question,
@@ -49,7 +57,7 @@ function createQuestionDetailStore() {
         return state;
       });
     },
-    get_question: () => {
+    get_question: () => { // retrieve QuestionDetail component state
       let questionId, name, question, answer, textAttached;
       update((state) => {
         questionId = state.questionId;
@@ -66,6 +74,8 @@ function createQuestionDetailStore() {
 
 export const questionDetailStore = createQuestionDetailStore();
 
+
+// fetch data into QuestionDetail component
 export const loadQuestionDetail = async (questionId: number | undefined) => {
   try {
     const response = await fetch(
@@ -90,6 +100,7 @@ export const loadQuestionDetail = async (questionId: number | undefined) => {
   }
 };
 
+// save QuestionDetail component data
 export const saveQuestionDetail = async () => {
   const question = questionDetailStore.get_question();
 
