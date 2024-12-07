@@ -41,6 +41,13 @@ Description: Page that shows the teacher detail of his reading exercise
 <Navbar {title} {links} {saveCallback}/>
 <div class="w-[90%] mx-auto flex"
      style="height: calc(100vh - 4em)">
+
+  {#if $teacherQuestionPanelStore.notificationPending}
+  <div 
+    class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-blue-200 text-black font-bold px-4 py-2 mt-4 rounded shadow">
+    {$teacherQuestionPanelStore.notificationText}
+  </div>
+  {/if}
   <!-- Left half of the page - Text -->
   <div class="w-1/2  border-black">
     <Editor {readingId} editable={true}/>

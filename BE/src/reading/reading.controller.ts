@@ -36,13 +36,34 @@ export class ReadingController {
   }
 
   @Get('question')
-  findAllQuestion(
+  async findAllQuestion(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 0,
-    @Query() _filters: any,
+    @Query('order') order: "ID" | "WRONG" | "CORRECT" | "HARD" = 'ID',
+    @Query() _filters: any
   ) {
-    const { page: _, limit: __, ...filters } = _filters;
-    return this.readingQuestionService.findAll({ page, limit, filters, order: {id: 'DESC'} });
+    const { page: _, limit: __, order: ___, ...filters } = _filters;
+    let orderBy;
+    switch (order)
+    {
+      case "ID":
+        orderBy = {id: 'DESC'};
+        break;
+      case "WRONG":
+        orderBy = {noWrong: 'DESC'};
+        break;
+      case "CORRECT":
+        orderBy = {noCorrect: 'DESC'};
+        break;
+      case "HARD":
+        orderBy = {hardCount: 'DESC'};
+        break;
+      default:
+        orderBy = {id: 'DESC'};
+    }
+    
+    let data = await this.readingQuestionService.findAll({ page, limit, filters, order: orderBy });
+    return data;
   }
 
   @Get('question/:id')

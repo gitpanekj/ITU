@@ -25,6 +25,11 @@ Description: Component for detail of a question and it's update
     await saveQuestionDetail();                // save linked text
     } catch(err) {alert('Failed to save the question.');}
     teacherQuestionPanelStore.set_list_view(); // change view
+
+    teacherQuestionPanelStore.show_notification("Otázka úspěšně upravena uložen");
+    setTimeout(() => {
+      teacherQuestionPanelStore.clear_notification();
+    }, 2000);
   };
 
   const linkTextButtonEvent = async () => {

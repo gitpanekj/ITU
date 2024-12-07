@@ -18,12 +18,15 @@ Description: Question list view component
   let questions: any = [];
   let page: number = 1;
   let totalRecords: number = 0;
-  $: totalPages = Math.ceil(totalRecords / 15);
+  $: totalPages = Math.ceil(totalRecords / 12);
+  let sortByNoCorrect: boolean = false;
+  let sortByNoWrong: boolean = false;
+  let sortByNoHard: boolean = false;
   
   // Data fetch
   const fetchQuestions = async () => {
     try{
-      const response = await fetch(`http://localhost:3000/reading-exercise/question?exerciseId=${readingId}&page=${page}&limit=15`);
+      const response = await fetch(`http://localhost:3000/reading-exercise/question?exerciseId=${readingId}&page=${page}&limit=12`);
 
       if (!response.ok) {
         const err = await response.text();
@@ -32,6 +35,43 @@ Description: Question list view component
       const {data, total} = await response.json();
       totalRecords = total;
       questions = data;
+    } catch (err) {throw err;}
+  };
+
+  const sortQuestions = async (by: string) => {
+    if (by === "CORRECT" && sortByNoCorrect)
+    {
+      by = "ID";
+      sortByNoCorrect = false;
+    }
+    else if (by === "WRONG" && sortByNoWrong)
+    {
+      by = "ID";
+      sortByNoWrong = false;
+    }
+    else if (by === "HARD" && sortByNoHard)
+    {
+      by = "ID";
+      sortByNoHard = false;
+    }
+    else {
+      sortByNoCorrect = (by === "CORRECT");
+      sortByNoWrong   = (by === "WRONG");
+      sortByNoHard    = (by === "HARD");
+    }
+
+    try{
+      const response = await fetch(`http://localhost:3000/reading-exercise/question?exerciseId=${readingId}&page=${page}&limit=12&order=${by}`);
+      if (!response.ok) {
+        console.log(response.text());
+        const err = await response.text();
+        throw new HttpError(response.status, response.statusText, err);
+      }
+      
+      const {data, total} = await response.json();
+      totalRecords = total;
+      questions = data;
+      console.log(questions);
     } catch (err) {throw err;}
   };
 
@@ -134,11 +174,13 @@ Description: Question list view component
         
         <!-- header -->
         <div class="w-11/12 h-12 px-4 flex justify-between items-center border-b-4 border-black mb-4">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
           <div class="flex flex-row gap-8 items-center">
             <div class="text-2xl font-bold w-48 text-center">Jméno</div>
-            <div class="text-lg w-24 text-center ">Správně</div>
-            <div class="text-lg w-24 text-center ">Špatně</div>
-            <div class="text-lg w-24 text-center ">Těžký</div>
+            <div class="text-lg w-24 text-center border-2 bg-green-400 font-bold rounded-lg cursor-pointer" on:click={async () => sortQuestions("CORRECT")}>Správně</div>
+            <div class="text-lg w-24 text-center border-2 bg-red-400 font-bold rounded-lg   cursor-pointer"   on:click={async () => sortQuestions("WRONG")}>Špatně</div>
+            <div class="text-lg w-24 text-center border-2 bg-blue-300 font-bold rounded-lg  cursor-pointer"  on:click={async () => sortQuestions("HARD")}>Těžký</div>
           </div>
         </div>
         

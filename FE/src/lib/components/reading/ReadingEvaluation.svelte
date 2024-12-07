@@ -113,7 +113,7 @@ Description: List view of evaluated reading questions
                 <!-- svelte-ignore a11y-click-events-have-key-events -->
                 <div 
                     on:click={async () => gotoQuestionDetailButtonEvent(q.id, q.chosen, q.hard)}
-                    class="w-full min-h-12 border-2 border-black rounded-ld flex gap-4 items-center p-2 cursor-pointer hover:bg-slate-200 rounded-">
+                    class="w-full min-h-10 border-2 border-black rounded-ld flex gap-4 items-center p-2 cursor-pointer hover:bg-slate-200 rounded-">
                     <h1>{q.name}</h1>
                     {#if q.hard}
                     <h1 class="w-16 border-2 bg-red-500 font-bold rounded-lg  text-center flex justify-center items-center">Těžká</h1>
@@ -153,7 +153,7 @@ Description: List view of evaluated reading questions
                 <!-- svelte-ignore a11y-no-static-element-interactions -->
                 <div 
                     on:click={async () => gotoQuestionDetailButtonEvent(q.id, q.chosen, q.hard)}   
-                    class="w-full min-h-12 border-2 border-black rounded-ld flex gap-2 items-center p-2 cursor-pointer hover:bg-slate-200">
+                    class="w-full min-h-10 border-2 border-black rounded-ld flex gap-2 items-center p-2 cursor-pointer hover:bg-slate-200">
                     <h1>{q.name}</h1>
                     {#if q.hard}
                     <h1 class="w-16 border-2 bg-red-500 font-bold rounded-lg  text-center flex justify-center items-center">Těžká</h1>

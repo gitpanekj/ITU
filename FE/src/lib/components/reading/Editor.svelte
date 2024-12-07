@@ -18,6 +18,7 @@ Description: Rich text editor component.
   import StarterKit from "@tiptap/starter-kit";
   import Underline from "@tiptap/extension-underline";
   import Heading from "@tiptap/extension-heading";
+  import { teacherQuestionPanelStore } from "../../../stores/Reading/TeacherQuestionPanelStore";
   // Props
   export let readingId;
   export let editable;
@@ -25,6 +26,7 @@ Description: Rich text editor component.
   // TipTap setup
   let editor: Editor | null = null;
   let element: HTMLDivElement | null = null;
+  let autosaveInterval: number;
   onMount(async () => {
     // Initialize editor
     editor = new Editor({
@@ -49,6 +51,12 @@ Description: Rich text editor component.
       editable: editable
     });
     editorStore.attach_editor(editor);
+
+    // CTRL+S
+    window.addEventListener("keydown", handleKeydown);
+    // Auto save
+    autosaveInterval = setInterval(saveButtonEvent, 10*60*1000);
+    
     
     // load initial editor contents
     try {
@@ -60,8 +68,21 @@ Description: Rich text editor component.
   });
 
   onDestroy(() => {
+    window.removeEventListener("keydown", handleKeydown);
     editor?.destroy();
   });
+
+
+  function handleKeydown(event: any) {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault(); // Prevent the browser's default "Save page" action
+        saveButtonEvent();
+        clearInterval(autosaveInterval);
+      }
+  }
+  
+
+
 
   // TipTap editor styling
   const bold = () => {
@@ -91,12 +112,16 @@ Description: Rich text editor component.
   // Element events
   const saveButtonEvent = async () => {
     try {
-    saveEditorContents(readingId);
+      saveEditorContents(readingId);
     }
     catch (err)
     {
       alert("Failed to save editor content.");
     }
+    teacherQuestionPanelStore.show_notification("Text úspěšně uložen");
+    setTimeout(() => {
+      teacherQuestionPanelStore.clear_notification();
+    }, 2000);
   };
 
   const selectTextButtonEvent = async () => {
