@@ -12,7 +12,7 @@ Description: Rich text editor component.
   // Libs
   import { QuestionSelection } from "./TextSelection";
   import { editorStore, linkTextToQuestion, loadEditorContents, saveEditorContents } from "../../../stores/Reading/EditorStore";
-  import { loadQuestionDetail, questionDetailStore } from "../../../stores/Reading/QuestionDetailStore";
+  import { loadQuestionDetail, questionDetailStore, saveQuestionDetail } from "../../../stores/Reading/QuestionDetailStore";
   // TipTap
   import { Editor } from "@tiptap/core";
   import StarterKit from "@tiptap/starter-kit";
@@ -130,6 +130,7 @@ Description: Rich text editor component.
     try {
       await linkTextToQuestion($questionDetailStore.questionId);
       await saveEditorContents(readingId);
+      await saveQuestionDetail();
       
       // reload question and editor
       await loadQuestionDetail($questionDetailStore.questionId);

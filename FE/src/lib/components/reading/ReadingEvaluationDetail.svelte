@@ -69,7 +69,7 @@ Description: Detail of evaluated reading questions
             Tvoje odpověd:
           </h1>
           <div class="text-xl">
-            {#if $evaluationDetailStore.chosen === undefined}
+          {#if $evaluationDetailStore.chosen === undefined}
             {$evaluationDetailStore.correct}
           {:else}
             {$evaluationDetailStore.chosen}
