@@ -33,12 +33,14 @@ Description: Component for detail of a question and it's update
   };
 
   const linkTextButtonEvent = async () => {
+    await saveQuestionDetail();
     questionDetailStore.set_linking_text_mode();
     editorStore.set_linking_text_mode();
   };
 
   const unLinkTextButtonEvent = async () => {
     try {
+    await saveQuestionDetail();
     await deleteQuestionTextLink(readingId, $questionDetailStore.questionId);
     await loadQuestionDetail($questionDetailStore.questionId);
     } catch(err) {alert('Failed to unlink the text.');}
@@ -48,6 +50,7 @@ Description: Component for detail of a question and it's update
     try {
     await highlightLinkedText(readingId, $questionDetailStore.questionId);
   } catch(err) {
+    await saveQuestionDetail();
     await unLinkTextButtonEvent();
     await loadQuestionDetail($questionDetailStore.questionId);
     alert('Oops. Vypadá to, že tenhle odkaz byl smazán.');
