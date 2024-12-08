@@ -1,8 +1,13 @@
-// Quiz detail page load - src/routes/module/[moduleId]/quiz/[quizId]/+page.ts
+// Filename: FE/src/routes/teacher/module/[moduleId]/quiz/[quizId]/+page.ts
+// Author: Jiří Kantor
+// Login: xkanto16
+// Last Modified: [08-12-2024]
+// Description: Quiz teacher main page typescript
+
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
-
+// page load function
 export async function load({ params } : { params: Record<string, string>}){
     const { routeModuleId, routeQuizId } = params;
     if (!isValidId(routeModuleId) || !isValidId(routeQuizId)) 
@@ -13,16 +18,11 @@ export async function load({ params } : { params: Record<string, string>}){
     const moduleId: number = +routeModuleId;
     const quizId: number = +routeQuizId;
 
-    // TODO: Fetch initial data - before page is rendered
-    // const response = await fetch('');
-    // const quiz_data = await response.json();
-
     return {
         props:
             {
                 moduleId,
                 quizId,
-                // quiz_data
             }
     }
 }

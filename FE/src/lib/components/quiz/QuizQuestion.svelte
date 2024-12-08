@@ -1,7 +1,17 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/quiz/QuizQuestion.svelte
+Author: Jiří Kantor
+Login: xkanto16
+Last Modified: [08-12-2024]
+Description: Quiz question view for user interaction
+---------------------------------------------------------------->
+
 <script lang="ts">
+    // library import
     import { onMount } from "svelte";
     import { userView } from "../../../stores/Quiz/userView";
 
+    // helper UI vars
     let question = "";
     let name = "";
     let questionId: number = 0;
@@ -15,9 +25,10 @@
     let questionEvaluationRes = "";
     let hard: boolean = false;
 
-   // Reactive statement to calculate progress percentage based on current and total questions
+   // calculating the progress percentage based on current and total questions
    $: progressPercentage = totalQuestions > 0 ? ((currentQuestion -1) / totalQuestions) * 100 : 0;
 
+   // question evaluation logic
     const evaluateQuestion = async () => {
         const response = await fetch(`http://localhost:3000/quiz-exercise/evaluate_question`,
             {
@@ -35,6 +46,7 @@
         currentQuestion++;
     };
 
+    // mark question as hard logic
     const markAsHard = async (id: number) => {
         if(hard){
             const response = await fetch(`http://localhost:3000/quiz-exercise/mark_hard/${id}`,
@@ -48,6 +60,7 @@
         }
     };
 
+    // get next question of the quiz
     const getNextQuestion = async () => {
         const response = await fetch(
             `http://localhost:3000/quiz-exercise/session/${localStorage.getItem("quizSessionId")}/next`
@@ -64,7 +77,6 @@
         totalQuestions = remainingQuestions + currentQuestion;
         
         answers = data.answers;
-        console.log("log: akt.ot.: ", currentQuestion, "zbývá: ", remaining, "akt.Id: ", questionId, "korektId: ", correctAnswerId);
     };
 
 
@@ -74,12 +86,9 @@
     });
 
 </script>
-{@debug answers}
-{@debug question}
-
-<!-- Progress Bar Container -->
+<!-- progress bar container -->
 <div class="w-1/2 mx-auto h-8 bg-black border-4 border-black rounded-full overflow-hidden mt-4">
-    <!-- Progress Bar -->
+    <!-- progress bar -->
     <div 
         class="flex items-center h-full bg-green-500 text-s font-medium text-center text-white  leading-none transition-all duration-300 ease-in-out"
         style="width: {progressPercentage}%;"
@@ -88,6 +97,7 @@
     </div>
 </div>
 
+<!-- question detail container -->
 <div class="flex flex-col mx-auto bg-blue-950 rounded-xl shadow-lg border-2 border-black p-6 text-white h-3/4 w-1/2 my-auto relative">
     <div class=" text-4xl bg-inherit w-full" >{name}</div>
   
@@ -95,9 +105,9 @@
     <div class="mt-6 h-1/4 p-2 border-2 border-neutral-400 rounded-xl text-white text-3xl">{question}</div>
   
     <!-- question answers  -->
-    <div class="text-2xl mt-8 space-y-6 text-black w-full overflow-y-auto max-h-full"> <!-- scrollable enabled-->
+    <div class="text-2xl mt-8 space-y-6 text-black w-full overflow-y-auto max-h-full">
         {#each answers as answer}
-            
+            <!-- if question evaluated shown correct/chosen answer, otherwise shown all answers -->
             {#if !questionEvaluated}
                 <button on:click={() => selectedAnswerId = answer.id} 
                     class={`border-1 border-color-zinc-400 flex rounded-xl w-full h-auto cursor-pointer border-4 
@@ -123,22 +133,24 @@
         {/each}
     </div>
   
-    <!-- Buttons -->
+    <!-- buttons -->
     <div class="flex justify-between absolute bottom-6 left-0 right-0 px-6">
-      {#if !questionEvaluated}
+    <!-- if not yet evaluated show only evaluate button -->
+    {#if !questionEvaluated}
         {#if selectedAnswerId !== null}
             <button on:click={async () => {await evaluateQuestion();}}  class="h-auto border-2 border-black bg-zinc-400 rounded-xl text-white text-2xl px-6 py-2 hover:bg-zinc-300 hover:text-black">
                 Zkontrolovat
             </button>
         {/if}
         
-        
+    <!-- otherwise the mark as hard and next button are displayed -->
     {:else}
         <button on:click={async () => { hard = !hard; }} class={`"h-auto border-2  rounded-xl  text-2xl px-6 py-2 
         ${hard ? 'text-white bg-blue-500 border-white' : 'text-white  hover:bg-zinc-300 hover:text-black  bg-zinc-400 border-black' }`}>
             Těžká
         </button>
         
+        <!-- if end of the quiz show quiz evaluation button, otherwise show question evaluation button -->
         {#if remainingQuestions != 0}
             <button 
                 on:click={async () => { 

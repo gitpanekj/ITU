@@ -1,4 +1,10 @@
-<!-- Quiz detail page - src/routes/module/[moduleId]/quiz/[quizId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/module/[moduleId]/quiz/[quizId]/+page.svelte
+Author: Jiří Kantor
+Login: xkanto16
+Last Modified: [08-12-2024]
+Description: Quiz main page
+---------------------------------------------------------------->
 <script lang="ts">
   import Navbar from "$lib/components/Navbar.svelte";
   import type { Link } from "$lib/utils/dataTypes.js";
@@ -20,6 +26,7 @@
 
   let sessionActive = false;
 
+  // quiz session creating
   const createSession = async () => {
     const response = await fetch(`http://localhost:3000/quiz-exercise/create_session/${quizId}`);
     const data = await response.json();

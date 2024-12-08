@@ -1,4 +1,10 @@
-<!-- Quiz detail page - src/routes/module/[moduleId]/quiz/[quizId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/teacher/module/[moduleId]/quiz/[quizId]/+page.svelte
+Author: Jiří Kantor
+Login: xkanto16
+Last Modified: [08-12-2024]
+Description: Quiz teacher main page
+---------------------------------------------------------------->
 <script lang="ts">
   import { page } from "$app/stores";
   import Navbar from "$lib/components/Navbar.svelte";
@@ -19,7 +25,7 @@
   let title: string = `Quiz exercise`;
 
   onMount(() => {
-    // TODO: fetching data after page render
+
   });
   
 </script>
@@ -32,7 +38,7 @@
   <!-- Left column: Question list -->
   <div class="w-1/2 h-full p-4 border-a border-black border-4">
     {#key change}
-      <QuestionList {quizId} on:selectQuestion={(event) => selectedQuestionId = event.detail.selectedQuestionId} />
+      <QuestionList {quizId} {selectedQuestionId} on:selectQuestion={(event) => selectedQuestionId = event.detail.selectedQuestionId} />
     {/key}
   </div>
 
