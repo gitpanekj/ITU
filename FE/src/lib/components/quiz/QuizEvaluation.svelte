@@ -30,36 +30,51 @@ Description: Component for view of the evaluated quiz
 
     // load question by id
     const loadQuestion = async (id: number) => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/question/${id}`);
-        const data = await response.json();
-        questionText = data.question;
-        correctAnswerId = data.rightAnswerId;
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/question/${id}`);
+            const data = await response.json();
+            questionText = data.question;
+            correctAnswerId = data.rightAnswerId;
+        } catch (error) {
+            alert("Chyba při načítání otázky");
+        }
+        
 
 
     };
 
     // load question answers by question id
     const loadQuestionAnswers = async (id: number) => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/answer?questionId=${id}`);
-        const {data, total} = await response.json();
-        answers = data;
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/answer?questionId=${id}`);
+            const {data, total} = await response.json();
+            answers = data;
+        } catch (error) {
+            alert("Chyba při načítání odpovědí");
+        }
+        
     };
 
     // session evaluation
     onMount(async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/evaluate_session/${localStorage.getItem('quizSessionId')}`,
-            {
-                method: "POST",
-                headers: {
-                        'Content-Type': 'application/json'
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/evaluate_session/${localStorage.getItem('quizSessionId')}`,
+                {
+                    method: "POST",
+                    headers: {
+                            'Content-Type': 'application/json'
+                    }
                 }
-            }
-        );
-        const data = await response.json();
-        wrongQuestions = data.wrong;
-        correctQuestions = data.correct;
-        noCorrect = data.no_correct;
-        noWrong = data.no_wrong;
+            );
+            const data = await response.json();
+            wrongQuestions = data.wrong;
+            correctQuestions = data.correct;
+            noCorrect = data.no_correct;
+            noWrong = data.no_wrong;
+        } catch (error) {
+            alert("Chyba při načítání vyhodnocení");
+        }
+        
     });
 
 

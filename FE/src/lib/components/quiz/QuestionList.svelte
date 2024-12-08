@@ -29,66 +29,95 @@ Description: Component obtaining fetching and manipulation with questions in lis
 
   // data fetch
   const fetchQuestions = async () => {
-    const response = await fetch(`http://localhost:3000/quiz-exercise/question?quizId=${quizId}&page=${page}`);
-    const { data, total } = await response.json();
-    questions = data;
+    try {
+      const response = await fetch(`http://localhost:3000/quiz-exercise/question?quizId=${quizId}&page=${page}`);
+      const { data, total } = await response.json();
+      questions = data;
 
-    // select first question if nothing selected
-    if (questions.length > 0) {
-      if (selectedQuestionId == null) {
-          selectQuestion(questions[0].id);
+      // select first question if nothing selected
+      if (questions.length > 0) {
+        if (selectedQuestionId == null) {
+            selectQuestion(questions[0].id);
+        }
+        
       }
-      
+
+    } catch (error) {
+      alert("Chyba při načítání otázky");
     }
+    
   };
 
   // question adding
   const addQuestion = async () => {
-    const response = await fetch(`http://localhost:3000/quiz-exercise/question`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name: "Nová otázka", question: "Text otázky", quizId: quizId, rightAnswerId: null })
-    });
-    const data = await response.json();
-    selectQuestion(data.id)
-    await createNewAnswer(data.id);
-    await fetchQuestions();
+    try {
+      const response = await fetch(`http://localhost:3000/quiz-exercise/question`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: "Nová otázka", question: "Text otázky", quizId: quizId, rightAnswerId: null })
+      });
+      const data = await response.json();
+      selectQuestion(data.id)
+      await createNewAnswer(data.id);
+      await fetchQuestions();
+
+    } catch (error) {
+      alert("Chyba při vytváření otázky");
+    }
+    
   };
 
   // question deletion
   const deleteQuestion = async (id: number) => {
-    const response = await fetch(`http://localhost:3000/quiz-exercise/question/${id}`, {
-      method: "DELETE"
-    });
-    selectedQuestionId = null;
-    await fetchQuestions();
+    try {
+      const response = await fetch(`http://localhost:3000/quiz-exercise/question/${id}`, {
+        method: "DELETE"
+      });
+      selectedQuestionId = null;
+      await fetchQuestions();
+
+    } catch (error) {
+      alert("Chyba při mazání otázky");
+    }
+    
   };
 
   // answer adding
   const createNewAnswer = async (newQuestionId: number) => {
-    const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
+    try {
+      const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
         method: "POST",
         headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ answer: "odpověď", questionId: newQuestionId })
-    });
-    const data = await response.json();
-    await setCorrectAnswer(newQuestionId, data.id);
+      });
+      const data = await response.json();
+      await setCorrectAnswer(newQuestionId, data.id);
+
+    } catch (error) {
+      alert("Chyba při vytváření odpovědi");
+    }
+    
   };
 
   // answer setting as correct
   const setCorrectAnswer = async (newQuestionId: number, correctAnswerId: number) => {
-    const response = await fetch(`http://localhost:3000/quiz-exercise/question/${newQuestionId}`,
-    {
-      method: "PATCH",
-      headers: {
-            'Content-Type': 'application/json', 
-        },
-      body: JSON.stringify({rightAnswerId: correctAnswerId})
-    });
+    try {
+      const response = await fetch(`http://localhost:3000/quiz-exercise/question/${newQuestionId}`,
+      {
+        method: "PATCH",
+        headers: {
+              'Content-Type': 'application/json', 
+          },
+        body: JSON.stringify({rightAnswerId: correctAnswerId})
+      });
+    } catch (error) {
+      alert("Chyba při ukládání otázky");
+    }
+    
   };
 
   onMount(async () => {

@@ -30,25 +30,32 @@ Description: Quiz question view for user interaction
 
    // question evaluation logic
     const evaluateQuestion = async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/evaluate_question`,
-            {
-            method: "POST",
-            headers: {
-                    'Content-Type': 'application/json',
-                },
-            body: JSON.stringify({questionId: questionId, answerId: selectedAnswerId, sessionId: Number(localStorage.getItem('quizSessionId'))})
-            }
-        );
-        const data = await response.json();
-        questionEvaluationRes = data.result;
-        questionEvaluated = true; 
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/evaluate_question`,
+                {
+                method: "POST",
+                headers: {
+                        'Content-Type': 'application/json',
+                    },
+                body: JSON.stringify({questionId: questionId, answerId: selectedAnswerId, sessionId: Number(localStorage.getItem('quizSessionId'))})
+                }
+            );
+            const data = await response.json();
+            questionEvaluationRes = data.result;
+            questionEvaluated = true; 
 
-        currentQuestion++;
+            currentQuestion++;
+
+        } catch (error) {
+            alert("Chyba při vyhodnocování otázky");
+        }
+        
     };
 
     // mark question as hard logic
     const markAsHard = async (id: number) => {
-        if(hard){
+        try {
+            if(hard){
             const response = await fetch(`http://localhost:3000/quiz-exercise/mark_hard/${id}`,
                 {
                 method: "POST",
@@ -56,27 +63,38 @@ Description: Quiz question view for user interaction
                         'Content-Type': 'application/json', 
                     }
                 }
-            );
+                );
+            }
+
+        } catch (error) {
+            alert("Chyba při označování otázky jako těžké");
         }
+        
     };
 
     // get next question of the quiz
     const getNextQuestion = async () => {
-        const response = await fetch(
+        try {
+            const response = await fetch(
             `http://localhost:3000/quiz-exercise/session/${localStorage.getItem("quizSessionId")}/next`
-        );
+            );
+            
+            const {data, remaining} = await response.json();
+            name = data.question.name;
+            question = data.question.question;
+            questionId = data.question.id;
+            correctAnswerId = data.question.rightAnswerId;
+            
+            remainingQuestions = remaining;
+            
+            totalQuestions = remainingQuestions + currentQuestion;
+            
+            answers = data.answers;
+
+        } catch (error) {
+            alert("Chyba při načítání další otázky");
+        }
         
-        const {data, remaining} = await response.json();
-        name = data.question.name;
-        question = data.question.question;
-        questionId = data.question.id;
-        correctAnswerId = data.question.rightAnswerId;
-        
-        remainingQuestions = remaining;
-        
-        totalQuestions = remainingQuestions + currentQuestion;
-        
-        answers = data.answers;
     };
 
 

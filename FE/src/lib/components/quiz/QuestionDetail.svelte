@@ -41,75 +41,104 @@ Description: Component for detail of the question and editing
 
     // question data fetch
     const fetchQuestion = async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`);
-        const data = await response.json();
-        name = data.name;
-        question = data.question;
-        correctAnswerId = data.rightAnswerId;
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`);
+            const data = await response.json();
+            name = data.name;
+            question = data.question;
+            correctAnswerId = data.rightAnswerId;
 
-        
+        } catch (error) {
+            alert("Chyba při načítání otázek");
+        }
     };
 
     // question answers fetch
     const fetchAnswers = async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/answer?questionId=${selectedQuestionId}`);
-        const {data, total} = await response.json();
-        answers = data;
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/answer?questionId=${selectedQuestionId}`);
+            const {data, total} = await response.json();
+            answers = data;
+
+        } catch (error) {
+            alert("Chyba při načítání odpovědí");
+        }
+        
     };
 
     // question data saving
     const saveQuestion = async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`,
-        {
-          method: "PATCH",
-          headers: {
-                'Content-Type': 'application/json', 
-            },
-          body: JSON.stringify({name: name, question: question, rightAnswerId: correctAnswerId})
-        });
-        const data = await response.json();
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/question/${selectedQuestionId}`,
+            {
+            method: "PATCH",
+            headers: {
+                    'Content-Type': 'application/json', 
+                },
+            body: JSON.stringify({name: name, question: question, rightAnswerId: correctAnswerId})
+            });
+            const data = await response.json();
+
+        } catch (error) {
+            alert("Chyba při ukládání otázky");
+        }
+        
     };
 
     // question answers saving
     const saveAnswers = async () => {
-        for (const answer of answers) {
-            const response = await fetch(`http://localhost:3000/quiz-exercise/answer/${answer.id}`, {
-                method: "PATCH",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ answer: answer.answer, questionId: selectedQuestionId })
-            });
-            const data = await response.json();
-        }   
+        try {
+            for (const answer of answers) {
+                const response = await fetch(`http://localhost:3000/quiz-exercise/answer/${answer.id}`, {
+                    method: "PATCH",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ answer: answer.answer, questionId: selectedQuestionId })
+                });
+                const data = await response.json();
+            }   
+        } catch (error) {
+            alert("Chyba při ukládání odpovědí");
+        }
+        
     };
 
     // new question answer creating
     const createNewAnswer = async () => {
-        const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
-            method: "POST",
-            headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ answer: "odpověď", questionId: selectedQuestionId })
-            });
+        try {
+            const response = await fetch(`http://localhost:3000/quiz-exercise/answer/`, {
+                method: "POST",
+                headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ answer: "odpověď", questionId: selectedQuestionId })
+                });
             const data = await response.json();
+        } catch (error) {
+            alert("Chyba při vytváření odpovědi");
+        }
+        
     };
 
     // delete question answer
     const deleteAnswer  = async (id: number) =>{
-        if(id != correctAnswerId){
-            const response = await fetch(`http://localhost:3000/quiz-exercise/answer/${id}`,
-            {
-                method: "DELETE"
+        try {
+            if(id != correctAnswerId){
+                const response = await fetch(`http://localhost:3000/quiz-exercise/answer/${id}`,
+                    {
+                        method: "DELETE"
+                    }
+                    );
+
+                await fetchAnswers();
+            }else{
+                showFlashMessage("Nelze smazat správnou odpověď!", "red");
             }
-            );
-
-            await fetchAnswers();
-
-        }else{
-            showFlashMessage("Nelze smazat správnou odpověď!", "red");
+        } catch (error) {
+            alert("Chyba při mazání odpovědi");
         }
+        
       
     };
 
