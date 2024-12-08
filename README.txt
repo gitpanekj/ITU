@@ -22,19 +22,31 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 
 
 ## Učební pomůcka kvíz
-- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění kvízu a uživatelského rozhrnaí pro správu kvízu učitelem.
+- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění kvízu a uživatelského rozhraní pro správu kvízu učitelem.
 - **Autor**: Kantor Jiří (xkanto16)
 - **Umístění v adresářové struktuře:**
 
 
 ## Učební pomůcka flashcards
-- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění flashcards a uživatelského rozhrnaí pro správu flashcards učitelem.
+- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění flashcards a uživatelského rozhraní pro správu flashcards učitelem.
 - **Autor**: Klímová Lucie (xklimo04)
 - **Umístění v adresářové struktuře:**
+  - Uživatelskému rozhraní pro plnění daného cvičení z pozice studenta odpovídá
+`FE\src\routes\module\[routeModuleId]\flashcards\[routeFlashcardId]\+page.svelte`, využívá komponenty `FlashcardQuestion` a ta je umístěna v adresáři `FE/src/lib/components/flashcards`
+  - Uživatelskému rozhraní pro zobrazení výsledků cvičení z pozice studenta odpovídá
+`FE\src\routes\module\[routeModuleId]\flashcards\results\+page.svelte`
+
+
+  - Uživatelskému rozhraní pro správu daného cvičení z pozice učitele odpovídá
+`FE\src\routes\teacher\module\[routeModuleId]\flashcards\[routeFlashcardExerciseId]\+page.svelte`, využívá komponenty `Feedback` a `QuestionList`, které jsou umístěny v adresáři `FE/src/lib/components/flashcards`
+
+Další použité komponenty `Progressbar` a `Spinner` jsou umístěny v adresáři `FE/src/lib/components`
+
+
 
 
 ## Učební pomůcka čtení s porozuměním
-- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění čtení s porozuměním a uživatelského rozhrnaí pro správu čtení s porozuměním učitelem.
+- **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění čtení s porozuměním a uživatelského rozhraní pro správu čtení s porozuměním učitelem.
 - **Autor**: Pánek Jan (xpanek11)
 - **Umístění v adresářové struktuře:**
     - stránka webové aplikace pro plnění čtení s porozuměním odpovídá `FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty
