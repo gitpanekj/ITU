@@ -11,12 +11,9 @@ with its functions including card toggle and feedback submittion
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
   
-<<<<<<< Updated upstream
     // Flashcard variables
-=======
     export let moduleId;
 
->>>>>>> Stashed changes
     let questionId: number = 0;
     let frontFace = "";
     let backFace = "";
