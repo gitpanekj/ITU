@@ -8,7 +8,7 @@ V tom se dále nacházejí adresáře `routes`, `stores` a `lib`.
 Adresář `routes` slouží k organizaci souborů, které reprezentují jednotlivé stránky nebo části aplikace, kdy adresářová struktura odpovídá jednotlivým routám.
 
 Adresář `stores` obsahuje tzv. stores (mechanismus frameworku Svelte)
-teré jsou v Svelte klíčovým mechanismem pro správu a sdílení stavu v aplikaci.
+které jsou v Svelte klíčovým mechanismem pro správu a sdílení stavu v aplikaci.
 
 Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a pomocné funkce.
 
@@ -25,7 +25,10 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění kvízu a uživatelského rozhraní pro správu kvízu učitelem.
 - **Autor**: Kantor Jiří (xkanto16)
 - **Umístění v adresářové struktuře:**
-
+  - hlavní stránce aplikace pro plnění kvízu odpovídá soubor
+`FE/src/routes/module/[routeModuleId]/quiz/[routeQuizId]/+page.svelte`, který využívá dvě komponenty `QuizQuestion` a `QuizEvaluation` umístěné v `FE/src/lib/components/quiz`
+  - hlavní stránce aplikace pro správu kvízu učitelem odpovídá soubor `FE/src/routes/teacher/module/[routeModuleId]/quiz/[routeQuizId]/+page.svelte`, který využívá komponenty `QuestionList` a `QuestionDetail` umístěné v `FE/src/lib/components/quiz`
+  - store sloužící pro správu a přepínání komponent je umístěn v souboru `FE/src/stores/Quiz/userView.ts`
 
 ## Učební pomůcka flashcards
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění flashcards a uživatelského rozhraní pro správu flashcards učitelem.
