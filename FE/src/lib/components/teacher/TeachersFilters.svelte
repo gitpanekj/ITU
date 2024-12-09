@@ -3,7 +3,7 @@ Filename: FE/src/lib/components/teacher/TeachersFilters.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Option to filter lections on teachers personal page.
+Description: Option to filter lectures on teachers personal page.
 ---------------------------------------------------------------->
 
 <script lang="ts">

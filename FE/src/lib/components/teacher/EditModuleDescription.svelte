@@ -3,7 +3,7 @@ Filename: FE/src/lib/components/teacher/EditModuleDescription.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Lection descritpion editation.
+Description: Lecture descritpion editation.
 ---------------------------------------------------------------->
 
 <script lang="ts">

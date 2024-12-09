@@ -3,7 +3,7 @@ Filename: FE/src/routes/teacher/module/+page.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Teachers personal page with of all their lections.
+Description: Teachers personal page with of all their lectures.
 ---------------------------------------------------------------->
 
 <script lang="ts">
@@ -75,7 +75,6 @@ Description: Teachers personal page with of all their lections.
         console.log("Creating new module.");
 
         await getModules();
-        //location.reload(); // obnoveni stranky, tj. i seznamu
     }
 
 

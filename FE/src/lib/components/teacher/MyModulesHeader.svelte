@@ -3,7 +3,7 @@ Filename: FE/src/lib/components/teacher/MyModulesHeader.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Header for lection page from teachers view.
+Description: Header for lecture page from teachers view.
 ---------------------------------------------------------------->
 
 <script lang="ts">

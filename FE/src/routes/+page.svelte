@@ -3,7 +3,7 @@ Filename: FE/src/routes/+page.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Main page with all modules listed.
+Description: Main page with all lectures listed.
 ---------------------------------------------------------------->
 
  <script lang="ts">

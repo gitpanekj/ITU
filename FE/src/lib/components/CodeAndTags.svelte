@@ -3,7 +3,7 @@ Filename: FE/src/lib/components/CodeAndTags.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Unique code and informative statistics about lection.
+Description: Unique code and informative statistics about lectures.
 ---------------------------------------------------------------->
 
 <script lang="ts">

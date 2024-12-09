@@ -3,7 +3,7 @@ Filename: FE/src/routes/teacher/module/[moduleId]/+page.svelte
 Author: Vojtěch Růžička
 Login: xruzic56
 Last Modified: [09-12-2024]
-Description: Lection edit page. 
+Description: Lecture edit page. 
 ---------------------------------------------------------------->
 
 <script lang="ts">
@@ -18,7 +18,7 @@ Description: Lection edit page.
     import CodeAndTags from '$lib/components/CodeAndTags.svelte';
     import ManageExercises from '$lib/components/teacher/ManageExercises.svelte';
     import { getFlashcards, getQuizes, getReadings } from '$lib/utils/getExercises';
-    import { getExerciseConunts } from '$lib/utils/getExerciseCounts';
+    import { getExerciseConunts } from '$lib/utils/exerciseCounts.js';
 
     let userId: number | null = null;
 
