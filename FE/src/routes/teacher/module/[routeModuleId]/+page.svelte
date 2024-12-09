@@ -5,7 +5,7 @@ Login: xruzic56
 Last Modified: [09-12-2024]
 Description: Lection edit page. 
 ---------------------------------------------------------------->
-<!-- Module edit page - src/routes/teacher/module/[moduleId]/+page.svelte -->
+
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { Link } from '$lib/utils/dataTypes.js';

@@ -17,6 +17,10 @@ Description: Teachers personal page with of all their lections.
 
     let userId: number | null = null;
 
+    let newModuleName: string;
+    let newModuleDescription: string;
+
+
     // Navbar
     let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
     let title: string = `Moje lekce`;
@@ -37,42 +41,28 @@ Description: Teachers personal page with of all their lections.
         teacher_name = data.username;
     }
 
-    // TODO
-    function hideModule(moduleId: number) {
-        console.log("Hiding module with ID [" + moduleId + "].");
-    } 
-
-    // TODO
-    function revealModule(moduleId: number) {
-        console.log("Revealing module with ID [" + moduleId + "].");
-    } 
-
     function editModule(moduleId: number) {
         goto(`/teacher/module/${moduleId}`);
     } 
 
-    // TODO mazani lekce
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    // TODO hezci varovne okno ?
+    //  mazani lekce
     async function deleteModule(moduleId: number) {  
         let reallyDelete = confirm("Opravdu smazat lekci i všechna její cvičení?\nTuto akci nelze vrátit zpět!");
         if(reallyDelete) {
             await fetch(`http://localhost:3000/exercise-group/${moduleId}`,{method: 'DELETE'});
             console.log("Deleting module with ID [" + moduleId + "].");
             await getModules();
-            //location.reload(); // obnoveni stranky, tj. i seznamu
         }   
     } 
 
-    // TODO tvorba nove lekce
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    async function createModule() {
+    // tvorba nove lekce
+    async function createModule(title: string, description: string) {
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-                name: "Nová lekce",
-                description: "Výchozí popis lekce.",
+                name: title,
+                description: description,
                 teacherId: userId 
             })
         };
@@ -104,71 +94,30 @@ Description: Teachers personal page with of all their lections.
 </div>
 
 <!-- Obsah stranky -->
-<!-- TODO dva sloupce, dragNdrop? mozna v prvni verzi jen tlacitka < a >, uprava viditelnosti (nutna BE podpora) -->
-<!-- TODO styly pro zobrazeni rozumne a jednotne sirky -->
-<!-- TODO filtry -->
-<!-- TODO funkční tlačítka -->
 <div class="flex mt-10">
        
-    <!-- Skryte moduly --> 
-    <!-- <div class="basis-1/3 grid gap-8 grid-cols-1 m-10">
-        <h2>Skryté lekce</h2>
-        <div class="border-2 rounded-xl border-slate-800 p-4">
-            <h2 class="font-bold">SKRYTÝ MODUL #1 (UKÁZKA)</h2>   
-            <br>  
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Upravit
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Smazat
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Zveřejnit →
-            </button>
-        </div>
-        <div class="border-2 rounded-xl border-slate-800 p-4">
-            <h2 class="font-bold">SKRYTÝ MODUL #2 (UKÁZKA)</h2>   
-            <br>  
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Upravit
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Smazat
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Zveřejnit →
-            </button>
-        </div>
-        <div class="border-2 rounded-xl border-slate-800 p-4">
-            <h2 class="font-bold">SKRYTÝ MODUL #3 (UKÁZKA)</h2>   
-            <br>  
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Upravit
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Smazat
-            </button>
-            <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200">
-                Zveřejnit →
-            </button>
-        </div>
-    </div> -->
-
-    <!-- TEMPORARY START -->
-    <div class="basis-1/4"></div>
-    <!-- TEMPORARY END -->
-
     <!-- Viditelne moduly --> 
-    <div class="basis-1/3 grid gap-8 grid-cols-1 m-10">
-        <!-- <h2>Veřejné lekce</h2> -->
+    <div class="basis-2/3 grid gap-8 grid-cols-2 m-10">
+        
+        <!-- Tvorba noveho modulu -->
+        <div class="grid grid-cols-subgrid gap-8 col-span-2 border-4 p-4 mx-48 rounded-xl border-slate-800">
+            <div>
+                <h2 class="font-bold">
+                    <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název nové lekce..." bind:value={newModuleName}></textarea>
+                </h2> 
+                <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                        on:click={() => {createModule(newModuleName,newModuleDescription)}}>
+                    Vytvořit novou lekci
+                </button>   
+            </div>
+            <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Výstižný popis nové lekce..." bind:value={newModuleDescription}></textarea>
+        </div>
+
+        <!-- Jiz vytvorene moduly -->
         {#each modules as mod (mod.id)}
             <div class="border-2 rounded-xl border-slate-800 p-4">
                 <h2 class="font-bold">{mod.name}</h2>     
                 <br>
-                <!-- TEMPORARY COMMENTED <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                        on:click={() => {hideModule(mod.id)}}>
-                    ← Skrýt
-                </button> -->
                 <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                         on:click={() => {editModule(mod.id)}}>
                     Upravit
@@ -185,14 +134,6 @@ Description: Teachers personal page with of all their lections.
 
     <div class="basis-1/3 m-10">
     <div class="fixed">
-
-        <!-- Vytvorit lekci -->
-        <div class="flex mx-auto justify-center mb-16">
-            <button class="rounded-xl text-xl font-bold border-2 py-3 px-6 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                    on:click={() => {createModule()}}>
-                Vytvořit novou lekci
-            </button>
-        </div>
 
         <!-- Filtry --> 
         <TeachersFilters  />
