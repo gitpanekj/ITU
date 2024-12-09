@@ -57,6 +57,9 @@ Description: Teachers personal page with of all their lections.
 
     // tvorba nove lekce
     async function createModule(title: string, description: string) {
+
+        if(!title) title = "Nová lekce";
+
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -105,7 +108,7 @@ Description: Teachers personal page with of all their lections.
                 <h2 class="font-bold">
                     <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název nové lekce..." bind:value={newModuleName}></textarea>
                 </h2> 
-                <button class="rounded-xl border-2 ml-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                <button class="w-full rounded-xl border-2 my-4 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
                         on:click={() => {createModule(newModuleName,newModuleDescription)}}>
                     Vytvořit novou lekci
                 </button>   

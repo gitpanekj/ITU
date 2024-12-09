@@ -15,6 +15,10 @@ Description: Creating and deleting exercises, editing properties of exercises (n
     export let flashcards: {id: number, name: string, description: string, groupId: number}[];
     export let quizes: {id: number, name: string, description: string, groupId: number}[];
     export let readings: {id: number, name: string, description: string, groupId: number}[];
+
+    let newReadingName: string;
+    let newFlashcardsName: string;
+    let newQuizName: string;
    
     // mazani cviceni
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
@@ -122,13 +126,15 @@ Description: Creating and deleting exercises, editing properties of exercises (n
 
     // tvorba noveho cviceni
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    async function createExercise(exerciseType: string) {
+    async function createExercise(exerciseType: string, title: string) {
+
+        if(!title) title = "Nové cvičení";
 
         const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
-                name: "Nové cvičení", 
+                name: title, 
                 description: "",
                 groupId: moduleId
             })
@@ -160,18 +166,33 @@ Description: Creating and deleting exercises, editing properties of exercises (n
 
 <!-- Tvorba cviceni -->
 <div class="grid gap-16 grid-cols-3 m-10">
-    <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-            on:click={() => {createExercise("reading")}}>
-        Vytvořit nové čtení
-    </button>
-    <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-            on:click={() => {createExercise("flashcards")}}>
+    <div class="grid justify-items-center border-4 rounded-xl border-slate-800 p-4">
+        <h2 class="font-bold w-full">
+            <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název nového čtení s porozuměním..." bind:value={newReadingName}></textarea>
+        </h2>
+        <button class="w-full rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                on:click={() => {createExercise("reading",newReadingName)}}>
+            Vytvořit nové čtení
+        </button>
+    </div>
+    <div class="grid justify-items-center border-4 rounded-xl border-slate-800 p-4">
+        <h2 class="font-bold w-full">
+            <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název nového cvičení flashcards..." bind:value={newFlashcardsName}></textarea>
+        </h2>
+        <button class="w-full rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                on:click={() => {createExercise("flashcards",newFlashcardsName)}}>
         Vytvořit nové flashcards
-    </button>                
-    <button class="rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-            on:click={() => {createExercise("quiz")}}>
+        </button>
+    </div>
+    <div class="grid justify-items-center border-4 rounded-xl border-slate-800 p-4">
+        <h2 class="font-bold w-full">
+            <textarea class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název nového kvízu..." bind:value={newQuizName}></textarea>
+        </h2>
+        <button class="w-full rounded-xl border-2 py-1 px-4 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
+                on:click={() => {createExercise("quiz",newQuizName)}}>
         Vytvořit nový kvíz
-    </button>   
+        </button>
+    </div> 
 </div>
 
 <!-- Jednotliva cviceni -->
@@ -183,12 +204,8 @@ Description: Creating and deleting exercises, editing properties of exercises (n
             <div class="border-2 rounded-xl border-slate-800 p-4">
                 <details>
                     <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{reading.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                    <br>
-                    <input type="text" name="reading" id={reading.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={reading.name}>
-                    <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                            on:click={() => {renameExercise("reading", reading.id)}}>
-                        Přejmenovat
-                    </button>
+                    <textarea id={reading.id.toString()} name="reading" class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název cvičení" on:blur={() => {renameExercise("reading", reading.id)}}>{reading.name}</textarea>
+                    <i class="text-sm m-4">(Název změníte zapsáním nového.)</i>
                     <hr class="border-blue-950 m-4">
                 </details>
                 <br>
@@ -210,12 +227,8 @@ Description: Creating and deleting exercises, editing properties of exercises (n
         <div class="border-2 rounded-xl border-slate-800 p-4">
             <details>
                 <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{flashcard.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                <br>
-                <input type="text" name="flashcards" id={flashcard.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={flashcard.name}>
-                <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                        on:click={() => {renameExercise("flashcards", flashcard.id)}}>
-                    Přejmenovat
-                </button>
+                <textarea id={flashcard.id.toString()} name="flashcards" class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název cvičení" on:blur={() => {renameExercise("flashcards", flashcard.id)}}>{flashcard.name}</textarea>
+                <i class="text-sm m-4">(Název změníte zapsáním nového.)</i>
                 <hr class="border-blue-950 m-4">
             </details>
             <br>
@@ -237,12 +250,8 @@ Description: Creating and deleting exercises, editing properties of exercises (n
         <div class="border-2 rounded-xl border-slate-800 p-4">
             <details>
                 <summary title="Upravit jméno" class="font-bold cursor-pointer list-none hover:underline">{quiz.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
-                <br>
-                <input type="text" name="quiz" id={quiz.id.toString()} class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={quiz.name}>
-                <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                        on:click={() => {renameExercise("quiz", quiz.id)}}>
-                    Přejmenovat
-                </button>
+                <textarea id={quiz.id.toString()} name="quiz" class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" placeholder="Název cvičení" on:blur={() => {renameExercise("quiz", quiz.id)}}>{quiz.name}</textarea>
+                <i class="text-sm m-4">(Název změníte zapsáním nového.)</i>
                 <hr class="border-blue-950 m-4">
             </details>
             <br>

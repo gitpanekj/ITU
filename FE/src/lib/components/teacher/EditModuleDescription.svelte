@@ -10,9 +10,17 @@ Description: Lection descritpion editation.
     export let module_data: {id: number, name: string, description: string, teacherId: number};
     export let moduleId: number;
 
+    let newDescription: string;
+
     // uprava popisu lekce
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    async function editDescription() {
+    async function editDescription(newDescription: string) {
+
+        if(!newDescription) {
+            await fetch(`http://localhost:3000/exercise-group/${moduleId}`);
+            return;
+        } 
+
         let element: any = document.getElementsByName("description")[0];
         if(element != null) {
             let requestOptions = {
@@ -36,11 +44,8 @@ Description: Lection descritpion editation.
     <details>
         <summary title="Upravit popis" class="text-xl cursor-pointer list-none hover:underline">{module_data.description}&nbsp;&nbsp;<b>|</b> ✏</summary>
         <br>
-        <textarea name="description" class="w-full bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.description}></textarea>
-        <button class="mx-auto flex flex-col text-center justify-center rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                on:click={() => {editDescription()}}>
-            Změnit popis
-        </button>
+        <textarea name="description" class="w-full bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" placeholder="Popis cvičení" value={module_data.description} on:blur={() => {editDescription(newDescription)}}></textarea>
+        <i class="text-sm m-4">(Popis změníte zapsáním nového. Není třeba nic potvrzovat.)</i>
         <hr class="border-blue-950 m-4">
     </details>
 </div>

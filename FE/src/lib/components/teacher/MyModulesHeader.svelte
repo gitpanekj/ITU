@@ -11,10 +11,17 @@ Description: Header for lection page from teachers view.
     export let teacher_name: string;
     export let moduleId: number;
 
-    
+    let newName: string;
+
     // uprava nazvu lekce
     // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    async function editName() {
+    async function editName(newName: string) {
+
+        if(!newName) {
+            await fetch(`http://localhost:3000/exercise-group/${moduleId}`);
+            return;
+        }
+
         let element: any = document.getElementsByName("name")[0];
         if(element != null) {
             let requestOptions = {
@@ -38,11 +45,9 @@ Description: Header for lection page from teachers view.
     <details>
         <summary title="Upravit název" class="font-bold text-4xl cursor-pointer list-none hover:underline">{module_data.name}&nbsp;&nbsp;<b>|</b> ✏</summary>
         <br>
-        <input type="text" name="name" class="bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" value={module_data.name}>
-        <button class="rounded-xl border-2 px-2 bg-blue-300 border-blue-950 hover:bg-blue-950 hover:text-blue-200"
-                on:click={() => {editName()}}>
-            Změnit název
-        </button>
+        <textarea name="name" class="w-1/3 bg-gray-100 px-2 rounded-md m-1 border-2 border-blue-200" placeholder="Název cvičení" value={module_data.name} on:blur={() => {editName(newName)}}></textarea>
+        <br>
+        <i class="text-sm m-4">(Název změníte zapsáním nového. Není třeba nic potvrzovat.)</i>
         <hr class="border-blue-950 m-4">
     </details>
 </div>
