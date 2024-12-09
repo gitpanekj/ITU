@@ -44,7 +44,6 @@ Description: Lecture edit page.
         teacher_name = data.username;
     }
 
-
     onMount( async () => {
         userId = loadUserContext();
             if (!userId){ // neprihlasen
@@ -80,6 +79,6 @@ Description: Lecture edit page.
     </div>
 
     <!-- Kod a znacky -->
-    <CodeAndTags {exercises_counts} />    
+    <CodeAndTags {exercises_counts} {moduleId} />  
 
 </div>

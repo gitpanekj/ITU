@@ -8,7 +8,7 @@ Description: Creating and deleting exercises, editing properties of exercises (n
 
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { getExerciseConunts } from "$lib/utils/exerciseCounts";
+    import { storeExerciseConunts } from "$lib/utils/exerciseCounts";
     import { getFlashcards, getQuizes, getReadings } from '$lib/utils/getExercises';
 
     export let moduleId: number;
@@ -45,6 +45,8 @@ Description: Creating and deleting exercises, editing properties of exercises (n
             flashcards = await getFlashcards(moduleId);
             quizes = await getQuizes(moduleId);
             readings = await getReadings(moduleId);
+
+            storeExerciseConunts(moduleId);
         }
     }
 
@@ -157,6 +159,8 @@ Description: Creating and deleting exercises, editing properties of exercises (n
         flashcards = await getFlashcards(moduleId);
         quizes = await getQuizes(moduleId);
         readings = await getReadings(moduleId);
+
+        storeExerciseConunts(moduleId);
     }
 
 </script>

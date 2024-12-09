@@ -73,6 +73,6 @@ Description: Lecture detail with links to exercises.
     </div>
 
     <!-- Kod a znacky -->
-    <CodeAndTags {exercises_counts} />  
+    <CodeAndTags {exercises_counts} {moduleId}/>  
 
 </div>
