@@ -22,7 +22,7 @@ Description: Component obtaining fetching and manipulation with questions in lis
   const dispatch = createEventDispatcher();
 
   // handling selected question and informing other components
-  const selectQuestion = (id: number) => {
+  const selectQuestion = (id: any) => {
     selectedQuestionId = id;
     dispatch('selectQuestion', { selectedQuestionId }); 
   };
@@ -39,7 +39,8 @@ Description: Component obtaining fetching and manipulation with questions in lis
         if (selectedQuestionId == null) {
             selectQuestion(questions[0].id);
         }
-        
+      }else{
+        selectQuestion(null);
       }
 
     } catch (error) {
@@ -59,8 +60,8 @@ Description: Component obtaining fetching and manipulation with questions in lis
         body: JSON.stringify({ name: "Nová otázka", question: "Text otázky", quizId: quizId, rightAnswerId: null })
       });
       const data = await response.json();
-      selectQuestion(data.id)
       await createNewAnswer(data.id);
+      selectQuestion(data.id)
       await fetchQuestions();
 
     } catch (error) {
@@ -129,7 +130,7 @@ Description: Component obtaining fetching and manipulation with questions in lis
 <div class="flex justify-between">
   <h1 class="text-3xl mb-4">Otázky</h1>
   <button 
-    on:click={() => { addQuestion(); }}
+    on:click={ async () => { await addQuestion(); }}
     class="border-2 border-blue-900 hover:bg-blue-600 hover:text-blue-200 py-2 px-4 size-12 rounded-full bg-blue-950 text-white text-xl text-justify">
       +
   </button>
