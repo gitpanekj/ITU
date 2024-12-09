@@ -13,7 +13,6 @@ Description: Lection descritpion editation.
     let newDescription: string;
 
     // uprava popisu lekce
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
     async function editDescription(newDescription: string) {
 
         if(!newDescription) {
@@ -32,7 +31,6 @@ Description: Lection descritpion editation.
             };
             await fetch(`http://localhost:3000/exercise-group/${moduleId}`, requestOptions);
             console.log("Changing description of module with ID [" + moduleId +"].");
-            //location.reload(); // obnoveni stranky, tj. i popisu
             let response = await fetch(`http://localhost:3000/exercise-group/${moduleId}`); 
             module_data = await response.json();
         }

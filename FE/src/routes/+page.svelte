@@ -26,7 +26,7 @@ Description: Main page with all modules listed.
     export let modules: {id: number, name: string, description: string, teacherId: number}[] = [];
 
     const getModules = async () => {
-        const response = await fetch('http://localhost:3000/exercise-group'); // TODO stahovat jen potrebne -- strankovani v API -- po scrollu vzdy natahnout dlasi
+        const response = await fetch('http://localhost:3000/exercise-group');
         const data = await response.json();
         modules = data.data;
     }
@@ -53,7 +53,6 @@ Description: Main page with all modules listed.
 <div class="flex mt-10">
 
     <!-- Moduly -->
-    <!-- TODO styly pro zobrazeni hezci mrizky (ne obrovske polozky) -->
     <div class="basis-2/3 grid gap-8 grid-cols-2 m-10">
 
         {#each modules as mod (mod.id)}

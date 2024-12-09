@@ -14,7 +14,6 @@ Description: Header for lection page from teachers view.
     let newName: string;
 
     // uprava nazvu lekce
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
     async function editName(newName: string) {
 
         if(!newName) {
@@ -35,7 +34,6 @@ Description: Header for lection page from teachers view.
             console.log("Changing title of module with ID [" + moduleId +"].");
             let response = await fetch(`http://localhost:3000/exercise-group/${moduleId}`); 
             module_data = await response.json();
-            //location.reload(); // obnoveni stranky, tj. i popisu
         }
     }
 

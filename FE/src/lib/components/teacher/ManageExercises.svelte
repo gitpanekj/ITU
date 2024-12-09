@@ -21,8 +21,6 @@ Description: Creating and deleting exercises, editing properties of exercises (n
     let newQuizName: string;
    
     // mazani cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
-    // TODO hezci varovne okno ?
     async function deleteExercise(exerciseType: string, exerciseId: number) {
         let reallyDelete = confirm("Opravdu smazat celé cvičení?\nTuto akci nelze vrátit zpět!");
         if(reallyDelete) {
@@ -50,7 +48,6 @@ Description: Creating and deleting exercises, editing properties of exercises (n
     }
 
     // prejmenovani cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
     async function renameExercise(exerciseType: string, exerciseId: number) {
         let newName = "";
         let names;
@@ -125,7 +122,6 @@ Description: Creating and deleting exercises, editing properties of exercises (n
     }
 
     // tvorba noveho cviceni
-    // TODO optimalnejsi obnoveni (je asi zbytecne obnovovat celou stranku)
     async function createExercise(exerciseType: string, title: string) {
 
         if(!title) title = "Nové cvičení";

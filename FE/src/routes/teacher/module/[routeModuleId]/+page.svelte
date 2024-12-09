@@ -80,7 +80,6 @@ Description: Lection edit page.
     </div>
 
     <!-- Kod a znacky -->
-    <!-- TODO update pocitadel po kazdem pridani / ubrani cviceni -->
     <CodeAndTags {exercises_counts} />    
 
 </div>
