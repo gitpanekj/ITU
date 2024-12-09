@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/mainPage/Filters.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Option to filter lections on the main page.
+---------------------------------------------------------------->
+
 <script lang="ts">
     
 </script>

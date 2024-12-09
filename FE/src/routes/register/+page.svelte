@@ -1,4 +1,11 @@
-<!-- src/routes/register/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/src/routes/register/+page.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: User registration. Not functional (as assigned).
+---------------------------------------------------------------->
+
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { setUserContext } from '$lib/userContenxt/userContext';

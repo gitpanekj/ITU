@@ -1,4 +1,11 @@
-<!-- Main page - listed modules - src/routes/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/+page.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Main page with all modules listed.
+---------------------------------------------------------------->
+
  <script lang="ts">
     import Navbar from "$lib/components/Navbar.svelte";
     import type { Link } from "$lib/utils/dataTypes.ts";

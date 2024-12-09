@@ -1,4 +1,11 @@
-<!-- src/routes/login/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/login/+page.svelte
+Author: Jan Pánek & Vojtěch Růžička
+Login: xpanek11 & xruzic56
+Last Modified: [09-12-2024]
+Description: User login page. Without authentication, only for presentation purposes (as assigned).
+---------------------------------------------------------------->
+
 <script lang="ts">
   import { goto } from '$app/navigation';
   import { setUserContext } from '$lib/userContenxt/userContext';
@@ -47,6 +54,3 @@
         {/each}
     </div>
 </div>
-
-<!-- TODO realne prihlaseni (pokud potreba) -->
-

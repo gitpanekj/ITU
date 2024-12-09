@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/mainPage/Exercises.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Three columns of available exercises with links to them.
+---------------------------------------------------------------->
+
 <script lang="ts">
     export let moduleId: number;
     export let flashcards: {id: number, name: string, description: string, groupId: number}[] = [];

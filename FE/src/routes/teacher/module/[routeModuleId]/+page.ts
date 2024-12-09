@@ -1,4 +1,9 @@
-// Module detail page load - src/routes/module/[moduleId]/+page.ts
+// Filename: FE/src/routes/module/[moduleId]/+page.ts
+// Author: Vojtěch Růžička
+// Login: xruzic56
+// Last Modified: [09-12-2024]
+// Description: Lection detail page load
+
 import { isValidId } from "$lib/utils/routeValidation";
 import { error } from "@sveltejs/kit";
 
@@ -10,10 +15,6 @@ export async function load({ params } : { params: Record<string, string>}){
         throw error(404, 'Page not found');
     };
     const moduleId = +routeModuleId;
-
-    // TODO: Fetch initial data - before page is rendered
-    // const response = await fetch('');
-    // const module_data = await response.json();
 
     let response = await fetch(`http://localhost:3000/exercise-group/${moduleId}`); 
     let module_data = await response.json();

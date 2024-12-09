@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/mainPage/LoginNavbar.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Navigation on login page.
+---------------------------------------------------------------->
+
 <script lang="ts">
     import { loadUserContext } from "$lib/userContenxt/userContext";
     import type { Link } from "$lib/utils/dataTypes";

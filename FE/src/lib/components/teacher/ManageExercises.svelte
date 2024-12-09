@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/teacher/ManageExercises.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Creating and deleting exercises, editing properties of exercises (not content).
+---------------------------------------------------------------->
+
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { getFlashcards, getQuizes, getReadings } from '$lib/utils/getExercises';

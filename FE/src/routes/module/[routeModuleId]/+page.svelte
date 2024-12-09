@@ -1,4 +1,11 @@
-<!-- Module detail page - src/routes/module/[moduleId]/+page.svelte -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/module/[moduleId]/+page.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Lection detail with links to exercises.
+---------------------------------------------------------------->
+
 <script lang="ts">
     import { onMount } from 'svelte';
     import type { Link } from '$lib/utils/dataTypes.js';

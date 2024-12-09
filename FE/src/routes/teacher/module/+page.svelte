@@ -1,4 +1,11 @@
-<!-- All the teacher's modules -->
+<!-------------------------------------------------------------- 
+Filename: FE/src/routes/teacher/module/+page.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Teachers personal page with of all their lections.
+---------------------------------------------------------------->
+
 <script lang="ts">
     import Navbar from "$lib/components/Navbar.svelte";
     import type { Link } from "$lib/utils/dataTypes";

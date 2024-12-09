@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/teacher/EditModuleDescription.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Lection descritpion editation.
+---------------------------------------------------------------->
+
 <script lang="ts">
     export let module_data: {id: number, name: string, description: string, teacherId: number};
     export let moduleId: number;

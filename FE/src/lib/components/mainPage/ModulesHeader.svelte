@@ -1,3 +1,11 @@
+<!-------------------------------------------------------------- 
+Filename: FE/src/lib/components/mainPage/ModulesHeader.svelte
+Author: Vojtěch Růžička
+Login: xruzic56
+Last Modified: [09-12-2024]
+Description: Header with title and author for lection page.
+---------------------------------------------------------------->
+
 <script lang="ts">
     export let module_data: {id: number, name: string, description: string, teacherId: number};
     export let teacher_name: string;
