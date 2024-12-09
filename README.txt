@@ -16,13 +16,13 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 - **Popis**: Tato část zahrnuje přístup k učebním lekcím a učebním pomůckám v rámci dané lekce a tvorbu a správu jednotlivých lekcí.
 - **Autor**: Růžička Vojtěch (xruzic56)
 - **Umístění v adresářové struktuře:**
-  - Přístup k lekcím (hlavní stránka aplikace) odpovídá `FE\src\routes\+page.svelte` a využívá komponenty `Navbar` a `Filters` umístěné v `FE\src\lib\components` a `FE\src\lib\components\mainPage`
+  - Přístup k lekcím (hlavní stránka aplikace) odpovídá `FE/src/routes/+page.svelte` a využívá komponenty `Navbar` a `Filters` umístěné v `FE/src/lib/components` a `FE/src/lib/components/mainPage`
 
-  - Přístup k učebním pomůckám v rámci lekce odpovídá `FE\src\routes\module\[routeModuleId]\+page.svelte` a využívá komponenty `Navbar`, `ModulesHeader`, `ModuleDescription`, `Exercises` a `CodeAndTags` umístěné v `FE\src\lib\components` a `FE\src\lib\components\mainPage`
+  - Přístup k učebním pomůckám v rámci lekce odpovídá `FE/src/routes/module/[routeModuleId]/+page.svelte` a využívá komponenty `Navbar`, `ModulesHeader`, `ModuleDescription`, `Exercises` a `CodeAndTags` umístěné v `FE/src/lib/components` a `FE/src/lib/components/mainPage`
 
-  - Tvorba a správa lekcí odpovídá `FE\src\routes\teacher\module\+page.svelte` a využívá komponenty `Navbar` a `TeacherFilters` umístěné v `FE\src\lib\components` a `FE\src\lib\components\teacher`
+  - Tvorba a správa lekcí odpovídá `FE/src/routes/teacher/module/+page.svelte` a využívá komponenty `Navbar` a `TeacherFilters` umístěné v `FE/src/lib/components` a `FE/src/lib/components/teacher`
 
-  - Správa učebních pomůcek v rámci dané lekce odpovídá `FE\src\routes\teacher\module\[routeModuleId]\+page.svelte` a využívá komponenty `Navbar`, `MyModulesHeader`, `EditModuleDescription`, `ManageExercises`, a `CodeAndTags` umístěné v `FE\src\lib\components` a `FE\src\lib\components\teacher`
+  - Správa učebních pomůcek v rámci dané lekce odpovídá `FE/src/routes/teacher/module/[routeModuleId]/+page.svelte` a využívá komponenty `Navbar`, `MyModulesHeader`, `EditModuleDescription`, `ManageExercises`, a `CodeAndTags` umístěné v `FE/src/lib/components` a `FE/src/lib/components/teacher`
 
 
 
@@ -31,20 +31,20 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 - **Autor**: Kantor Jiří (xkanto16)
 - **Umístění v adresářové struktuře:**
   - 
-  `FE\src\routes\module\[routeModuleId]
+  `FE/src/routes/module/[routeModuleId]
 
 ## Učební pomůcka flashcards
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění flashcards a uživatelského rozhraní pro správu flashcards učitelem.
 - **Autor**: Klímová Lucie (xklimo04)
 - **Umístění v adresářové struktuře:**
   - Uživatelskému rozhraní pro plnění daného cvičení z pozice studenta odpovídá
-`FE\src\routes\module\[routeModuleId]\flashcards\[routeFlashcardId]\+page.svelte`, využívá komponenty `FlashcardQuestion` a ta je umístěna v adresáři `FE/src/lib/components/flashcards`
+`FE/src/routes/module/[routeModuleId]/flashcards/[routeFlashcardId]/+page.svelte`, využívá komponenty `FlashcardQuestion` a ta je umístěna v adresáři `FE/src/lib/components/flashcards`
   - Uživatelskému rozhraní pro zobrazení výsledků cvičení z pozice studenta odpovídá
-`FE\src\routes\module\[routeModuleId]\flashcards\results\+page.svelte`
+`FE/src/routes/module/[routeModuleId]/flashcards/results/+page.svelte`
 
 
   - Uživatelskému rozhraní pro správu daného cvičení z pozice učitele odpovídá
-`FE\src\routes\teacher\module\[routeModuleId]\flashcards\[routeFlashcardExerciseId]\+page.svelte`, využívá komponenty `Feedback` a `QuestionList`, které jsou umístěny v adresáři `FE/src/lib/components/flashcards`
+`FE/src/routes/teacher/module/[routeModuleId]/flashcards/[routeFlashcardExerciseId]/+page.svelte`, využívá komponenty `Feedback` a `QuestionList`, které jsou umístěny v adresáři `FE/src/lib/components/flashcards`
 
 Další použité komponenty `Progressbar` a `Spinner` jsou umístěny v adresáři `FE/src/lib/components`
 
