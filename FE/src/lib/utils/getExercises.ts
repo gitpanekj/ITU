@@ -1,3 +1,8 @@
+// Filename: getExercises.ts
+// Author: Vojtěch Růžička
+// Login: xruzic56
+// Last Modified: [09-12-2024]
+// Description: Get info about all exercises in one lecture
 
 // ziskani karticek pro danou lekci
 export async function getFlashcards(moduleId: number): Promise<{ id: number; name: string; description: string; groupId: number; }[]> {
