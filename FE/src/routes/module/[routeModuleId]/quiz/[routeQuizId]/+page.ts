@@ -1,4 +1,4 @@
-// Filename: FE/src/routes/module/[moduleId]/quiz/[quizId]/+page.ts
+// Filename: FE/src/routes/module/[routeModuleId]/quiz/[routeQuizId]/+page.ts
 // Author: Jiří Kantor
 // Login: xkanto16
 // Last Modified: [08-12-2024]

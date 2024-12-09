@@ -1,5 +1,5 @@
 <!-------------------------------------------------------------- 
-Filename: FE/src/routes/teacher/module/[moduleId]/quiz/[quizId]/+page.svelte
+Filename: FE/src/routes/teacher/module/[routeModuleId]/quiz/[routeQuizId]/+page.svelte
 Author: Jiří Kantor
 Login: xkanto16
 Last Modified: [08-12-2024]
