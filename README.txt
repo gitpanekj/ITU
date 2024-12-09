@@ -1,23 +1,28 @@
 # Klíčové části FE a jejich autoři
 
-Klíčové části FE společně s jejich autory jsou uvedeny v podkapitolách.
-Obecně jsou všechny zdrojové soubory spjaté s jednotlivými částmi umístěny
-v adresáři `FE/src`.
+Klíčové části FE společně se svými autory jsou uvedeny v podkapitolách.
+Obecně jsou všechny zdrojové soubory spjaté s jednotlivými částmi umístěny v adresáři `FE/src`.
 V tom se dále nacházejí adresáře `routes`, `stores` a `lib`.
 
 Adresář `routes` slouží k organizaci souborů, které reprezentují jednotlivé stránky nebo části aplikace, kdy adresářová struktura odpovídá jednotlivým routám.
 
-Adresář `stores` obsahuje tzv. stores (mechanismus frameworku Svelte)
-teré jsou v Svelte klíčovým mechanismem pro správu a sdílení stavu v aplikaci.
+Adresář `stores` obsahuje tzv. stores (mechanismus frameworku Svelte), které jsou v Svelte klíčovým mechanismem pro správu a sdílení stavu v aplikaci.
 
 Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a pomocné funkce.
 
 
 
 ## Úvodní stránka modulů a správa modulů
-- **Popis**: Tato část zahrnuje přístup k učebním lekcím a učebním pomůckám v rámci dané lekce a tvorba a správa jednotlivých lekcí.
+- **Popis**: Tato část zahrnuje přístup k učebním lekcím a učebním pomůckám v rámci dané lekce a tvorbu a správu jednotlivých lekcí.
 - **Autor**: Růžička Vojtěch (xruzic56)
 - **Umístění v adresářové struktuře:**
+  - Přístup k lekcím (hlavní stránka aplikace) odpovídá `FE\src\routes\+page.svelte` a využívá komponenty `Navbar` a `Filters` umístěné v `FE\src\lib\components` a `FE\src\lib\components\mainPage`
+
+  - Přístup k učebním pomůckám v rámci lekce odpovídá `FE\src\routes\module\[routeModuleId]\+page.svelte` a využívá komponenty `Navbar`, `ModulesHeader`, `ModuleDescription`, `Exercises` a `CodeAndTags` umístěné v `FE\src\lib\components` a `FE\src\lib\components\mainPage`
+
+  - Tvorba a správa lekcí odpovídá `FE\src\routes\teacher\module\+page.svelte` a využívá komponenty `Navbar` a `TeacherFilters` umístěné v `FE\src\lib\components` a `FE\src\lib\components\teacher`
+
+  - Správa učebních pomůcek v rámci dané lekce odpovídá `FE\src\routes\teacher\module\[routeModuleId]\+page.svelte` a využívá komponenty `Navbar`, `MyModulesHeader`, `EditModuleDescription`, `ManageExercises`, a `CodeAndTags` umístěné v `FE\src\lib\components` a `FE\src\lib\components\teacher`
 
 
 
@@ -25,7 +30,8 @@ Adresář `lib` obsahuje komponenty využívané v jednotlivých částech FE a 
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění kvízu a uživatelského rozhraní pro správu kvízu učitelem.
 - **Autor**: Kantor Jiří (xkanto16)
 - **Umístění v adresářové struktuře:**
-
+  - 
+  `FE\src\routes\module\[routeModuleId]
 
 ## Učební pomůcka flashcards
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění flashcards a uživatelského rozhraní pro správu flashcards učitelem.
@@ -49,12 +55,12 @@ Další použité komponenty `Progressbar` a `Spinner` jsou umístěny v adresá
 - **Popis**: Tato část zahrnuje tvorbu uživatelského rozhraní pro plnění čtení s porozuměním a uživatelského rozhraní pro správu čtení s porozuměním učitelem.
 - **Autor**: Pánek Jan (xpanek11)
 - **Umístění v adresářové struktuře:**
-    - stránka webové aplikace pro plnění čtení s porozuměním odpovídá `FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty
-     `Editor`, `ReadingQuestion`, `ReadingEvaluation`, `ReadingEvaluationDetail` umístěné v adresáři `FE/src/lib/components/reading`
-    - stránka webové aplikace pro správu čtení s porozumněním odpovídá 
-    `FE/src/routes/teacher/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty 
-    `Editor`,
-    `QuestionList`,
-    `QuestionDetail` umístěné v adresáři `FE/src/lib/components/reading`
-    - stores pro správu a sdílení stavu komponent jsou umístěny v adresáři 
-    `FE/src/stores/Reading`
+  - stránka webové aplikace pro plnění čtení s porozuměním odpovídá `FE/src/routes/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty
+    `Editor`, `ReadingQuestion`, `ReadingEvaluation`, `ReadingEvaluationDetail` umístěné v adresáři `FE/src/lib/components/reading`
+  - stránka webové aplikace pro správu čtení s porozumněním odpovídá 
+  `FE/src/routes/teacher/module/[routeModuleId]/reading/[routeReadingId]/+page.svelte` a využívá komponenty 
+  `Editor`,
+  `QuestionList`,
+  `QuestionDetail` umístěné v adresáři `FE/src/lib/components/reading`
+  - stores pro správu a sdílení stavu komponent jsou umístěny v adresáři 
+  `FE/src/stores/Reading`
