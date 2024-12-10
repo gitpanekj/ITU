@@ -18,7 +18,7 @@ Description: Page that shows the flashcards detail and allows student to flip it
 
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
-  let title: string = "Flashcard exercise";
+  let title: string = "Flashcards";
 
   let sessionCreated = false;
 

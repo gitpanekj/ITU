@@ -23,7 +23,7 @@ Description: Page that shows the student's view of a reading exercise
   
   // Navbar links
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
-  let title: string = "Reading exercise";
+  let title: string = "Čtení s porozuměním";
 
   let sessionCreated = false;
 

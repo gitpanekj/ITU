@@ -27,7 +27,7 @@ Description: Page that shows the teacher detail of his reading exercise
   
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
-  let title: string = `Čtení s porozumněním`;
+  let title: string = `Čtení s porozuměním`;
   let saveCallback: Function = () => {saveEditorContents(readingId)};
 
   onMount(() => {

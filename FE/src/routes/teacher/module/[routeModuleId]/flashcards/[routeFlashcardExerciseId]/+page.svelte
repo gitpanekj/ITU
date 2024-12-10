@@ -17,7 +17,7 @@ Description: Page that shows the teacher detail of his flashcard exercise
 
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
-  let title: string = `Flashcard exercise`;
+  let title: string = `Flashcards`;
 
   onMount(() => {
     // nothing to do

@@ -16,7 +16,7 @@ Description: Page that shows the flashcards exercise results
 
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
-  let title: string = "Flashcard exercise";
+  let title: string = "Flashcards";
 
   // Pagination variables
   let page: number = 1;

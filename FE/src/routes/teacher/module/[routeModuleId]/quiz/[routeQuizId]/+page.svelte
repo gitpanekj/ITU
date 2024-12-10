@@ -22,7 +22,7 @@ Description: Quiz teacher main page
     
   // Navbar
   let links: Array<Link> = [["Zpět do lekce", `/teacher/module/${moduleId}`, () => {}]];
-  let title: string = `Quiz exercise`;
+  let title: string = `Kvíz`;
 
   onMount(() => {
 
