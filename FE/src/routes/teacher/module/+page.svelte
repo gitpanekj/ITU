@@ -19,7 +19,7 @@ Description: Teachers personal page with of all their lectures.
     let newModuleDescription: string;
 
     let filteredId: number | null = null;
-    let filteredName: number | null = null;
+    let searchName: string = "";
 
     // Navbar
     let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
@@ -94,8 +94,8 @@ Description: Teachers personal page with of all their lectures.
         // filtrace dle ID
         getModulesById();
     }
-    else if(filteredName) {
-        // filtrace dle jmena autora
+    else if(searchName) {
+        // hledani dle nazvu
         getModulesByName();
     }
     else {
@@ -111,10 +111,14 @@ Description: Teachers personal page with of all their lectures.
     }
 
     const getModulesByName = () => {
-        if (filteredName == 0) {
-            return resultModules = modules;
-        } 
-        return resultModules = modules.filter(lecture => lecture.id == filteredName);
+        let output: {id: number, name: string, description: string, teacherId: number}[] = [];
+        modules.forEach(module => {
+            if(module.name.search(searchName) >= 0) {
+                output.push(module);
+            }
+        });
+        
+        return resultModules = output;
     }
 
 </script>
@@ -178,12 +182,7 @@ Description: Teachers personal page with of all their lectures.
                     <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                         <label for=name>Název</label>
                         <br>
-                        <select id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredName}>
-                            <option value=0></option>
-                            {#each modules as mod}
-                            <option value={mod.id}>{mod.name}</option>
-                            {/each}
-                        </select>
+                        <input type=text id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={searchName}>
                     </div>
                 </form>
             </div>

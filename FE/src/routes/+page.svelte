@@ -21,7 +21,7 @@ import Navbar from "$lib/components/Navbar.svelte";
 
     let filteredId: number | null = null;
     let filteredAuthor: number | null = null;
-    let filteredName: number | null = null;
+    let searchName: string = "";
     
     export let modules: {id: number, name: string, description: string, teacherId: number}[] = [];
 
@@ -59,8 +59,8 @@ import Navbar from "$lib/components/Navbar.svelte";
         // filtrace dle jmena autora
         getModulesByAuthor();
     }
-    else if(filteredName) {
-        // filtrace dle jmena autora
+    else if(searchName) {
+        // hledani dle nazvu
         getModulesByName();
     }
     else {
@@ -83,10 +83,14 @@ import Navbar from "$lib/components/Navbar.svelte";
     }
 
     const getModulesByName = () => {
-        if (filteredName == 0) {
-            return resultModules = modules;
-        } 
-        return resultModules = modules.filter(lecture => lecture.id == filteredName);
+        let output: {id: number, name: string, description: string, teacherId: number}[] = [];
+        modules.forEach(module => {
+            if(module.name.search(searchName) >= 0) {
+                output.push(module);
+            }
+        });
+        
+        return resultModules = output;
     }
 
  </script>
@@ -127,12 +131,7 @@ import Navbar from "$lib/components/Navbar.svelte";
                     <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
                         <label for=name>Název</label>
                         <br>
-                        <select id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredName}>
-                            <option value=0></option>
-                            {#each modules as mod}
-                            <option value={mod.id}>{mod.name}</option>
-                            {/each}
-                        </select>
+                        <input type=text id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={searchName}>
                     </div>
                 </form>
             </div>
