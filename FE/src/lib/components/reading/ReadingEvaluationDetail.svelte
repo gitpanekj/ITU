@@ -54,7 +54,7 @@ Description: Detail of evaluated reading questions
           <!-- Hard indicator -->
           {#if $evaluationDetailStore.hard}
             <h1 class="w-32 border-2 bg-red-500 font-bold rounded-lg text-center flex justify-center items-center">
-              Hard
+              Těžká
             </h1>
           {/if}
           </div>
