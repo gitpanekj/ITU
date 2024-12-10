@@ -7,11 +7,9 @@ Description: Main page with all lectures listed.
 ---------------------------------------------------------------->
 
  <script lang="ts">
-    import Navbar from "$lib/components/Navbar.svelte";
-    import type { Link } from "$lib/utils/dataTypes.ts";
+    import Modules from "$lib/components/mainPage/Modules.svelte";
+import Navbar from "$lib/components/Navbar.svelte";
     import { onMount } from "svelte"; 
-    import Filters from "$lib/components/mainPage/Filters.svelte";
-    import { goto } from '$app/navigation';
 
     // Navbar
     let title: string = `
@@ -21,9 +19,13 @@ Description: Main page with all lectures listed.
         </div>
     `;
 
-
+    let filteredId: number | null = null;
+    let filteredAuthor: number | null = null;
+    let filteredName: number | null = null;
     
     export let modules: {id: number, name: string, description: string, teacherId: number}[] = [];
+
+    let teachers: {id: number, username: string}[] = [];
 
     const getModules = async () => {
         const response = await fetch('http://localhost:3000/exercise-group');
@@ -31,16 +33,61 @@ Description: Main page with all lectures listed.
         modules = data.data;
     }
 
-    async function getTeacherName(id: number) {
-        const response = await fetch(`http://localhost:3000/teacher/${id}`);
+    const getTeachers = async () => {
+        const response = await fetch(`http://localhost:3000/teacher`);
         const data = await response.json();
-        return data.username;
+        teachers = data.data;
+        console.log(teachers);
     }
 
     onMount( async () => {
         await getModules();
+        await getTeachers();
     });
 
+    
+
+    let resultModules: {id: number, name: string, description: string, teacherId: number}[] = [];
+
+
+
+    $: if(filteredId) {
+        // filtrace dle ID
+        getModulesById();
+    }
+    else if(filteredAuthor) {
+        // filtrace dle jmena autora
+        getModulesByAuthor();
+    }
+    else if(filteredName) {
+        // filtrace dle jmena autora
+        getModulesByName();
+    }
+    else {
+        // zobrazeno vse
+        resultModules = modules;
+    }
+
+    const getModulesById = () => {
+        if (filteredId == 0) {
+            return resultModules = [];
+        } 
+        return resultModules = modules.filter(lecture => lecture.id == filteredId);
+    }
+
+    const getModulesByAuthor = () => {
+        if (filteredAuthor == 0) {
+            return resultModules = modules;
+        } 
+        return resultModules = modules.filter(lecture => lecture.teacherId == filteredAuthor);
+    }
+
+    const getModulesByName = () => {
+        if (filteredName == 0) {
+            return resultModules = modules;
+        } 
+        return resultModules = modules.filter(lecture => lecture.id == filteredName);
+    }
 
  </script>
 
@@ -51,33 +98,44 @@ Description: Main page with all lectures listed.
 
 <!-- Obsah stranky -->
 <div class="flex mt-10">
-
-    <!-- Moduly -->
-    <div class="basis-2/3 grid gap-8 grid-cols-2 m-10">
-
-        {#each modules as mod (mod.id)}
-            <a href="/module/{mod.id}" class="border-2 rounded-xl border-slate-800 p-4 hover:bg-gray-100">
-                <h2 class="font-bold">{mod.name}</h2>
-                <br>
-                <span class="italic">
-                    Vytvořil: 
-                    {#await getTeacherName(mod.teacherId)}
-                        ...
-                    {:then value}
-                        {value}
-                    {:catch error}
-                        ?
-                    {/await}
-                </span>
-            </a> 
-        {/each}
-
-    </div>
     
+    <!-- Moduly -->
+    <Modules {resultModules} />
+
     <!-- Filtry --> 
     <div class="basis-1/3 m-10">
         <div class="fixed">
-            <Filters />
+            <div class="max-w-sm border-2 rounded-xl border-slate-800 p-2">
+                <h2 class="flex mx-auto font-bold text-xl m-2 justify-center">Filtry</h2>
+                <form class="flex flex-col text-xl">
+                    <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
+                        <label for=code>Kód lekce</label>
+                        <br>
+                        <input type=text id=code name=code class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredId}>
+                    </div>
+                    <br>
+                    <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
+                        <label for=author>Autor</label>
+                        <br>
+                        <select id=author name=author class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredAuthor}>
+                            <option value=0></option>
+                            {#each teachers as teacher}
+                            <option value={teacher.id}>{teacher.username}</option>
+                            {/each}
+                        </select>
+                    </div>
+                    <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
+                        <label for=name>Název</label>
+                        <br>
+                        <select id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredName}>
+                            <option value=0></option>
+                            {#each modules as mod}
+                            <option value={mod.id}>{mod.name}</option>
+                            {/each}
+                        </select>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

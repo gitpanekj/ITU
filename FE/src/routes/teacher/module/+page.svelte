@@ -12,14 +12,14 @@ Description: Teachers personal page with of all their lectures.
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import { loadUserContext } from "$lib/userContenxt/userContext";
-    import TeachersFilters from "$lib/components/teacher/TeachersFilters.svelte";
-
 
     let userId: number | null = null;
 
     let newModuleName: string;
     let newModuleDescription: string;
 
+    let filteredId: number | null = null;
+    let filteredName: number | null = null;
 
     // Navbar
     let links: Array<Link> = [["Hlavní stránka", "/", () => {}]];
@@ -87,6 +87,36 @@ Description: Teachers personal page with of all their lectures.
         await getTeacherName();
     })
 
+
+    let resultModules: {id: number, name: string, description: string, teacherId: number}[] = [];
+
+    $: if(filteredId) {
+        // filtrace dle ID
+        getModulesById();
+    }
+    else if(filteredName) {
+        // filtrace dle jmena autora
+        getModulesByName();
+    }
+    else {
+        // zobrazeno vse
+        resultModules = modules;
+    }
+
+    const getModulesById = () => {
+        if (filteredId == 0) {
+            return resultModules = [];
+        } 
+        return resultModules = modules.filter(lecture => lecture.id == filteredId);
+    }
+
+    const getModulesByName = () => {
+        if (filteredName == 0) {
+            return resultModules = modules;
+        } 
+        return resultModules = modules.filter(lecture => lecture.id == filteredName);
+    }
+
 </script>
 
 
@@ -133,14 +163,31 @@ Description: Teachers personal page with of all their lectures.
     </div>
 
 
-
+    <!-- Filtry --> 
     <div class="basis-1/3 m-10">
-    <div class="fixed">
-
-        <!-- Filtry --> 
-        <TeachersFilters  />
-
-    </div>
+        <div class="fixed">
+            <div class="max-w-sm border-2 rounded-xl border-slate-800 p-2">
+                <h2 class="flex mx-auto font-bold text-xl m-2 justify-center">Filtry</h2>
+                <form class="flex flex-col text-xl">
+                    <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
+                        <label for=code>Kód lekce</label>
+                        <br>
+                        <input type=text id=code name=code class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredId}>
+                    </div>
+                    <br>
+                    <div class="border-2 rounded-xl border-slate-800 m-2 p-2">  
+                        <label for=name>Název</label>
+                        <br>
+                        <select id=name name=name class="w-full bg-gray-100 rounded-md m-1 border-2 border-blue-200" bind:value={filteredName}>
+                            <option value=0></option>
+                            {#each modules as mod}
+                            <option value={mod.id}>{mod.name}</option>
+                            {/each}
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
 </div>
