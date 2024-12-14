@@ -21,7 +21,7 @@ Description: Quiz main page
   
   // Navbar links
   let links: Array<Link> = [["Zpět do lekce", `/module/${moduleId}`, () => {}]];
-    let title: string = "Quiz exercise";
+    let title: string = "Kvíz";
 
 
   let sessionActive = false;
@@ -30,7 +30,7 @@ Description: Quiz main page
   const createSession = async () => {
     const response = await fetch(`http://localhost:3000/quiz-exercise/create_session/${quizId}`);
     const data = await response.json();
-    localStorage.setItem('Kvíz', data.quizSessionId);
+    localStorage.setItem('quizSessionId', data.quizSessionId);
     sessionActive = true;
   }
 
